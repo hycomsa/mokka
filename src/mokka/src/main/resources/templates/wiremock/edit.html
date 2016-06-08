@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Wiremock Mappings</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+    <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+    <style type="text/css">
+        .bs-example{
+        margin: 20px;
+        }
+    </style>
+</head>
+<body>
+<h1>Wiremock mappings</h1>
+
+<ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" th:href="@{'##request}">Request</a></li>
+    <li><a data-toggle="tab" th:href="@{'##response}">Response</a></li>
+</ul>
+
+<form id="mappingForm" role="form" th:object="${mapping}" action="#" th:action="@{/wiremock/save}" method="post">
+    <div class="tab-content">
+        <div id="request" class="tab-pane fade in active">
+
+            <label class="radio-inline">
+                <input type="radio" name="urlType" value="1"/>URL
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="urlType" value="2"/>URL Pattern
+            </label>
+            <label class="radio-inline">
+                <input  type="radio" name="urlType" value="3"/>URL Path
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="urlType" value="4"/>URL Path Pattern
+            </label>
+            <br/>
+            <br/>
+            <input type="text" class="form-control"  th:field="*{requestPattern.url}"/>
+            <br/>
+            <div class="form-group">
+                <div class="col-xs-5 selectContainer">
+                    <label class="control-label">Method:</label>
+                    <select class="form-control" th:field="*{requestPattern.requestMethod}">
+                        <option value=""></option>
+                        <option th:each="method:${methods}"
+                                th:value="${method}" th:text="${method}">Japan
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <br/>
+            <br/>
+            <br/>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-4">
+                        <label class="control-label">ID:</label>
+                        <input type="text" class="form-control" id="scenarioName" th:field="*{id}"/>
+                    </div>
+                    <div class="col-xs-4">
+                        <label class="control-label">From ID:</label>
+                        <input type="text" class="form-control" id="fromScenario" th:field="*{fromId}"/>
+                    </div>
+                    <div class="col-xs-4">
+                        <label class="control-label">To ID:</label>
+                        <input type="text" class="form-control" id="toScenario" th:field="*{targetId}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Header patterns:</label>
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <label class="control-label">Header:</label>
+                            <input type="text" class="form-control" th:field="*{requestPattern.headers[0].key}"/>
+                        </div>
+                        <div class="col-xs-3">
+                            <label class="control-label">Predicate:</label>
+                            <select class="form-control" th:field="*{requestPattern.headers[0].matchingType}">
+                                <option value=""></option>
+                                <div th:each="predicate  : ${predicates}">
+                                    <option th:value="${predicate}" th:text="${predicate.name}"/>
+                                </div>
+                            </select>
+                        </div>
+                        <div class="col-xs-4">
+                            <label class="control-label">Value:</label>
+                            <input type="text" class="form-control" th:field="*{requestPattern.headers[0].value}"/>
+                        </div>
+                        <div class="col-xs-1">
+                            <button type="button" class="btn btn-success">+</button>
+                        </div>
+                    </div>
+                </li>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Parameter patterns:</label>
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <label class="control-label">Parameter:</label>
+                            <input type="text" class="form-control" th:field="*{requestPattern.parameters[0].key}"/>
+                        </div>
+                        <div class="col-xs-3">
+                            <label class="control-label">Predicate:</label>
+                            <select class="form-control" th:field="*{requestPattern.parameters[0].matchingType}">
+                                <option value=""></option>
+                                <div th:each="predicate  : ${predicates}">
+                                    <option th:value="${predicate}" th:text="${predicate.name}"/>
+                                </div>
+                            </select>
+                        </div>
+                        <div class="col-xs-4">
+                            <label class="control-label">Value:</label>
+                            <input type="text" class="form-control" th:field="*{requestPattern.parameters[0].value}"/>
+                        </div>
+                        <div class="col-xs-1">
+                            <button type="button" class="btn btn-success" onclick="createParam()">+</button>
+                        </div>
+                    </div>
+                </li>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Body patterns:</label>
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <label class="control-label">Predicate:</label>
+                            <select class="form-control" th:field="*{requestPattern.bodyPatterns[0].matchingType}">>
+                                <option value=""></option>
+                                <div th:each="predicate  : ${predicates}">
+                                    <option th:value="${predicate}" th:text="${predicate.name}"/>
+                                </div>
+                            </select>
+                        </div>
+                        <div class="col-xs-8">
+                            <label class="control-label">Value:</label>
+                            <textarea class="form-control" th:field="*{requestPattern.bodyPatterns[0].value}"></textarea>
+                        </div>
+                    </div>
+                </li>
+            </div>
+
+        </div>
+        <div id="response" class="tab-pane fade">
+            <div class="form-group">
+                <label class="control-label">Status:</label>
+                <input type="text" value="200" class="form-control" th:field="*{responseDefinition.status}"/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Body:</label>
+                <textarea class="form-control" th:field="*{responseDefinition.body}"/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Headers:</label>
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <label class="control-label">Header:</label>
+                            <input type="text" class="form-control"/>
+                        </div>
+                        <div class="col-xs-6">
+                            <label class="control-label">Value:</label>
+                            <input type="text" class="form-control"/>
+                        </div>
+                    </div>
+                </li>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button id="saveButton" type="submit" class="btn btn-primary">Save</button>
+    </div>
+</form>
+
+</body>
+</html>

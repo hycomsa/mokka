@@ -1,0 +1,26 @@
+@startuml
+
+title Package organisation
+
+package "pl.hycom.mokka" #LightYellow {
+
+    package "api" #Gold {
+    }
+
+    package "adapter" #Gold {
+        package "wiremock" #DarkOrange {
+
+        }
+        package "mockserver" #DarkOrange {
+
+        }
+    }
+
+    package "core" #Gold {
+    }
+
+    package "ui" #Gold {
+    }
+}
+
+@enduml

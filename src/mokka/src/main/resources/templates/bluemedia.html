@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Simple Payment Form use Bootstrap</title>
+
+
+    <link rel="stylesheet" href="css/reset.css"/>
+
+    <link rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'/>
+    <link rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css'/>
+
+    <link rel="stylesheet" href="css/style.css"/>
+    <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    $( document ).ready(function() {
+
+     $("#redirectURL").change(function()
+      {
+           $("#payButton").attr("disabled",  !$(this).val());
+            $("#errorButton").attr("disabled",  !$(this).val());
+
+    });
+
+     $("#notificationURL").change(function()
+      {
+          $("#pendingButton").attr("disabled",  !$(this).val());
+     });
+
+
+      $("#payButton").click(function(){
+       $("#payment-form").prop('action', '/bluemedia/pay');
+        $("#payment-form").prop('method', 'post');
+        $("#payment-form").submit();
+        });
+
+
+    $("#pendingButton").click(function(){
+
+        var url = "/bluemedia/pending";
+
+    $.ajax({
+           type: "POST",
+           url: url,
+           data: $("#payment-form").serialize(),
+           success: function(data)
+           {
+               alert(data);
+           }
+         });
+     });
+
+          $("#errorButton").click(function(){
+
+           $("#payment-form").prop('action', '/bluemedia/error');
+           $("#payment-form").prop('method', 'post');
+           $("#payment-form").submit();
+
+        });
+    });
+
+
+    </script>
+</head>
+
+<body>
+
+<body style="width:100%; height:100%; display:block; background:#f0f0f0;">
+
+<div class="container">
+    <div class="row">
+        <!-- You can make it whatever width you want. I'm making it full width
+        on <= small devices and 4/12 page width on >= medium devices -->
+        <div class="col-xs-12 col-md-4">
+
+
+            <!-- CREDIT CARD FORM STARTS HERE -->
+            <div class="panel panel-default credit-card-box">
+                <div class="panel-heading display-table">
+                    <div class="row display-tr">
+                        <h3 class="panel-title display-td">Payment Details</h3>
+
+                        <div class="display-td">
+                            <img class="img-responsive pull-right" src="http://i76.imgup.net/accepted_c22e0.png"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <p class="payment-errors"></p>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <form action="#" id="payment-form" th:object="${blueMediaPayment}">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="ServiceID">ServiceId : </label>
+
+                                    <label><p th:text="${blueMediaPayment.ServiceID}"/></label>
+
+                                    <div>
+                                        <p style="color:red" th:text="${ServiceIDerror}"/>
+                                    </div>
+                                    <input type="hidden" class="form-control" name="ServiceID" th:field="*{ServiceID}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="OrderID">OrderId : </label>
+
+                                    <label><p th:text="${blueMediaPayment.OrderID}"/></label>
+
+                                    <div>
+                                        <p style="color:red" th:text="${OrderIDerror}"/>
+                                    </div>
+                                    <input type="hidden" class="form-control" name="OrderID" th:field="*{OrderID}"/>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="Amount">Amount : </label>
+                                    <label><p th:text="${blueMediaPayment.Amount}"/></label>
+
+                                    <p style="color:red" th:text="${Amounterror}"/>
+                                    <input type="hidden" class="form-control" name="Amount" th:field="*{Amount}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="CustomerEmail">CustomerEmail : </label>
+                                    <label><p th:text="${blueMediaPayment.CustomerEmail}"/></label>
+
+                                    <p style="color:red" th:text="${Emailerror}"/>
+                                    <input type="hidden" class="form-control" name="CustomerEmail"
+                                           th:field="*{CustomerEmail}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="Hash">Hash : </label>
+                                    <label><p th:text="${blueMediaPayment.Hash}"/></label>
+
+                                    <p style="color:red" th:text="${Hasherror}"/>
+                                    <input type="hidden" class="form-control" name="hash" th:field="*{Hash}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-7">
+                                <div class="form-group">
+                                    <label for="Key">Key</label>
+                                    <input type="text" class="form-control" id="key" th:field="*{Key}" name="Key"/>
+
+                                </div>
+                            </div>
+                            <div  class="col-xs-5">
+                                <button class="btn" style="margin-top:23px" type="submit" id="checkHash">Check hash</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="RedirectURL">Redirect URL</label>
+                                    <input type="text" class="form-control" id="redirectURL" th:field="*{RedirectURL}"
+                                           name="RedirectURL"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="NotificationURL">Notification URL</label>
+                                    <input type="text" id="notificationURL" class="form-control"
+                                           th:field="*{NotificationURL}" name="NotificationURL"/>
+                                </div>
+                            </div>
+                        </div>
+                        <!--<div class="row">-->
+                        <!--<div class="col-xs-12">-->
+                        <!--<button class="btn btn-success btn-lg btn-block" type="submit">Start Subscription-->
+                        <!--</button>-->
+                        <!--</div>-->
+                        <!--</div>-->
+
+                         <button class="btn" style="margin-top:23px" type="button"  id="payButton">Pay</button>
+                         <button class="btn" style="margin-top:23px" type="button"  id="pendingButton">Pending</button>
+                         <button class="btn" style="margin-top:23px" type="button"  id="errorButton">Payment error</button>
+
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+<!-- If you're using Stripe for payments -->
+<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+
+</body>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js'></script>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery.payment/1.2.3/jquery.payment.min.js'></script>
+
+<script src="js/index.js"></script>
+
+
+</body>
+</html>

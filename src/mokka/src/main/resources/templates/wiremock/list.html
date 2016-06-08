@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Wiremock Mappings</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <style type="text/css">
+        .bs-example{
+        margin: 20px;
+        }
+    </style>
+</head>
+<body>
+<h1>Wiremock mappings</h1>
+<button class="btn" style="margin-top:23px" onclick="location.reload()" type="button">Refresh</button>
+<a class="btn" style="margin-top:23px" th:href="@{/wiremock/edit}"><span>Add new mapping</span></a>
+<div class="bs-example">
+    <div class="panel-group" id="accordion">
+        <div class="panel panel-default" th:each="mapping,iterationStatus  : ${mappings}">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" th:href="@{'#collapse' + ${iterationStatus.count}}"><p th:text="${mapping.id}"/></a>
+                </h4>
+            </div>
+            <div id="collapse" th:attrappend="id='' + ${iterationStatus.count}" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" th:href="@{'##sectionA' + ${iterationStatus.count}}">Request</a></li>
+                        <li><a data-toggle="tab" th:href="@{'##sectionB' + ${iterationStatus.count}}">Response</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="sectionA" th:attrappend="id='' + ${iterationStatus.count}" class="tab-pane fade in active">
+                            <div class="form-group">
+                                <label><p th:text="'URL : ' + ${mapping.requestPattern.url}"/></label><br/>
+                                <label><p th:text="'URL Pattern : ' + ${mapping.requestPattern.urlPattern}"/></label><br/>
+                                <label><p th:text="'URL Path : ' + ${mapping.requestPattern.urlPath}"/></label><br/>
+                                <label><p th:text="'URL Path Pattern : ' + ${mapping.requestPattern.urlPathPattern}"/></label><br/>
+                                <label><p th:text="'Method : ' + ${mapping.requestPattern.requestMethod}"/></label><br/>
+                                <label>Header patterns</label>
+                                <div th:each="pattern : ${mapping.requestPattern.headerPatterns}">
+                                    <label><p th:text="${pattern.key} + ' ' + ${pattern.value.matchingType} + ' ' + ${pattern.value.value}"></p></label>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <label>Query param patterns</label>
+                                <div th:each="pattern : ${mapping.requestPattern.queryParamPatterns}">
+                                    <label><p th:text="${pattern.key} + ' ' + ${pattern.value.matchingType} + ' ' + ${pattern.value.value}"></p></label>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <label>Body patterns</label>
+                                <div th:each="pattern : ${mapping.requestPattern.bodyPatterns}">
+                                    <label><p th:text="${pattern.matchingType} + ' ' + ${pattern.value}"></p></label>
+                                    <br/>
+                                </div>
+                                <br/>
+                            </div>
+                        </div>
+                        <div id="sectionB" th:attrappend="id='' + ${iterationStatus.count}" class="tab-pane fade">
+                            <div class="form-group">
+                                <label><p th:text="'Status : ' + ${mapping.responseDefinition.status}"/></label><br/>
+                                <label>Body : </label>
+                                <div class="well">
+                                    <p th:text="${mapping.responseDefinition.bodyAsString}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

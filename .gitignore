@@ -1,0 +1,9 @@
+# Ignore Intellij Idea project files
+**/.idea
+**/*.iml
+# Ignore eclipse project files
+**/.externalToolBuilders
+**/.settings
+**/target
+
+**/eclipsebin
