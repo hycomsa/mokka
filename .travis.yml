@@ -5,7 +5,7 @@ before_install:
     - cd src
 
 install:
-    - mvn org.jacoco:jacoco-maven-plugin:prepare-agent install
+    - mvn org.jacoco:jacoco-maven-plugin:prepare-agent install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
 script:
     - mvn test sonar:sonar -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_TOKEN
