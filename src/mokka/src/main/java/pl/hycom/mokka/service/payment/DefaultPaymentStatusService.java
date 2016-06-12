@@ -110,9 +110,7 @@ public class DefaultPaymentStatusService implements PaymentStatusService {
         sb.append(BlueMediaConstants.SEPARATOR);
         sb.append(BlueMediaConstants.PAYMENT_STATUS_DETAILS);
 
-        String generatedHash = hashGenerator.generateHash(sb.toString(), HashAlgorithm.SHA256, blueMediaPayment.getKey());
-
-        return generatedHash;
+        return hashGenerator.generateHash(sb.toString(), HashAlgorithm.SHA256, blueMediaPayment.getKey());
     }
 
     private String calculateRedirectHash(BlueMediaPayment blueMediaPayment) {
@@ -121,9 +119,7 @@ public class DefaultPaymentStatusService implements PaymentStatusService {
                 .append(BlueMediaConstants.SEPARATOR)
                 .append(blueMediaPayment.getOrderID());
 
-        String generatedHash = hashGenerator.generateHash(hashChain.toString(), HashAlgorithm.SHA256, blueMediaPayment.getKey());
-
-        return generatedHash;
+        return hashGenerator.generateHash(hashChain.toString(), HashAlgorithm.SHA256, blueMediaPayment.getKey());
     }
 
 
