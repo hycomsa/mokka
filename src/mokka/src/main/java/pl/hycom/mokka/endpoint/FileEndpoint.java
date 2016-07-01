@@ -3,73 +3,88 @@ package pl.hycom.mokka.endpoint;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import pl.hycom.mokka.service.file.FileService;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.FileNotFoundException;
+import java.net.URLConnection;
+import java.util.Objects;
 
 /**
+ * Rest controller responsible for file management
+ *
  * @author Mariusz Krysztofowicz (mariusz.krysztofowicz@hycom.pl)
  */
 @RequestMapping(value = "/files")
 @RestController
 public class FileEndpoint {
     private static final Logger LOG = Logger.getLogger(FileEndpoint.class);
-    private static final int BUFFER_SIZE = 4096;
+    /**
+     * FileService
+     */
     @Autowired
     private FileService fileService;
 
-    @RequestMapping(value = "/{file-id:.+}",
+    /**
+     * Method returns file  with given file name wrapped with ResponseEntity,
+     * if extension argument is empty returns HttpStatus.BAD_REQUEST,
+     * if file doesn't exist returns HttpStatus.NOT_FOUND
+     *
+     * @param fileId
+     *         File name path variable
+     * @param extension
+     *         File extension query argument
+     * @return ResponseEntity<FileSystemResource>
+     */
+    @RequestMapping(value = "/{file-id}",
                     method = RequestMethod.GET,
                     produces = "application/octet-stream")
-    public void fetchFile(
+    @ResponseBody
+    public ResponseEntity<FileSystemResource> fetchFile(
             @PathVariable("file-id")
             String fileId,
-            @RequestParam(name = "ext",required = false)
-            String extension, HttpServletResponse response, HttpServletRequest request) throws IOException {
-        LOG.debug("Invoking FileEndpoint#fetchFile with file-id [" + fileId + "]");
-        ServletContext context = request.getServletContext();
-        String fileName = fileId;
-        if (StringUtils.isNotBlank(extension)) {
+            @RequestParam(name = "ext")
+            String extension) {
+
+        String fileName = null;
+        File file;
+        try {
+            Objects.requireNonNull(extension);
             fileName = fileId + "." + extension;
-        }
-        File file = fileService.fetchFile(fileName);
-        if (file == null) {
-            LOG.warn("Could not find file with given name [" + fileName + "]");
-            return;
-        }
-
-        String mimeType = context.getMimeType(file.getAbsolutePath());
-        response.setContentType(mimeType);
-
-        String headerKey = "Content-Disposition";
-        String headerValue = String.format("attachment; filename=\"%s\"", file.getName());
-        response.setHeader(headerKey, headerValue);
-        response.setContentLength((int) file.length());
-
-        OutputStream outStream = response.getOutputStream();
-
-        byte[] buffer = new byte[BUFFER_SIZE];
-        int bytesRead;
-
-        FileInputStream inputStream = new FileInputStream(file);
-        while ((bytesRead = inputStream.read(buffer)) != -1) {
-            outStream.write(buffer, 0, bytesRead);
+            file = fileService.fetchFile(fileName);
+        } catch (FileNotFoundException e) {
+            LOG.warn("Could not find file with given name [" + fileName + "]", e);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (NullPointerException e) {
+            LOG.warn("Extension cannot be null", e);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        inputStream.close();
-        outStream.close();
-        LOG.debug("Ending FileEndpoint#fetchFile");
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.add("Content-Disposition", "attachment; filename=" + file.getName());
+        String mimeType = URLConnection.guessContentTypeFromName(file.getName());
+        if (StringUtils.isNotBlank(mimeType) && MediaType.parseMediaType(mimeType) != null) {
+            headers.setContentType(MediaType.parseMediaType(mimeType));
+        }
+        headers.setContentLength(file.length());
+        FileSystemResource fileSystemResource = new FileSystemResource(file);
+        LOG.debug("Ending FileEndpoint#fetchFile with status [" + HttpStatus.OK + "]");
+        return new ResponseEntity<>(fileSystemResource, HttpStatus.OK);
     }
 
+
 }
+
+
