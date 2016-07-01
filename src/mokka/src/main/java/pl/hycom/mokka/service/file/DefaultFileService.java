@@ -36,15 +36,13 @@ public class DefaultFileService implements FileService {
     public File fetchFile(String fileName) throws FileNotFoundException {
         LOG.debug("Invoking DefaultFileService#fetchFile with argument [" + fileName + "]");
         if (StringUtils.isEmpty(fileName)) {
-            LOG.warn("File name cannot be empty");
-            throw new FileNotFoundException();
+            throw new FileNotFoundException("File name cannot be empty");
         }
         String fullPath = sourceDirectory + fileName;
 
         File file = new File(fullPath);
         if (!file.exists()) {
-            LOG.warn("File with path [" + fullPath + "] does not exist");
-            throw new FileNotFoundException();
+            throw new FileNotFoundException("File with path [" + fullPath + "] does not exist");
         }
         LOG.debug("Found file [" + file.getAbsolutePath() + "]");
         LOG.debug("Ending DefaultFileService#fetchFile");
