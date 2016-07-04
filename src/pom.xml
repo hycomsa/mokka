@@ -12,7 +12,7 @@
 
     <groupId>pl.hycom.mokka</groupId>
     <artifactId>mokka-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>"One to rule them all" - single tool to manage service mocks</description>
     <name>Mokka :: Parent</name>
