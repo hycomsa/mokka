@@ -1,12 +1,14 @@
 package pl.hycom.mokka.service.file;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * @author Mariusz Krysztofowicz (mariusz.krysztofowicz@hycom.pl)
@@ -17,7 +19,7 @@ import java.io.FileNotFoundException;
  */
 @Component
 public class DefaultFileService implements FileService {
-    private static final Logger LOG = Logger.getLogger(DefaultFileService.class);
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(DefaultFileService.class);
     /**
      * Location for files
      */
@@ -30,14 +32,12 @@ public class DefaultFileService implements FileService {
      * @param fileName
      *         String Searching file name
      * @return File
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException,IllegalArgumentException
      */
     @Override
-    public File fetchFile(String fileName) throws FileNotFoundException {
+    public File fetchFile(String fileName) throws FileNotFoundException, IllegalArgumentException {
         LOG.debug("Invoking DefaultFileService#fetchFile with argument [" + fileName + "]");
-        if (StringUtils.isEmpty(fileName)) {
-            throw new FileNotFoundException("File name cannot be empty");
-        }
+        checkArgument(!StringUtils.isEmpty(fileName), "File name cannot be empty");
         String fullPath = sourceDirectory + fileName;
 
         File file = new File(fullPath);
