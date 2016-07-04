@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import pl.hycom.api.model.Mapping;
-import pl.hycom.api.service.WireMockManager;
+import pl.hycom.adapters.wiremock.WireMockManager;
 import pl.hycom.mokka.util.validation.MappingValidator;
 
 /**

@@ -1,8 +1,6 @@
-package pl.hycom.api.service;
+package pl.hycom.adapters.wiremock;
 
-import pl.hycom.adapters.wiremock.WireMockService;
 import pl.hycom.api.MockManager;
-import pl.hycom.api.converter.wiremock.WiremockMappingConverter;
 import pl.hycom.api.model.Mapping;
 
 import java.util.List;

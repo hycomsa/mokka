@@ -1,4 +1,4 @@
-package pl.hycom.api.converter.wiremock;
+package pl.hycom.adapters.wiremock;
 
 import com.github.tomakehurst.wiremock.matching.ValuePattern;
 import pl.hycom.api.model.request.MatchingType;

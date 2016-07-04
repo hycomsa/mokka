@@ -1,10 +1,8 @@
 package pl.hycom.api.model.response;
 
-import com.github.tomakehurst.wiremock.common.Strings;
 
+import java.nio.charset.Charset;
 import java.util.Map;
-
-import static com.google.common.base.Charsets.UTF_8;
 
 /**
  * Model for response definition
@@ -20,7 +18,7 @@ public class ResponseDefinition {
     }
 
     public ResponseDefinition(String content, int status) {
-        this.body = Strings.bytesFromString(content);
+        this.body = content.getBytes(Charset.forName("UTF-8"));
         this.status = status;
     }
 
@@ -62,6 +60,6 @@ public class ResponseDefinition {
             return null;
         }
 
-        return new String(bytes, UTF_8);
+        return new String(bytes, Charset.forName("UTF-8"));
     }
 }

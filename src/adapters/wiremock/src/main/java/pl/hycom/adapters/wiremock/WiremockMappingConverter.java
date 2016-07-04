@@ -1,4 +1,4 @@
-package pl.hycom.api.converter.wiremock;
+package pl.hycom.adapters.wiremock;
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import pl.hycom.api.model.Mapping;

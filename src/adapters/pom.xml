@@ -19,5 +19,19 @@
         <module>wiremock</module>
     </modules>
 
+    <dependencies>
+        <dependency>
+            <groupId>pl.hycom.mokka</groupId>
+            <artifactId>mokka-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
 
 </project>

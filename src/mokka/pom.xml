@@ -21,8 +21,14 @@
         <dependency>
             <groupId>pl.hycom.mokka</groupId>
             <artifactId>mokka-api</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>pl.hycom.mokka</groupId>
+            <artifactId>mokka-wiremock</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
@@ -32,40 +38,10 @@
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency><!-- http://mvnrepository.com/artifact/junit/junit -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-velocity</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-            <version>4.2.1.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>4.2.1.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock</artifactId>
-            <version>1.57</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.10.19</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
@@ -76,6 +52,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
