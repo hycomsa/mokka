@@ -24,4 +24,5 @@ public interface BlueMediaConstants {
     String HASH_LABEL = "hash";
     String TRANSACTIONS = "transactions";
     String PAYMENT_STATUS_UPDATE_VM = "paymentStatusUpdate.vm";
+    String PAYMENT_SCHEMA = "paymentSchema";
 }

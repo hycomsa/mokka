@@ -7,6 +7,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -18,9 +19,8 @@ import pl.hycom.mokka.util.validation.HashAlgorithm;
 import pl.hycom.mokka.util.validation.HashGenerator;
 
 import javax.annotation.Resource;
-import javax.xml.bind.DatatypeConverter;
 import java.io.StringWriter;
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
@@ -32,10 +32,13 @@ import java.util.Random;
 @Service(value = "paymentStatusService")
 public class DefaultPaymentStatusService implements PaymentStatusService {
     private static final Logger LOG = (Logger) Logger.getInstance(DefaultPaymentStatusService.class);
+    private static final String DATE_FORMAT = "yyyyMMddHHmmss";
     @Resource
     private HashGenerator hashGenerator;
     @Autowired
     private VelocityEngine velocityEngine;
+    @Value("${paymentSchema}")
+    private String paymentSchema;
 
     /**
      * Generates rest post request with SUCCESS status
@@ -127,10 +130,9 @@ public class DefaultPaymentStatusService implements PaymentStatusService {
         VelocityContext context = new VelocityContext();
         context.put(BlueMediaConstants.ORDER_ID_LABEL, blueMediaPayment.getOrderID());
         context.put(BlueMediaConstants.AMOUNT_LABEL, blueMediaPayment.getAmount());
+        context.put(BlueMediaConstants.PAYMENT_SCHEMA, paymentSchema);
         context.put(BlueMediaConstants.PAYMENT_STATUS_LABEL, status);
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        String date = DatatypeConverter.printDate(cal);
+        String date = new SimpleDateFormat(DATE_FORMAT).format(new Date());
         context.put(BlueMediaConstants.PAYMENT_DATE_LABEL, date);
         context.put(BlueMediaConstants.CURRENCY_LABEL, BlueMediaConstants.CURRENCY);
         String remoteID = generateRandomString(20);

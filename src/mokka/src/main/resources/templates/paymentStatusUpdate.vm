@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<transactionList xmlns="http://TODO/service/PaymentNotificationService">
+<transactionList xmlns="$paymentSchema">
     <serviceID>$serviceID</serviceID>
     <transactions>
         <transaction>
