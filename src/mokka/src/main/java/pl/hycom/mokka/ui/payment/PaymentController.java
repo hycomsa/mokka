@@ -2,8 +2,6 @@ package pl.hycom.mokka.ui.payment;
 
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,8 +24,6 @@ import java.util.regex.Pattern;
  */
 @Controller
 @RequestMapping(value = "/bluemedia")
-@ComponentScan(basePackages = {"pl.hycom.mokka.*"})
-@PropertySource("classpath:application.properties")
 public class PaymentController {
     private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     public static final String SERVICE_ID_EMPTY = "ServiceID cannot be empty.";
