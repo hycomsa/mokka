@@ -3,7 +3,7 @@ package pl.hycom.mokka.service.file;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 /**
  * Service responsible for file management, implements FileService interface
  */
-@Component
+@Service
 public class DefaultFileService implements FileService {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(DefaultFileService.class);
     /**
