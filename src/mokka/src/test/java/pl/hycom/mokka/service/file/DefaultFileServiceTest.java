@@ -16,14 +16,14 @@ public class DefaultFileServiceTest extends AbstractTest {
 
     @Test
     public void testFetchFileSuccess() throws FileNotFoundException {
-        fileService.setSourceDirectory("src/test/resource/");
+        fileService.setSourceDirectory("src/test/resources/");
         File file = fileService.fetchFile("samplefile.txt");
         Assert.assertNotNull(file);
     }
 
     @Test(expected = FileNotFoundException.class)
     public void testFetchFileFileNotFoundException() throws FileNotFoundException {
-        fileService.setSourceDirectory("src/test/resource/");
+        fileService.setSourceDirectory("src/test/resources/");
         fileService.fetchFile("samplefile1.txt");
 
     }
