@@ -24,12 +24,5 @@ public class ExceptionHandlingController {
         // Nothing to do
     }
 
-    /**
-     * Method responsible for handling IllegalArgumentException and returns HttpStatus.BAD_REQUEST
-     */
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(IllegalArgumentException.class)
-    public void illegalArgumentException() {
-        // Nothing to do
-    }
+
 }
