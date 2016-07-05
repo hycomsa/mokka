@@ -1,18 +1,12 @@
 package pl.hycom.mokka.endpoint;
 
+import com.jayway.restassured.RestAssured;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.WebIntegrationTest;
 import pl.hycom.mokka.AbstractTest;
-import pl.hycom.mokka.service.file.FileService;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static com.jayway.restassured.RestAssured.expect;
@@ -20,49 +14,30 @@ import static com.jayway.restassured.RestAssured.expect;
 /**
  * @author Mariusz Krysztofowicz (mariusz.krysztofowicz@hycom.pl)
  */
-@WebIntegrationTest("server.port:43634")
+@WebIntegrationTest(randomPort = true)
 public class FileControllerTest extends AbstractTest {
     private static final String FILE_NAME = "file.txt";
     private static final String FILE_ID = "file";
     private static final String FILE_EXT = "txt";
-    @Autowired
-    @InjectMocks
-    private FileController fileController;
 
-    @Mock
-    private FileService fileService;
+    @Value("${local.server.port}")
+    protected int serverPort;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        RestAssured.port = serverPort;
     }
-
 
     @Test
     public void testFetchFile() throws IOException {
-        File file = new File("src/test/resource/samplefile.txt");
-        Mockito.when(fileService.fetchFile(FILE_NAME))
-                .thenReturn(file);
-
-        fileController.fetchFile(FILE_ID, FILE_EXT);
-
-
+        expect().statusCode(200)
+                .when()
+                .get("/files/samplefile?ext=txt");
     }
 
-
-    @Test(expected = FileNotFoundException.class)
-    public void testFetchFileFailure() throws IOException {
-
-        Mockito.when(fileService.fetchFile(FILE_NAME))
-                .thenThrow(FileNotFoundException.class);
-
-        fileController.fetchFile(FILE_ID, FILE_EXT);
-    }
 
     @Test
     public void testFetchFileHttpNotFound() throws IOException {
-
-
         expect().statusCode(404)
                 .when()
                 .get("/files/mozilladd?ext=pdf");
