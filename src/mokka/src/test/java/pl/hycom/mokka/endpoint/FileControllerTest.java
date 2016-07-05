@@ -1,6 +1,5 @@
 package pl.hycom.mokka.endpoint;
 
-import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -9,10 +8,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.WebIntegrationTest;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import pl.hycom.mokka.AbstractTest;
-import pl.hycom.mokka.exception.ExceptionHandlingController;
 import pl.hycom.mokka.service.file.FileService;
 
 import java.io.File;
@@ -65,10 +61,7 @@ public class FileControllerTest extends AbstractTest {
 
     @Test
     public void testFetchFileHttpNotFound() throws IOException {
-      /*  RestAssuredMockMvc.mockMvc = MockMvcBuilders.standaloneSetup(fileController)
-                .setControllerAdvice(exceptionHandlingController)
-                .build();
-        RestAssuredMockMvc.webAppContextSetup(webApplicationContext);*/
+
 
         expect().statusCode(404)
                 .when()
