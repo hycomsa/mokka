@@ -24,13 +24,13 @@ public class DefaultFileServiceTest extends AbstractTest {
     @Test(expected = FileNotFoundException.class)
     public void testFetchFileFileNotFoundException() throws FileNotFoundException {
         fileService.setSourceDirectory("src/test/resource/");
-        File file = fileService.fetchFile("samplefile1.txt");
+        fileService.fetchFile("samplefile1.txt");
 
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testFetchFileIllegalArgumentException() throws FileNotFoundException {
-        File file = fileService.fetchFile(null);
+        fileService.fetchFile(null);
 
     }
 
