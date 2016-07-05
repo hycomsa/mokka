@@ -20,7 +20,7 @@ import static com.jayway.restassured.RestAssured.expect;
 /**
  * @author Mariusz Krysztofowicz (mariusz.krysztofowicz@hycom.pl)
  */
-@WebIntegrationTest(randomPort = true)
+@WebIntegrationTest("server.port:43634")
 public class FileControllerTest extends AbstractTest {
     private static final String FILE_NAME = "file.txt";
     private static final String FILE_ID = "file";
