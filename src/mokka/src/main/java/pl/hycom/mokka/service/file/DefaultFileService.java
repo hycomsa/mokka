@@ -35,7 +35,7 @@ public class DefaultFileService implements FileService {
      * @throws FileNotFoundException,IllegalArgumentException
      */
     @Override
-    public File fetchFile(String fileName) throws FileNotFoundException, IllegalArgumentException {
+    public File fetchFile(String fileName) throws FileNotFoundException {
         LOG.debug("Invoking DefaultFileService#fetchFile with argument [" + fileName + "]");
         checkArgument(!StringUtils.isEmpty(fileName), "File name cannot be empty");
         String fullPath = sourceDirectory + fileName;

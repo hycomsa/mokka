@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,23 +44,17 @@ public class FileController {
      * @return ResponseEntity<FileSystemResource>
      */
     @RequestMapping(value = "/{file-id}",
-                    method = RequestMethod.GET,
-                    produces = "application/octet-stream")
+                    method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<FileSystemResource> fetchFile(
             @PathVariable("file-id")
                     String fileId,
             @RequestParam(name = "ext")
-                    String extension) throws FileNotFoundException, IllegalArgumentException {
+                    String extension) throws FileNotFoundException {
 
         String fileName = fileId + "." + extension;
         File file = fileService.fetchFile(fileName);
 
-        HttpHeaders headers = new HttpHeaders();
-
-        headers.add("Content-Disposition", "attachment; filename=" + file.getName());
-
-        headers.setContentLength(file.length());
         FileSystemResource fileSystemResource = new FileSystemResource(file);
         LOG.debug("Ending FileController#fetchFile with status [" + HttpStatus.OK + "]");
         return new ResponseEntity<>(fileSystemResource, HttpStatus.OK);
