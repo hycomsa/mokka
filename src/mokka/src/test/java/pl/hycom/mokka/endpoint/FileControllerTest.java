@@ -32,4 +32,9 @@ public class FileControllerTest extends AbstractTest {
         expect().statusCode(404).when().get("/files/mozilladd?ext=pdf");
     }
 
+    @Test
+    public void testFetchAllFiles() {
+        expect().statusCode(200).when().get("/files");
+    }
+
 }

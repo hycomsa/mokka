@@ -21,6 +21,7 @@ import pl.hycom.mokka.service.file.FileService;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URLConnection;
+import java.util.List;
 
 /**
  * Rest controller responsible for file management
@@ -55,7 +56,7 @@ public class FileController {
                     String fileId,
             @RequestParam(name = "ext")
                     String extension) throws FileNotFoundException {
-
+        LOG.debug("Calling FileController#fetchFile with arguments [" + fileId, "," + extension + "]");
         String fileName = fileId + "." + extension;
         File file = fileService.fetchFile(fileName);
         HttpHeaders headers = new HttpHeaders();
@@ -70,6 +71,21 @@ public class FileController {
         return new ResponseEntity<>(fileSystemResource, headers, HttpStatus.OK);
     }
 
+    /**
+     * Method returns all files names in json format
+     * sexisting in configured directory
+     *
+     * @return ResponseEntity<List<String>>
+     */
+    @RequestMapping(method = RequestMethod.GET,
+                    produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<List<String>> fetchAllFiles() {
+        LOG.debug("Calling FileController#fetchAllFiles");
+        List<String> files = fileService.fetchAllFiles();
+        LOG.debug("Ending FileController#fetchAllFiles with status [" + HttpStatus.OK + "]");
+        return new ResponseEntity<>(files, HttpStatus.OK);
+    }
 
 }
 

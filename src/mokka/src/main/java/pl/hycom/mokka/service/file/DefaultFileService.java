@@ -1,5 +1,6 @@
 package pl.hycom.mokka.service.file;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -47,6 +50,32 @@ public class DefaultFileService implements FileService {
         LOG.debug("Found file [" + file.getAbsolutePath() + "]");
         LOG.debug("Ending DefaultFileService#fetchFile");
         return file;
+    }
+
+    /**
+     * Method returns List of files names existing in configured directory,
+     * if there is no file returns an empty list
+     *
+     * @return List<String> list of files names
+     */
+    @Override
+    public List<String> fetchAllFiles() {
+
+        return fetchAllFilesInternal(sourceDirectory);
+    }
+
+    private List<String> fetchAllFilesInternal(String directory) {
+        File folder = new File(directory);
+        File[] listOfFiles = folder.listFiles();
+        List<String> files = new ArrayList<>();
+        if (!ArrayUtils.isEmpty(listOfFiles)) {
+            for (File item : listOfFiles) {
+                if (item.isFile()) {
+                    files.add(item.getName());
+                }
+            }
+        }
+        return files;
     }
 
     public String getSourceDirectory() {
