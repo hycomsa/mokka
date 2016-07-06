@@ -21,6 +21,7 @@ import pl.hycom.mokka.service.file.FileService;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URLConnection;
+import java.util.List;
 
 /**
  * Rest controller responsible for file management
@@ -43,21 +44,16 @@ public class FileController {
      *
      * @param fileId
      *         File name path variable
-     * @param extension
-     *         File extension query argument
      * @return ResponseEntity<FileSystemResource>
      */
-    @RequestMapping(value = "/{file-id}",
+    @RequestMapping(value = "/{file-id:.+}",
                     method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<FileSystemResource> fetchFile(
             @PathVariable("file-id")
-                    String fileId,
-            @RequestParam(name = "ext")
-                    String extension) throws FileNotFoundException {
-
-        String fileName = fileId + "." + extension;
-        File file = fileService.fetchFile(fileName);
+                    String fileId) throws FileNotFoundException {
+        LOG.debug("Calling FileController#fetchFile with arguments [" + fileId + "]");
+        File file = fileService.fetchFile(fileId);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=" + file.getName());
         String mimeType = URLConnection.guessContentTypeFromName(file.getName());
@@ -70,6 +66,21 @@ public class FileController {
         return new ResponseEntity<>(fileSystemResource, headers, HttpStatus.OK);
     }
 
+    /**
+     * Method returns all files names in json format
+     * existing in configured directory
+     *
+     * @return ResponseEntity<List<String>>
+     */
+    @RequestMapping(method = RequestMethod.GET,
+                    produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<List<String>> fetchAllFiles() {
+        LOG.debug("Calling FileController#fetchAllFiles");
+        List<String> files = fileService.fetchAllFiles();
+        LOG.debug("Ending FileController#fetchAllFiles with status [" + HttpStatus.OK + "]");
+        return new ResponseEntity<>(files, HttpStatus.OK);
+    }
 
 }
 

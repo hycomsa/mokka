@@ -1,6 +1,7 @@
 package pl.hycom.mokka.endpoint;
 
 import com.jayway.restassured.RestAssured;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,12 +25,16 @@ public class FileControllerTest extends AbstractTest {
 
     @Test
     public void testFetchFile() {
-        expect().statusCode(200).when().get("/files/samplefile?ext=txt");
+        expect().statusCode(200).when().get("/files/samplefile.txt");
     }
 
     @Test
     public void testFetchFileHttpNotFound() {
-        expect().statusCode(404).when().get("/files/mozilladd?ext=pdf");
+        expect().statusCode(404).when().get("/files/mozilladd.pdf");
     }
 
+    @Test
+    public void testFetchAllFiles() {
+        expect().statusCode(200).body("", Matchers.notNullValue()).when().get("/files");
+    }
 }
