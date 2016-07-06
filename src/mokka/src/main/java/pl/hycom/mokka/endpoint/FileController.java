@@ -44,21 +44,16 @@ public class FileController {
      *
      * @param fileId
      *         File name path variable
-     * @param extension
-     *         File extension query argument
      * @return ResponseEntity<FileSystemResource>
      */
-    @RequestMapping(value = "/{file-id}",
+    @RequestMapping(value = "/{file-id:.+}",
                     method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<FileSystemResource> fetchFile(
             @PathVariable("file-id")
-                    String fileId,
-            @RequestParam(name = "ext")
-                    String extension) throws FileNotFoundException {
-        LOG.debug("Calling FileController#fetchFile with arguments [" + fileId, "," + extension + "]");
-        String fileName = fileId + "." + extension;
-        File file = fileService.fetchFile(fileName);
+                    String fileId) throws FileNotFoundException {
+        LOG.debug("Calling FileController#fetchFile with arguments [" + fileId + "]");
+        File file = fileService.fetchFile(fileId);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=" + file.getName());
         String mimeType = URLConnection.guessContentTypeFromName(file.getName());
