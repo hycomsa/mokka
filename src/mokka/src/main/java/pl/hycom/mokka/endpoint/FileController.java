@@ -73,7 +73,7 @@ public class FileController {
 
     /**
      * Method returns all files names in json format
-     * sexisting in configured directory
+     * existing in configured directory
      *
      * @return ResponseEntity<List<String>>
      */

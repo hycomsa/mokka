@@ -2,6 +2,7 @@ package pl.hycom.mokka.service.file;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.test.context.TestPropertySource;
 import pl.hycom.mokka.AbstractTest;
 
 import java.io.File;
