@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,8 @@ public class FileController {
      */
     @Autowired
     private FileService fileService;
+    @Value("${contentDisposition}")
+    private String contentDisposition;
 
     /**
      * Method returns file  with given file name wrapped with ResponseEntity,
@@ -54,7 +57,7 @@ public class FileController {
         LOG.debug("Calling FileController#fetchFile with arguments [" + fileId + "]");
         File file = fileService.fetchFile(fileId);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=" + file.getName());
+        headers.add("Content-Disposition", contentDisposition+"; filename=" + file.getName());
         String mimeType = URLConnection.guessContentTypeFromName(file.getName());
         if (StringUtils.isNotBlank(mimeType) && MediaType.parseMediaType(mimeType) != null) {
             headers.setContentType(MediaType.parseMediaType(mimeType));
