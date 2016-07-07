@@ -37,8 +37,8 @@ public class FileController {
      */
     @Autowired
     private FileService fileService;
-    @Value("${contentDisposition}")
-    private String contentDisposition;
+    @Value("${file.contentDisposition}")
+    private String defaultContentDisposition;
 
     /**
      * Method returns file  with given file name wrapped with ResponseEntity,
@@ -53,11 +53,16 @@ public class FileController {
     @ResponseBody
     public ResponseEntity<FileSystemResource> fetchFile(
             @PathVariable("file-id")
-                    String fileId) throws FileNotFoundException {
-        LOG.debug("Calling FileController#fetchFile with arguments [" + fileId + "]");
+                    String fileId,
+            @RequestParam(name = "cd",
+                          required = false)
+                    String requestContentDisposition) throws FileNotFoundException {
+        LOG.debug("Calling FileController#fetchFile with arguments [" + fileId + "," + requestContentDisposition + "]");
         File file = fileService.fetchFile(fileId);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", contentDisposition+"; filename=" + file.getName());
+        String contentDisposition = StringUtils.isNotBlank(requestContentDisposition) ? requestContentDisposition :
+                defaultContentDisposition;
+        headers.add("Content-Disposition", contentDisposition + "; filename=" + file.getName());
         String mimeType = URLConnection.guessContentTypeFromName(file.getName());
         if (StringUtils.isNotBlank(mimeType) && MediaType.parseMediaType(mimeType) != null) {
             headers.setContentType(MediaType.parseMediaType(mimeType));
