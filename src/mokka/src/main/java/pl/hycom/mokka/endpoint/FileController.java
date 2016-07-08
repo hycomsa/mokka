@@ -55,14 +55,13 @@ public class FileController {
     public ResponseEntity<FileSystemResource> fetchFile(
             @PathVariable("file-id")
                     String fileId,
-            @RequestParam(name = "cd",
+            @RequestParam(name = "contentDisposition",
                           required = false)
                     String requestContentDisposition) throws FileNotFoundException {
-        LOG.debug("Calling FileController#fetchFile with arguments [" + fileId + "," + requestContentDisposition + "]");
+        LOG.debug("Calling FileController#fetchFile with arguments [{},{}]", fileId, requestContentDisposition);
         File file = fileService.fetchFile(fileId);
         HttpHeaders headers = new HttpHeaders();
-        String contentDisposition = StringUtils.isNotBlank(requestContentDisposition) ? requestContentDisposition :
-                defaultContentDisposition;
+        String contentDisposition = StringUtils.defaultIfEmpty(requestContentDisposition, defaultContentDisposition);
         headers.add("Content-Disposition", contentDisposition + "; filename=" + file.getName());
         String mimeType = URLConnection.guessContentTypeFromName(file.getName());
         if (StringUtils.isNotBlank(mimeType) && MediaType.parseMediaType(mimeType) != null) {
@@ -70,7 +69,7 @@ public class FileController {
         }
         headers.setContentLength(file.length());
         FileSystemResource fileSystemResource = new FileSystemResource(file);
-        LOG.debug("Ending FileController#fetchFile with status [" + HttpStatus.OK + "]");
+        LOG.debug("Ending FileController#fetchFile with status [{}]", HttpStatus.OK);
         return new ResponseEntity<>(fileSystemResource, headers, HttpStatus.OK);
     }
 
@@ -86,7 +85,7 @@ public class FileController {
     public ResponseEntity<List<String>> fetchAllFiles() {
         LOG.debug("Calling FileController#fetchAllFiles");
         List<String> files = fileService.fetchAllFiles();
-        LOG.debug("Ending FileController#fetchAllFiles with status [" + HttpStatus.OK + "]");
+        LOG.debug("Ending FileController#fetchAllFiles with status [{}]", HttpStatus.OK);
         return new ResponseEntity<>(files, HttpStatus.OK);
     }
 
