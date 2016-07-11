@@ -26,6 +26,7 @@ public class FileControllerTest extends AbstractTest {
     @Test
     public void testFetchFile() {
         expect().statusCode(200).when().get("/files/samplefile.txt");
+        expect().statusCode(200).when().get("/files/samplefile.txt/?contentDisposition=inline");
     }
 
     @Test

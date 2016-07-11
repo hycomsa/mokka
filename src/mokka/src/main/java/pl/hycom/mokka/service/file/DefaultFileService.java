@@ -39,7 +39,7 @@ public class DefaultFileService implements FileService {
      */
     @Override
     public File fetchFile(String fileName) throws FileNotFoundException {
-        LOG.debug("Invoking DefaultFileService#fetchFile with argument [" + fileName + "]");
+        LOG.debug("Invoking DefaultFileService#fetchFile with argument [{}]", fileName);
         checkArgument(!StringUtils.isEmpty(fileName), "File name cannot be empty");
         String fullPath = sourceDirectory + fileName;
 
@@ -47,7 +47,7 @@ public class DefaultFileService implements FileService {
         if (!file.exists()) {
             throw new FileNotFoundException("File with path [" + fullPath + "] does not exist");
         }
-        LOG.debug("Found file [" + file.getAbsolutePath() + "]");
+        LOG.debug("Found file [{}]", file.getAbsolutePath());
         LOG.debug("Ending DefaultFileService#fetchFile");
         return file;
     }

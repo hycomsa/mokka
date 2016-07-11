@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import pl.hycom.mokka.service.file.FileService;
@@ -36,6 +38,8 @@ public class FileController {
      */
     @Autowired
     private FileService fileService;
+    @Value("${file.contentDisposition}")
+    private String defaultContentDisposition;
 
     /**
      * Method returns file  with given file name wrapped with ResponseEntity,
@@ -50,18 +54,22 @@ public class FileController {
     @ResponseBody
     public ResponseEntity<FileSystemResource> fetchFile(
             @PathVariable("file-id")
-                    String fileId) throws FileNotFoundException {
-        LOG.debug("Calling FileController#fetchFile with arguments [" + fileId + "]");
+                    String fileId,
+            @RequestParam(name = "contentDisposition",
+                          required = false)
+                    String requestContentDisposition) throws FileNotFoundException {
+        LOG.debug("Calling FileController#fetchFile with arguments [{},{}]", fileId, requestContentDisposition);
         File file = fileService.fetchFile(fileId);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=" + file.getName());
+        String contentDisposition = StringUtils.defaultIfEmpty(requestContentDisposition, defaultContentDisposition);
+        headers.add("Content-Disposition", contentDisposition + "; filename=" + file.getName());
         String mimeType = URLConnection.guessContentTypeFromName(file.getName());
         if (StringUtils.isNotBlank(mimeType) && MediaType.parseMediaType(mimeType) != null) {
             headers.setContentType(MediaType.parseMediaType(mimeType));
         }
         headers.setContentLength(file.length());
         FileSystemResource fileSystemResource = new FileSystemResource(file);
-        LOG.debug("Ending FileController#fetchFile with status [" + HttpStatus.OK + "]");
+        LOG.debug("Ending FileController#fetchFile with status [{}]", HttpStatus.OK);
         return new ResponseEntity<>(fileSystemResource, headers, HttpStatus.OK);
     }
 
@@ -77,7 +85,7 @@ public class FileController {
     public ResponseEntity<List<String>> fetchAllFiles() {
         LOG.debug("Calling FileController#fetchAllFiles");
         List<String> files = fileService.fetchAllFiles();
-        LOG.debug("Ending FileController#fetchAllFiles with status [" + HttpStatus.OK + "]");
+        LOG.debug("Ending FileController#fetchAllFiles with status [{}]", HttpStatus.OK);
         return new ResponseEntity<>(files, HttpStatus.OK);
     }
 
