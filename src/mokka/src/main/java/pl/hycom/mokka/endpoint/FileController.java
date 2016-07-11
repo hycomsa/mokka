@@ -55,7 +55,7 @@ public class FileController {
     public ResponseEntity<FileSystemResource> fetchFile(
             @PathVariable("file-id")
                     String fileId,
-            @RequestParam(name = "contentDisposition",
+            @RequestParam(name = "content-disposition",
                           required = false)
                     String requestContentDisposition) throws FileNotFoundException {
         LOG.debug("Calling FileController#fetchFile with arguments [{},{}]", fileId, requestContentDisposition);
