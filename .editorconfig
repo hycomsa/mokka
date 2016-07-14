@@ -1,0 +1,17 @@
+## IDE-independent coding style via EditorConfig: http://editorconfig.org/
+## Please be sure to apply these when submitting a pull request.
+
+# top-most EditorConfig file
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# Matches the exact files either package.json or .travis.yml
+[{package.json,.travis.yml}]
+indent_style = space
+indent_size = 2
