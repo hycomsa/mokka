@@ -11,11 +11,19 @@ mvn clean package
 ##Run
 
 Before running Mokka make sure you have Oracle database running and configured. By default Mokka expects `oracle` schema on `oracle` user identified by `oracle`.
+You can change those properties directly in `application.properties` files or (recommended) by overwriting during start (see below).
 
 ```
 cd mokka
 mvn spring-boot:run
 ```
+
+or
+
+```
+java -jar target/mokka*.jar --spring.config.location=your_app.properties
+```
+
 
 URLs:
 - http://localhost:8081 - login page
