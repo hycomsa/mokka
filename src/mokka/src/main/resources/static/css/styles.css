@@ -1,0 +1,58 @@
+body {	
+	height: 100%;
+}
+
+#main-container {
+	max-width: 1280px;
+}
+
+.isa_info, .isa_success, .isa_warning, .isa_error {
+	margin: 10px 0px;
+	padding:12px;
+}
+
+.isa_info {
+    color: #00529B;
+    background-color: #BDE5F8;
+}
+.isa_success {
+    color: #4F8A10;
+    background-color: #DFF2BF;
+}
+.isa_warning {
+    color: #9F6000;
+    background-color: #FEEFB3;
+}
+.isa_error {
+    color: #D8000C;
+    background-color: #FFBABA;
+}
+.isa_info i, .isa_success i, .isa_warning i, .isa_error i {
+    font-size:2em;
+    vertical-align:middle;
+}
+
+input[type='number'] {
+    -moz-appearance:textfield !important;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none !important; 
+  margin: 0 !important; 
+}
+
+.flex-right {
+	margin-left: auto;
+}
+
+md-content {
+	background: inherit !important;
+}
+
+.ui-ace {
+	height: 300px;
+	width: 100%;
+	margin-bottom: 10px;
+	border: 1px solid #C8CCD0;
+}

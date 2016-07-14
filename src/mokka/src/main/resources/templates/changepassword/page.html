@@ -1,0 +1,43 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+	<meta charset="utf-8"></meta>
+</head>
+<body>
+	<div th:fragment="main">
+	
+		<div ng-cloak="" layout="row" layout-align="center center" layout-padding="" ng-controller="ChangePasswordController as ctrl">
+		  	<md-card>
+		        <md-card-content layout="column" layout-align="space-between">
+			        <md-content layout-padding="" class="isa_error" ng-show="ctrl.error">
+			        	<i class="fa fa-times-circle"></i>
+			            Invalid password
+			        </md-content>
+			        
+			        <md-content layout-padding="" class="isa_success" ng-show="ctrl.success">
+			        	<i class="fa fa-check"></i>
+			            Password changed
+			        </md-content>
+			        
+			        <form method="post" layout="column" layout-align="center center">
+			            <div>
+			            	<md-input-container>
+			            		<input type="{{ctrl.showPassword ? 'text' : 'password'}}" ng-model="ctrl.password" placeholder="New password" required=""/>
+			            	</md-input-container>
+			            
+			            	<md-button class="md-icon-button" ng-click="ctrl.showPassword = !ctrl.showPassword">
+						    	<md-tooltip md-direction="top">{{ctrl.showPassword ? 'Hide' : 'Show'}} password</md-tooltip>
+						    	<ng-md-icon icon="remove_red_eye" style="fill:#{{ctrl.showPassword ? '666666' : '999999'}}"></ng-md-icon>
+						  	</md-button>
+			            </div>
+			            
+			            <md-button type="submit" class="md-raised md-primary" ng-click="ctrl.changePassword()">Change</md-button>
+			        </form>		        
+		        </md-card-content>
+			</md-card>   		    
+		</div>
+		
+	</div>	
+</body>
+</html>

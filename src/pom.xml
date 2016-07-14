@@ -14,16 +14,14 @@
     <artifactId>mokka-parent</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <description>"One to rule them all" - single tool to manage service mocks</description>
     <name>Mokka :: Parent</name>
 
     <modules>
-        <module>api</module>
-        <module>adapters</module>
         <module>mokka</module>
     </modules>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
     </properties>
 </project>
