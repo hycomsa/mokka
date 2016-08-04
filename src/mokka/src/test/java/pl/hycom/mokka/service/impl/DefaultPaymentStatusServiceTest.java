@@ -2,6 +2,7 @@ package pl.hycom.mokka.service.impl;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import pl.hycom.mokka.AbstractTest;
@@ -10,17 +11,18 @@ import pl.hycom.mokka.service.payment.PaymentStatusService;
 
 import javax.annotation.Resource;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+
 
 /**
  * @author Mariusz Krysztofowicz (mariusz.krysztofowicz@hycom.pl)
  */
-
+@Ignore
 public class DefaultPaymentStatusServiceTest extends AbstractTest {
+
     @Resource
     private PaymentStatusService paymentStatusService;
+
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(48080);
 

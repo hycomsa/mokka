@@ -1,0 +1,51 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+	<meta charset="utf-8"></meta>
+</head>
+<body>
+	<div th:fragment="main">
+				
+		<div ng-cloak="" layout="column" layout-align="center center" layout-padding="">
+		  	<md-card>
+		        <md-card-content layout="column" layout-align="space-between">
+			        <md-content th:if="${param.error}" layout-padding="" class="isa_error">
+			        	<i class="fa fa-times-circle"></i>
+			            Invalid username or password
+			        </md-content>
+			        
+			        <md-content th:if="${param.logout}" layout-padding="" class="isa_success">
+			        	<i class="fa fa-check"></i>
+			            You have been logged out
+			        </md-content>
+			        
+			        <form name="userForm" th:action="@{/login}" method="post" layout="column" layout-align="center center">
+			            <div class="full-width">
+			            	<md-input-container>
+				            	<input type="text" name="username" placeholder="Name" required=""/>
+			            	</md-input-container> 
+			            </div>
+			            <div class="full-width">
+			            	<md-input-container>
+			            		<input type="{{showPassword ? 'text' : 'password'}}" name="password" placeholder="Password" required=""/>
+			            	</md-input-container>
+			            	
+			            	<md-button class="md-icon-button" ng-click="showPassword = !showPassword">
+						    	<md-tooltip md-direction="top">{{showPassword ? 'Hide' : 'Show'}} password</md-tooltip>
+						    	<ng-md-icon icon="remove_red_eye" style="fill:#{{showPassword ? '666666' : '999999'}}"></ng-md-icon>
+						  	</md-button>
+			            </div>
+			            
+			            <md-button type="submit" class="md-raised md-primary">Sign In</md-button>
+			        </form>		        
+		        </md-card-content>
+			</md-card>  
+			
+			<small style="color: #aaa">Initial password is "Hello123"</small>
+		</div>
+	
+	</div>
+</body>
+</html>
+	

@@ -75,7 +75,7 @@ public class DefaultPaymentStatusService implements PaymentStatusService {
         byte[] bytesEncoded = Base64.encodeBase64(writer.toString()
                                                           .getBytes());
         blueMediaPayment.setHash(calculateRedirectHash(blueMediaPayment));
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         String base64String=new String(bytesEncoded);
         LOG.info("Request transformed to Base64:["+base64String+"]");
         params.add(BlueMediaConstants.TRANSACTIONS, base64String);

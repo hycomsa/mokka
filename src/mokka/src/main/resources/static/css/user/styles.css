@@ -1,0 +1,33 @@
+#main-container md-fab-speed-dial {
+	position: fixed;
+}
+
+#main-container md-fab-speed-dial svg {
+	display: block;
+	margin: 0px auto;
+}
+
+#main-container md-fab-speed-dial a {
+	padding-top:8px;
+}
+
+@media all and (min-width: 1360px) {
+	#main-container md-fab-speed-dial {
+		left: 1223px;
+	}
+}
+
+md-input-container {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+md-card-content {
+    margin-bottom: 0;
+    padding-bottom: 0 !important;
+}
+
+md-card-actions {
+    margin-top: 0 !important;
+    padding-top: 0;
+}

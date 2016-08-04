@@ -1,0 +1,102 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+	<meta charset="utf-8"></meta>
+</head>
+<body>
+	<div th:fragment="main">
+		<div class="generic-container" ng-controller="UsersController as ctrl">
+			<div ng-show="!ctrl.loading">
+				<md-fab-speed-dial md-direction="left" class="md-fling md-fab-bottom-right">
+					<md-fab-trigger>
+						<md-button aria-label="menu" class="md-fab md-warn">
+					    	<md-tooltip md-direction="top">Menu</md-tooltip>
+					    	<ng-md-icon icon="menu" style="fill: #fff"></ng-md-icon>
+					  	</md-button>
+					</md-fab-trigger>			
+					<md-fab-actions>
+					  	<md-button aria-label="add" class="md-fab md-raised md-mini" ng-click="ctrl.addUser()">
+					    	<md-tooltip md-direction="top">Add</md-tooltip>
+					    	<ng-md-icon icon="add" style="fill:#666666"></ng-md-icon>
+					  	</md-button>
+					</md-fab-actions>
+				</md-fab-speed-dial>
+				
+				<md-card>
+					<md-card-content>
+						<md-content layout-padding="" layout="column">								
+							<div layout="row">
+								<md-input-container class="md-block" flex="100">
+						            <label>Filter</label>
+						            <input ng-model="ctrl.search"/>
+						        </md-input-container>
+					        </div>					        
+						    <div layout-gt-xs="row">						
+								<md-button class="md-raised" ng-click="ctrl.search = null">Clear</md-button>						
+							</div>					        
+						</md-content>
+					</md-card-content>
+				</md-card>	
+				
+				<md-card ng-repeat="u in ctrl.users | filter:ctrl.userFilter" id="user-{{u.id}}">	
+					<md-card-content layout="row" layout-align="start start">
+						<div>
+							<md-input-container md-is-error="u.errors.firstName != null">									
+								<label>First name</label>
+								<input placeholder="" ng-model="u.firstName" required="" ng-disabled="!u.editMode" md-no-asterisk="true"/>
+							</md-input-container>
+							<md-input-container md-is-error="u.errors.lastName != null">									
+								<label>Last name</label>
+								<input placeholder="" ng-model="u.lastName" required="" ng-disabled="!u.editMode" md-no-asterisk="true"/>
+							</md-input-container>
+							<md-input-container md-is-error="u.errors.userName != null">									
+								<label>Username</label>
+								<input placeholder="" ng-model="u.userName" required="" md-no-asterisk="true" ng-disabled="!u.editMode || u.isAdmin &amp;&amp; !user.isAdmin"/>
+							</md-input-container>
+						</div>
+						<div class="flex-right">
+							<md-button class="{{u.isEditor?'md-raised':''}} md-primary" ng-click="ctrl.switchRole(u,'EDITOR')">Editor</md-button>
+							<md-button class="{{u.isUserAdmin?'md-raised':''}} md-primary" ng-click="ctrl.switchRole(u,'USER_ADMIN')">User Admin</md-button>
+							<md-button class="{{u.isAdmin?'md-raised':''}} md-primary" ng-disabled="!user.isAdmin" ng-click="ctrl.switchRole(u,'ADMIN')">Admin</md-button>										
+						</div>
+					</md-card-content>
+					<md-card-actions layout="row" layout-align="end center">					
+						  <span>					  	
+						  		<md-tooltip md-direction="top">{{ u.disabled ? 'Enable' : 'Disable'}}</md-tooltip>
+						  		<md-switch ng-model="u.disabled" ng-true-value="false" ng-false-value="true" class="md-primary" ng-change="ctrl.setDisabled(u)" ng-disabled="u.isAdmin &amp;&amp; !user.isAdmin"></md-switch>
+						  </span>		
+						  <md-button ng-show="!u.editMode" class="md-icon-button" ng-click="ctrl.editUser(u)">
+								<md-tooltip md-direction="top">Edit</md-tooltip>
+								<ng-md-icon style="fill: #9a9a9a" icon="edit"></ng-md-icon>
+						  </md-button>					  
+						  <md-button ng-show="u.editMode" class="md-icon-button" ng-click="ctrl.saveEditMode(u)">
+								<md-tooltip md-direction="top">Save</md-tooltip>
+								<ng-md-icon style="fill: #9a9a9a" icon="save"></ng-md-icon>
+						  </md-button>
+						  <md-button ng-show="u.editMode" class="md-icon-button" ng-click="ctrl.cancelEditMode(u)">
+								<md-tooltip md-direction="top">Cancel</md-tooltip>
+								<ng-md-icon style="fill: #9a9a9a" icon="cancel"></ng-md-icon>
+						  </md-button>					  
+						  <md-button ng-show="u.editMode" class="md-icon-button" ng-click="ctrl.resetPassword(u)" ng-disabled="u.isAdmin &amp;&amp; !user.isAdmin">
+								<md-tooltip md-direction="top">Reset password</md-tooltip>
+								<ng-md-icon style="fill: #9a9a9a" icon="vpn_key"></ng-md-icon>
+						  </md-button>
+						  <md-button ng-show="u.editMode &amp;&amp; !u.isNew" class="md-icon-button" ng-click="ctrl.removeUser(u)" ng-disabled="u.isAdmin &amp;&amp; !user.isAdmin">
+						  		<md-tooltip md-direction="top">Delete</md-tooltip>
+								<ng-md-icon style="fill: #9a9a9a" icon="delete_forever"></ng-md-icon>
+						  </md-button>					
+					</md-card-actions>
+				</md-card>
+			</div>
+			
+			<md-card ng-show="ctrl.loading" layout-padding="">	
+				<md-card-content layout="row" layout-align="center center">
+					<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+				</md-card-content>
+			</md-card>		
+			
+		</div>
+	</div>
+</body>
+</html>

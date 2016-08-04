@@ -1,0 +1,228 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+	<meta charset="utf-8"></meta>
+</head>
+<body>
+	<div th:fragment="main">
+	
+		<div class="generic-container" ng-controller="ConfigurationController as ctrl">
+				
+			<md-fab-speed-dial md-direction="left" class="md-fling md-fab-bottom-right" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
+				<md-fab-trigger>
+					<md-button aria-label="menu" class="md-fab md-warn">
+				    	<md-tooltip md-direction="top">Menu</md-tooltip>
+				    	<ng-md-icon icon="menu" style="fill: #fff"></ng-md-icon>
+				  	</md-button>
+				</md-fab-trigger>			
+				<md-fab-actions>
+				  	<md-button aria-label="add" class="md-fab md-raised md-mini" ng-click="ctrl.addMockConfiguration()">
+				    	<md-tooltip md-direction="top">Add</md-tooltip>
+				    	<ng-md-icon icon="add" style="fill:#666666"></ng-md-icon>
+				  	</md-button>							  	
+				  	<md-button type="file" aria-label="import" class="md-fab md-raised md-mini" ngf-select="ctrl.importFromFile($file, $invalidFiles)">
+				    	<md-tooltip md-direction="top">Import</md-tooltip>
+				    	<ng-md-icon icon="file_upload" style="fill:#666666"></ng-md-icon>
+				  	</md-button>
+				  	<md-button aria-label="export" class="md-fab md-raised md-mini" th:href="@{/configurations/export}" target="_blank">
+				    	<md-tooltip md-direction="top">Export</md-tooltip>
+				    	<ng-md-icon icon="file_download" style="fill:#666666"></ng-md-icon>
+				  	</md-button>
+				</md-fab-actions>
+			</md-fab-speed-dial>
+
+			<md-card>
+				<md-card-content>
+					<md-content layout-padding="" layout="column">
+						<div layout="row">	
+								<md-input-container class="md-block" flex="33">
+						            <label>Service</label>
+						            <input ng-model="ctrl.search.path" ng-change="ctrl.search.update = true"/>
+						        </md-input-container>
+						
+								<md-input-container class="md-block" flex="33">
+						            <label>Pattern</label>
+						            <input ng-model="ctrl.search.pattern" ng-change="ctrl.search.update = true"/>
+						        </md-input-container>
+						
+								<md-input-container class="md-block" flex="33">
+						            <label>Description</label>
+						            <input ng-model="ctrl.search.description" ng-change="ctrl.search.update = true"/>
+						        </md-input-container>
+						</div>					        
+						
+						<div layout-gt-xs="row">						
+							<md-button class="md-raised md-primary" ng-click="ctrl.activateFilter()">{{ ctrl.search.update ? 'Update results' : 'Filter' }}</md-button>
+							<md-button class="md-raised" ng-click="ctrl.resetFilter()">Reset</md-button>						
+						</div>
+						
+					</md-content>
+				</md-card-content>
+			</md-card>	
+			
+			<md-card ng-show="!ctrl.mocks.length &amp;&amp; !ctrl.loading">	
+				<md-card-content>
+					<h3>No mocks were found</h3>
+				</md-card-content>
+			</md-card>
+			
+			<div ng-show="ctrl.mocks.length &amp;&amp; !ctrl.loading">				
+				<md-card id="mock-{{mock.id}}" ng-repeat="mock in ctrl.mocks" class="{{mock.editMode ? 'edit-mode' : ''}}">
+					<md-card-content>
+						
+						<div class="mock-basic">							
+							<div layout="row" layout-align="start center">
+								<md-input-container md-is-error="mock.errors.path != null" flex="50">									
+									<label>Path</label>
+									<input placeholder="" ng-model="mock.path" required="" ng-disabled="!mock.editMode" md-no-asterisk="true"/>
+								</md-input-container>
+								<md-input-container md-is-error="mock.errors.timeout != null" flex="25">			
+									<label>Delay (ms)</label>						
+									<input type="number" placeholder="" ng-model="mock.timeout" ng-disabled="!mock.editMode"/>
+								</md-input-container>								
+								<md-input-container md-is-error="mock.errors.order != null" flex="25">			
+									<label>Order</label>						
+									<input type="number" placeholder="" ng-model="mock.order" ng-disabled="!mock.editMode"/>
+								</md-input-container>
+							</div>								
+							<md-input-container class="full-width" md-is-error="mock.errors.pattern != null">
+								<label>Pattern</label>									
+								<input placeholder="" ng-model="mock.pattern" ng-disabled="!mock.editMode"/>
+							</md-input-container>
+							<md-input-container class="full-width" md-is-error="mock.errors.description != null">
+								<label>Description</label>									
+								<textarea placeholder="" ng-model="mock.description" ng-disabled="!mock.editMode"></textarea>
+							</md-input-container>		
+						</div>
+						
+						<div class="mock-configuration">							
+							<h4>Configuration</h4>
+		            		<md-button class="md-icon-button md-ink-ripple" type="button" ng-click="ctrl.showConfiguration(mock)" ng-show="!mock.editMode">												
+								<md-tooltip md-direction="top">{{mock.showConfiguration ? 'hide' : 'show'}} configuration</md-tooltip>
+			            		<ng-md-icon ng-show="!mock.showConfiguration" style="fill: #000000" icon="expand_more"></ng-md-icon>
+			            		<ng-md-icon ng-show="mock.showConfiguration" style="fill: #000000" icon="expand_less"></ng-md-icon>
+							</md-button>
+							
+							<div layout="row" layout-align="center center" ng-show="mock.configurationLoading">
+								<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+							</div>
+							
+							<div ng-show="mock.showConfiguration || mock.editMode">							
+								<md-input-container>
+						            <label>Type</label>
+						            <md-select ng-model="mock.type" ng-disabled="!mock.editMode" ng-change="ctrl.clearConfiguration(mock)">
+						              <md-option value="string">string</md-option>
+						              <md-option value="xml">xml</md-option>
+						              <md-option value="groovy">groovy</md-option>						              
+						            </md-select>
+					          	</md-input-container>
+														
+								<div ng-show="mock.type == 'groovy'" class="full-width">
+									<div class="ui-ace" ng-readonly="!mock.editMode" ui-ace="{mode: 'groovy'}" ng-model="mock.configurationContent.groovy.script"></div>
+								</div>
+								<div ng-show="mock.type == 'xml'" class="full-width">
+									<div class="ui-ace" ng-readonly="!mock.editMode" ui-ace="{mode: 'xml'}" ng-model="mock.configurationContent.xml.value"></div>
+								</div>
+								<div ng-show="mock.type == 'string'" class="full-width">
+									<div class="ui-ace" ng-readonly="!mock.editMode" ui-ace="" ng-model="mock.configurationContent.string.value"></div>
+								</div>											
+							</div>
+						</div>						
+					</md-card-content>
+									
+					<md-card-actions layout="column">					  
+					  <md-divider ></md-divider>
+	
+					  <div layout="row" layout-align="end center">
+						  <span>					  	
+						  		<md-tooltip md-direction="top" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">{{ mock.enabled ? 'Disable' : 'Enable'}}</md-tooltip>
+						  		<md-tooltip md-direction="top" sec:authorize="!hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">You don't have permision to change configuration</md-tooltip>
+							  	<md-switch ng-model="mock.enabled" class="md-primary" ng-change="ctrl.setEnabled(mock)" ng-disabled="!user.isAdmin &amp;&amp; !user.isEditor"></md-switch>
+						  </span>		
+						  <md-button class="md-icon-button {{mock.showChanges ? 'md-raised' : ''}}" ng-click="ctrl.showChanges(mock)">
+								<md-tooltip md-direction="top">{{mock.showChanges ? 'Hide' : 'Show'}} change history</md-tooltip>
+								<ng-md-icon style="fill: {{mock.showChanges ? '#000000' : '#9a9a9a'}}" icon="history"></ng-md-icon>
+						  </md-button>
+						  <md-button ng-show="!mock.editMode" class="md-icon-button" ng-click="ctrl.editMode(mock)" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
+								<md-tooltip md-direction="top">Edit</md-tooltip>
+								<ng-md-icon style="fill: #9a9a9a" icon="edit"></ng-md-icon>
+						  </md-button>					  
+						  <md-button ng-show="!mock.editMode" class="md-icon-button" ng-click="ctrl.duplicateMock(mock)" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
+								<md-tooltip md-direction="top">Duplicate</md-tooltip>
+								<ng-md-icon style="fill: #9a9a9a" icon="content_copy"></ng-md-icon>
+						  </md-button>
+						  <md-button ng-show="mock.editMode" class="md-icon-button" ng-click="ctrl.saveEditMode(mock)" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
+								<md-tooltip md-direction="top">Save</md-tooltip>
+								<ng-md-icon style="fill: #9a9a9a" icon="save"></ng-md-icon>
+						  </md-button>
+						  <md-button ng-show="mock.editMode" class="md-icon-button" ng-click="ctrl.cancelEditMode(mock)" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
+								<md-tooltip md-direction="top">Cancel</md-tooltip>
+								<ng-md-icon style="fill: #9a9a9a" icon="cancel"></ng-md-icon>
+						  </md-button>					  
+						  <md-button ng-show="mock.editMode &amp;&amp; !mock.isNew" class="md-icon-button" ng-click="ctrl.removeMockConfiguration(mock)" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
+						  		<md-tooltip md-direction="top">Delete</md-tooltip>
+								<ng-md-icon style="fill: #9a9a9a" icon="delete_forever"></ng-md-icon>
+						  </md-button>
+					  </div>
+					  
+					  <div layout="row" layout-align="center center" ng-show="mock.changesLoading">
+						<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+					  </div>
+					  
+					  <div class="mock-changes" ng-show="mock.showChanges">
+							<md-divider ></md-divider>
+							<h4>Changes</h4>
+							<p flex="" ng-show="mock.changes.length == 0">
+								No changes
+							</p>									
+							<ul ng-show="mock.changes">
+								<li ng-repeat="change in mock.changes">
+									<h5>{{ change.author }} / {{ change.date | date:"yyyy.MM.dd HH:mm:ss" }}</h5>
+						            <ul>
+							            <li ng-repeat="(key, value) in change.diffs">
+							            	<h5>Field: {{ key }}</h5>
+							            	<div ng-if="value.diff != null" class="diff-value">								            	
+								            	Diff:<br />
+							            		<pre ng-bind-html="value.diff | to_trusted"></pre>								            	
+							            	</div>
+							            	<div ng-if="value.newValue != null || value.oldValue != null" layout="row" layout-align="start start">
+							            		<div class="old-value">
+						            				Old value:<br />{{ value.oldValue }}
+						            			</div>
+						            			<div class="new-value">
+						            				New value:<br />{{ value.newValue }}
+						            			</div>
+							            	</div>
+							            </li>
+						            </ul>
+								</li>
+							</ul>
+						</div>
+					  
+					</md-card-actions>
+				</md-card>
+					
+				<div layout="row" layout-align="center center">
+					<md-button class="md-icon-button" ng-click="ctrl.paginationPrevious()" ng-disabled="ctrl.pagination == 0">
+						<md-tooltip md-direction="top">Previous page</md-tooltip>
+						<ng-md-icon icon="navigate_before" style="fill: {{ctrl.pagination == 0 ? '#9a9a9a' : '#000000'}}"></ng-md-icon>
+					</md-button>
+					<md-button class="md-icon-button" ng-click="ctrl.paginationNext()" ng-disabled="!ctrl.paginationHasNext">						
+						<md-tooltip md-direction="top">Next page</md-tooltip>
+						<ng-md-icon icon="navigate_next" style="fill: {{!ctrl.paginationHasNext ? '#9a9a9a' : '#000000'}}"></ng-md-icon>
+					</md-button>
+				</div>			
+			</div>
+			
+			<md-card ng-show="ctrl.loading">	
+				<md-card-content layout="row" layout-align="center center">
+					<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+				</md-card-content>
+			</md-card>
+			
+		</div>
+	</div>
+	
+</body>
+</html>
