@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 @Slf4j
 public class MockConfigurationImportExportController {
 
+	public static final String STATUS = "status";
 	@Autowired
 	private pl.hycom.mokka.emulator.mock.MockConfigurationImportExportManager importExportManager;
 
@@ -65,19 +66,24 @@ public class MockConfigurationImportExportController {
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')")
 	@RequestMapping(value = "/configurations/import", method = RequestMethod.POST)
 	@ResponseBody
-	public Object load(HttpServletRequest req) throws IOException, ServletException {
+	public Object load(HttpServletRequest req) throws IOException {
 
 		log.info("CSV import started");
 
-		final Part filePart = req.getPart("file");
+		Part filePart = null;
+		try {
+			filePart = req.getPart("file");
+		} catch (ServletException e) {
+			log.debug("Exception: ", e);
+		}
 		if (filePart == null) {
-			return ImmutableMap.of("status", "no file");
+			return ImmutableMap.of(STATUS, "no file");
 		}
 
 		String fileName = getFileName(filePart);
 
 		if (!StringUtils.endsWithAny(fileName, ".xml", ".zip")) {
-			return ImmutableMap.of("status", "not supported");
+			return ImmutableMap.of(STATUS, "not supported");
 		}
 
 		@Cleanup
@@ -88,7 +94,7 @@ public class MockConfigurationImportExportController {
 			if (file != null) {
 				stream = new FileInputStream(file);
 			} else {
-				return ImmutableMap.of("status", "no file");
+				return ImmutableMap.of(STATUS, "no file");
 			}
 		} else {
 			stream = filePart.getInputStream();
@@ -98,7 +104,7 @@ public class MockConfigurationImportExportController {
 
 		log.info("XML imported!");
 
-		return ImmutableMap.of("status", "ok");
+		return ImmutableMap.of(STATUS, "ok");
 	}
 
 	private String getFileName(Part filePart) {

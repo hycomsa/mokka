@@ -24,8 +24,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http
-				.authorizeRequests().antMatchers("/bluemedia", "/files").permitAll().and()
+		http.csrf().ignoringAntMatchers("/bluemedia/**").and()
+				.authorizeRequests().antMatchers("/bluemedia/**", "/files/**").permitAll().and()
 				.authorizeRequests().anyRequest().authenticated()
 				.and()
 				.formLogin()

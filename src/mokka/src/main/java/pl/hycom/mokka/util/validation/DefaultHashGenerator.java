@@ -1,6 +1,7 @@
 package pl.hycom.mokka.util.validation;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Component;
 import sun.security.jca.ProviderList;
@@ -13,6 +14,7 @@ import java.security.NoSuchAlgorithmException;
  * @author Mariusz Krysztofowicz (mariusz.krysztofowicz@hycom.pl)
  */
 @Component(value = "hashGenerator")
+@Slf4j
 public class DefaultHashGenerator implements HashGenerator {
 
     public static final String SEPARATOR = "|";
@@ -27,6 +29,7 @@ public class DefaultHashGenerator implements HashGenerator {
         try {
             md = MessageDigest.getInstance(algorithm.name());
         } catch (NoSuchAlgorithmException e) {
+            log.debug("NoSuchAlgorithmException: ", e);
             return "";
         }
 

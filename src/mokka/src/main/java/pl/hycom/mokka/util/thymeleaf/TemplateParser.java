@@ -1,20 +1,18 @@
 package pl.hycom.mokka.util.thymeleaf;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.context.SpringWebContext;
-
 import pl.hycom.mokka.Application;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.
@@ -39,7 +37,7 @@ public class TemplateParser {
 		SpringTemplateEngine engine = new SpringTemplateEngine();
 		engine.setTemplateResolver(new StringTemplateResolver(content));
 
-		return engine.process("" + content.hashCode(), context);
+		return engine.process(Integer.toString(content.hashCode()), context);
 	}
 
 }

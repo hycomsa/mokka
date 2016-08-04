@@ -112,7 +112,7 @@ public class PaymentController {
         return "bluemedia";
     }
 
-    private void addOrderIdToModel(@RequestParam("OrderID") String orderId, Model model) {
+    private void addOrderIdToModel(String orderId, Model model) {
         if (StringUtils.isEmptyOrWhitespace(orderId)) {
             model.addAttribute(ORDER_IDERROR, ORDER_ID_CANNOT_BE_EMPTY);
         } else if (orderId.length() > 32) {
@@ -124,7 +124,7 @@ public class PaymentController {
         }
     }
 
-    private void addAmountToModel(@RequestParam("Amount") String amount, Model model) {
+    private void addAmountToModel(String amount, Model model) {
         try {
             if (StringUtils.isEmptyOrWhitespace(amount)) {
                 model.addAttribute(AMOUNTERROR, AMOUNT_COULDNT_BE_NULL);

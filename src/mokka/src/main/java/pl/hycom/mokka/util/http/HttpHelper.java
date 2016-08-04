@@ -74,7 +74,8 @@ public class HttpHelper {
 			try {
 				Thread.sleep(delay * 1000l);
 			} catch (InterruptedException e) {
-				log.error("", e);
+				log.warn("Interrupted!", e);
+				Thread.currentThread().interrupt();
 			}
 		}
 
