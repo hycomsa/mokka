@@ -1,15 +1,15 @@
 package pl.hycom.mokka.security;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
 import pl.hycom.mokka.security.model.CurrentUser;
 import pl.hycom.mokka.security.model.User;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.
@@ -29,6 +29,10 @@ public class ChangePasswordInterceptor extends HandlerInterceptorAdapter {
 			return true;
 		}
 
+		return preHandleCurrentUser(res);
+	}
+
+	private boolean preHandleCurrentUser(HttpServletResponse res) throws IOException {
 		if (SecurityContextHolder.getContext().getAuthentication() != null && SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof CurrentUser) {
 			CurrentUser user = (CurrentUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			if (user != null) {
@@ -37,7 +41,6 @@ public class ChangePasswordInterceptor extends HandlerInterceptorAdapter {
 					res.sendRedirect("/change-password");
 					return false;
 				}
-
 			}
 		}
 

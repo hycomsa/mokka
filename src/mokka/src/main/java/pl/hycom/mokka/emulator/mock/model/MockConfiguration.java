@@ -1,7 +1,10 @@
 package pl.hycom.mokka.emulator.mock.model;
 
-import java.io.Serializable;
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Data;
+import org.hibernate.envers.Audited;
+import pl.hycom.mokka.emulator.mock.TrackChanges;
+import pl.hycom.mokka.web.json.View;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,14 +20,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-
-import org.hibernate.envers.Audited;
-
-import com.fasterxml.jackson.annotation.JsonView;
-
-import lombok.Data;
-import pl.hycom.mokka.emulator.mock.TrackChanges;
-import pl.hycom.mokka.web.json.View;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.

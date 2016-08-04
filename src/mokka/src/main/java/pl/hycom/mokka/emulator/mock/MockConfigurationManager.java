@@ -1,5 +1,30 @@
 package pl.hycom.mokka.emulator.mock;
 
+import com.google.common.collect.ImmutableList;
+import lombok.Synchronized;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.Revisions;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+import pl.hycom.mokka.emulator.mock.model.Change;
+import pl.hycom.mokka.emulator.mock.model.MockConfiguration;
+import pl.hycom.mokka.security.UserRepository;
+import pl.hycom.mokka.security.model.AuditedRevisionEntity;
+import pl.hycom.mokka.security.model.User;
+import pl.hycom.mokka.util.query.Q;
+import pl.hycom.mokka.util.query.QManager;
+
+import javax.persistence.Lob;
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,34 +38,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
-import javax.persistence.Lob;
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
-import org.hibernate.Hibernate;
-import org.hibernate.proxy.HibernateProxy;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.history.Revision;
-import org.springframework.data.history.Revisions;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
-import com.google.common.collect.ImmutableList;
-
-import lombok.Synchronized;
-import pl.hycom.mokka.emulator.mock.model.Change;
-import pl.hycom.mokka.emulator.mock.model.MockConfiguration;
-import pl.hycom.mokka.security.UserRepository;
-import pl.hycom.mokka.security.model.AuditedRevisionEntity;
-import pl.hycom.mokka.security.model.User;
-import pl.hycom.mokka.util.query.Q;
-import pl.hycom.mokka.util.query.QManager;
-
 /**
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.
  */
@@ -48,7 +45,12 @@ import pl.hycom.mokka.util.query.QManager;
 @Component
 public class MockConfigurationManager {
 
-	private static int NUMBER_OF_RESULTS_PER_QUERY = 10;
+	public static final String MOCK_ID = "Mock (id: ";
+	public static final String PATTERN = "pattern";
+	public static final String NEW_VALUE = "newValue";
+	public static final String OLD_VALUE = "oldValue";
+	public static final String NOT_VALID = "not-valid";
+	private static int numberOfResultsPerQuery = 10;
 
 	@Autowired
 	private QManager qManager;
@@ -81,7 +83,7 @@ public class MockConfigurationManager {
 		mock.setUpdated(new Date(System.currentTimeMillis()));
 
 		MockConfiguration m = repository.save(mock);
-		log.info("Mock (id: " + mock.getId() + ") added or updated");
+		log.info(MOCK_ID + mock.getId() + ") added or updated");
 
 		updatePathcache();
 
@@ -93,10 +95,10 @@ public class MockConfigurationManager {
 	public boolean removeMockConfiguration(Long id) {
 		try {
 			repository.delete(id);
-			log.info("Mock (id: " + id + ") deleted");
+			log.info(MOCK_ID + id + ") deleted");
 			return true;
 		} catch (Exception e) {
-			log.error("Mock (id: " + id + ") could not be deleted", e);
+			log.error(MOCK_ID + id + ") could not be deleted", e);
 		}
 
 		updatePathcache();
@@ -182,7 +184,7 @@ public class MockConfigurationManager {
 		if (StringUtils.isNumeric(req.getParameter("perPage"))) {
 			q.maxResults(Integer.parseInt(req.getParameter("perPage")));
 		} else {
-			q.maxResults(NUMBER_OF_RESULTS_PER_QUERY);
+			q.maxResults(numberOfResultsPerQuery);
 		}
 
 		// path
@@ -191,8 +193,8 @@ public class MockConfigurationManager {
 		}
 
 		// path
-		if (StringUtils.isNotBlank(req.getParameter("pattern"))) {
-			q.and(Q.like("l.pattern", req.getParameter("pattern")));
+		if (StringUtils.isNotBlank(req.getParameter(PATTERN))) {
+			q.and(Q.like("l.pattern", req.getParameter(PATTERN)));
 		}
 
 		// text
@@ -245,72 +247,83 @@ public class MockConfigurationManager {
 		Map<String, Map<String, Object>> result = new HashMap<>();
 
 		for (Field f : clazz.getDeclaredFields()) {
-			if (!f.isAnnotationPresent(TrackChanges.class)) {
-				continue;
-			}
-
-			try {
-				f.setAccessible(true);
-
-				Object o1Value = o1 == null ? null : f.get(o1);
-				Object o2Value = o2 == null ? null : f.get(o2);
-
-				if (!ClassUtils.isPrimitiveOrWrapper(f.getType()) && f.getType() != String.class) {
-
-					o1Value = initializeAndUnproxy(o1Value);
-					o2Value = initializeAndUnproxy(o2Value);
-
-					Class<?> fieldType = f.getType();
-					if (o1Value != null && o2Value != null) {
-						fieldType = o2Value.getClass();
-						if (o1Value.getClass() != o2Value.getClass()) {
-							Map<String, Object> changeValue = new HashMap<>();
-							changeValue.put("newValue", o2Value.getClass().getSimpleName());
-							changeValue.put("oldValue", o1Value.getClass().getSimpleName());
-							result.put(fieldPrefix + f.getName(), changeValue);
-							o1Value = null;
-						}
-					}
-
-					if (o1Value == null && o2Value != null) {
-						fieldType = o2Value.getClass();
-					}
-
-					if (o1Value != null && o2Value == null) {
-						fieldType = o1Value.getClass();
-					}
-
-					result.putAll(getChangesForObject(fieldPrefix + f.getName() + ".", o1Value, o2Value, fieldType, dmp));
-
-				} else {
-					Map<String, Object> changeValue = new HashMap<>();
-					if (o1Value == null && o2Value == null) {
-						continue;
-
-					} else if ((o1Value == null && o2Value != null) || (o2Value == null && o1Value != null)) {
-						changeValue.put("newValue", o2Value);
-						changeValue.put("oldValue", o1Value);
-
-					} else if (!o1Value.equals(o2Value)) {
-						if (f.getAnnotation(Lob.class) != null) {
-							changeValue.put("diff", dmp.patchToText(dmp.patchMake((String) o1Value, (String) o2Value)));
-						} else {
-							changeValue.put("newValue", o2Value);
-							changeValue.put("oldValue", o1Value);
-						}
-					}
-
-					if (!changeValue.isEmpty()) {
-						result.put(fieldPrefix + f.getName(), changeValue);
-					}
-				}
-
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				log.error("", e);
+			if (f.isAnnotationPresent(TrackChanges.class)) {
+				getObjectChangesForTrackChanges(fieldPrefix, o1, o2, dmp, result, f);
 			}
 		}
 
 		return result;
+	}
+
+	private void getObjectChangesForTrackChanges(String fieldPrefix, Object o1, Object o2, DiffMatchPatch dmp, Map<String, Map<String, Object>> result, Field f) {
+		try {
+            f.setAccessible(true);
+
+            Object o1Value = o1 == null ? null : f.get(o1);
+            Object o2Value = o2 == null ? null : f.get(o2);
+
+            if (!ClassUtils.isPrimitiveOrWrapper(f.getType()) && f.getType() != String.class) {
+
+                o1Value = initializeAndUnproxy(o1Value);
+                o2Value = initializeAndUnproxy(o2Value);
+
+                putObjectChangesToResult(fieldPrefix, dmp, result, f, o1Value, o2Value);
+
+            } else {
+                if (o1Value == null && o2Value == null) {
+					return;
+                }
+                putPrimitiveChangeToResult(fieldPrefix, dmp, result, f, o1Value, o2Value);
+            }
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            log.error("", e);
+        }
+	}
+
+	private void putPrimitiveChangeToResult(String fieldPrefix, DiffMatchPatch dmp, Map<String, Map<String, Object>> result, Field f, Object o1Value, Object o2Value) {
+		Map<String, Object> changeValue = new HashMap<>();
+		if ((o1Value == null && o2Value != null) || (o2Value == null && o1Value != null)) {
+            changeValue.put(NEW_VALUE, o2Value);
+            changeValue.put(OLD_VALUE, o1Value);
+
+        } else if (o1Value != null && !o1Value.equals(o2Value)) {
+            if (f.getAnnotation(Lob.class) != null) {
+                changeValue.put("diff", dmp.patchToText(dmp.patchMake((String) o1Value, (String) o2Value)));
+            } else {
+                changeValue.put(NEW_VALUE, o2Value);
+                changeValue.put(OLD_VALUE, o1Value);
+            }
+        }
+
+		if (!changeValue.isEmpty()) {
+            result.put(fieldPrefix + f.getName(), changeValue);
+        }
+	}
+
+	private void putObjectChangesToResult(String fieldPrefix, DiffMatchPatch dmp, Map<String, Map<String, Object>> result, Field f, Object o1Value, Object o2Value) {
+		Class<?> fieldType = f.getType();
+		if (o1Value != null && o2Value != null) {
+            fieldType = o2Value.getClass();
+            if (o1Value.getClass() != o2Value.getClass()) {
+                Map<String, Object> changeValue = new HashMap<>();
+                changeValue.put(NEW_VALUE, o2Value.getClass()
+                        .getSimpleName());
+                changeValue.put(OLD_VALUE, o1Value.getClass()
+                        .getSimpleName());
+                result.put(fieldPrefix + f.getName(), changeValue);
+                o1Value = null;
+            }
+        }
+
+		if (o1Value == null && o2Value != null) {
+            fieldType = o2Value.getClass();
+        }
+
+		if (o1Value != null && o2Value == null) {
+            fieldType = o1Value.getClass();
+        }
+
+		result.putAll(getChangesForObject(fieldPrefix + f.getName() + ".", o1Value, o2Value, fieldType, dmp));
 	}
 
 	private <T> T initializeAndUnproxy(T entity) {
@@ -320,7 +333,7 @@ public class MockConfigurationManager {
 
 		Hibernate.initialize(entity);
 		if (entity instanceof HibernateProxy) {
-			entity = (T) ((HibernateProxy) entity).getHibernateLazyInitializer().getImplementation();
+			return (T) ((HibernateProxy) entity).getHibernateLazyInitializer().getImplementation();
 		}
 		return entity;
 	}
@@ -329,19 +342,20 @@ public class MockConfigurationManager {
 		Map<String, String> out = new HashMap<>();
 
 		if (StringUtils.isBlank(mc.getPath())) {
-			out.put("path", "not-valid");
+			out.put("path", NOT_VALID);
 		}
 
 		if (StringUtils.isNotBlank(mc.getPattern())) {
 			try {
 				Pattern.compile(mc.getPattern());
 			} catch (Exception e) {
-				out.put("pattern", "not-valid");
+				log.debug("Exception: ", e);
+				out.put(PATTERN, NOT_VALID);
 			}
 		}
 
 		if (mc.getTimeout() < 0) {
-			out.put("timeout", "not-valid");
+			out.put("timeout", NOT_VALID);
 		}
 
 		return out;

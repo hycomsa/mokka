@@ -1,8 +1,10 @@
 package pl.hycom.mokka.security.model;
 
-import java.util.Set;
-
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Set;
 
 /**
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.
@@ -28,5 +30,29 @@ public class CurrentUser extends org.springframework.security.core.userdetails.U
 
 	public Long getId() {
 		return user.getId();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+
+		if (!(o instanceof CurrentUser)) {
+			return false;
+		}
+
+		CurrentUser that = (CurrentUser) o;
+
+		return new EqualsBuilder().appendSuper(super.equals(o))
+				.append(user, that.user)
+				.isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(17, 37).appendSuper(super.hashCode())
+				.append(user)
+				.toHashCode();
 	}
 }

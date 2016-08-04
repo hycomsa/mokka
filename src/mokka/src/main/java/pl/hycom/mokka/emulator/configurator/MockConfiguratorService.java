@@ -1,16 +1,14 @@
 package pl.hycom.mokka.emulator.configurator;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import pl.hycom.mokka.emulator.configurator.model.LocalData;
 import pl.hycom.mokka.emulator.configurator.model.MockConfigurator;
 import pl.hycom.mokka.emulator.configurator.model.type.ThingType;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 /**
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.
@@ -47,16 +45,11 @@ public class MockConfiguratorService {
 			configurator.setValueConfigurator(Integer.toString(timeout));
 
 			mockConfiguratorRepository.save(configurator);
-
-			// localData.setTimeout(timeout);
 		}
 	}
 
 	public int getTimeout() {
-
 		return Integer.parseInt(mockConfiguratorRepository.getValueByKey("timeout"));
-
-		// return localData.getTimeout();
 	}
 
 }

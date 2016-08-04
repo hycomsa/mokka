@@ -1,29 +1,27 @@
 package pl.hycom.mokka.security;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.transaction.Transactional;
-
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-
 import pl.hycom.mokka.security.model.CurrentUser;
 import pl.hycom.mokka.security.model.Role;
 import pl.hycom.mokka.security.model.User;
+
+import javax.transaction.Transactional;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.
@@ -32,7 +30,9 @@ import pl.hycom.mokka.security.model.User;
 @Service
 public class UserManager {
 
-	private static final String DEFAULT_PASSWORD = "Hello123";
+	public static final String NOT_VALID = "not-valid";
+	@Value("${default.password}")
+	private String defaultPassword;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -46,12 +46,12 @@ public class UserManager {
 	}
 
 	@Transactional
-	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String userName){
 
 		if (!userRepository.findAll().iterator().hasNext()) {
 			User user = new User();
 			user.setUserName("admin");
-			user.setPasswordHash(passwordEncoder.encode(DEFAULT_PASSWORD));
+			user.setPasswordHash(passwordEncoder.encode(getDefaultPassword()));
 			user.setFirstName("Admin");
 			user.setLastName("Admin");
 			user.setDisabled(Boolean.FALSE);
@@ -108,7 +108,7 @@ public class UserManager {
 	@Transactional
 	public User saveOrUpdateUser(User user) {
 		if (StringUtils.isBlank(user.getPasswordHash())) {
-			user.setPasswordHash(passwordEncoder.encode(DEFAULT_PASSWORD));
+			user.setPasswordHash(passwordEncoder.encode(getDefaultPassword()));
 			user.setResetPassword(Boolean.TRUE);
 		}
 
@@ -122,19 +122,19 @@ public class UserManager {
 		Map<String, String> out = new HashMap<>();
 
 		if (StringUtils.isBlank(user.getFirstName())) {
-			out.put("firstName", "not-valid");
+			out.put("firstName", NOT_VALID);
 		}
 
 		if (StringUtils.isBlank(user.getLastName())) {
-			out.put("lastName", "not-valid");
+			out.put("lastName", NOT_VALID);
 		}
 
 		if (StringUtils.isBlank(user.getUserName())) {
-			out.put("userName", "not-valid");
+			out.put("userName", NOT_VALID);
 		}
 
 		if (user.getId() == null && userRepository.findOneByUserName(user.getUserName()).isPresent()) {
-			out.put("userName", "not-valid");
+			out.put("userName", NOT_VALID);
 		}
 
 		return out;
@@ -152,7 +152,7 @@ public class UserManager {
 			return;
 		}
 
-		user.setPasswordHash(passwordEncoder.encode(DEFAULT_PASSWORD));
+		user.setPasswordHash(passwordEncoder.encode(getDefaultPassword()));
 		user.setResetPassword(Boolean.TRUE);
 
 		userRepository.save(user);
@@ -173,5 +173,9 @@ public class UserManager {
 		userRepository.save(user);
 
 		return true;
+	}
+
+	public String getDefaultPassword() {
+		return defaultPassword;
 	}
 }

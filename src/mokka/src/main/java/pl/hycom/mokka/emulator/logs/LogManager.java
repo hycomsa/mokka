@@ -52,6 +52,12 @@ public class LogManager {
 			}
 		}
 
+		createLog(req, descSort, q, lastId);
+
+		return qManager.execute(q, Log.class);
+	}
+
+	private void createLog(HttpServletRequest req, boolean descSort, Q q, Long lastId) {
 		if (lastId != null) {
 			if (descSort) {
 				q.and(Q.lt("l.id", lastId));
@@ -92,8 +98,6 @@ public class LogManager {
 				log.warn("Error parsing date", e);
 			}
 		}
-
-		return qManager.execute(q, Log.class);
 	}
 
 	public Log getLog(long id) {

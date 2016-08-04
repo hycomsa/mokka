@@ -45,6 +45,9 @@ public class PaymentController {
     private static final String ORDER_ID = "&OrderID=";
     private static final String SERVICE_ID = "?ServiceID=";
     private static final String HASH = "&Hash=";
+    public static final String ORDER_IDERROR = "OrderIDerror";
+    public static final String AMOUNTERROR = "Amounterror";
+    public static final String SERVICE_IDERROR = "ServiceIDerror";
     @Resource
     private PaymentStatusService paymentStatusService;
 
@@ -74,36 +77,16 @@ public class PaymentController {
             String hash, Model model) {
         String currentKey = StringUtils.isEmptyOrWhitespace(key) ? privateKey : key;
         if (StringUtils.isEmptyOrWhitespace(serviceId)) {
-            model.addAttribute("ServiceIDerror", SERVICE_ID_EMPTY);
+            model.addAttribute(SERVICE_IDERROR, SERVICE_ID_EMPTY);
         } else if (serviceId.length() > 10) {
-            model.addAttribute("ServiceIDerror", SERVICE_ID_TOO_LONG_MAXIMUM_10_SIGNS);
+            model.addAttribute(SERVICE_IDERROR, SERVICE_ID_TOO_LONG_MAXIMUM_10_SIGNS);
         } else if (!Pattern.compile(INT_REGEX)
                 .matcher(serviceId)
                 .matches()) {
-            model.addAttribute("ServiceIDerror", ONLY_INTEGERS_ARE_ALLOWED);
+            model.addAttribute(SERVICE_IDERROR, ONLY_INTEGERS_ARE_ALLOWED);
         }
-        if (StringUtils.isEmptyOrWhitespace(orderId)) {
-            model.addAttribute("OrderIDerror", ORDER_ID_CANNOT_BE_EMPTY);
-        } else if (orderId.length() > 32) {
-            model.addAttribute("OrderIDerror", ORDER_ID_TOO_LONG_MAXIMUM_32_SIGNS);
-        } else if (!Pattern.compile(ALFANUMERIC_REGEX)
-                .matcher(orderId)
-                .matches()) {
-            model.addAttribute("OrderIDerror", ONLY_ALFANUMERIC_SIGNS_ARE_ALLOWED);
-        }
-        try {
-            if (StringUtils.isEmptyOrWhitespace(amount)) {
-                model.addAttribute("Amounterror", AMOUNT_COULDNT_BE_NULL);
-            } else if (Double.parseDouble(amount) < 0) {
-                model.addAttribute("Amounterror", AMOUNT_MUST_NOT_BE_0);
-            } else if (!Pattern.compile(AMOUNT_REGEX)
-                    .matcher(amount)
-                    .matches()) {
-                model.addAttribute("Amounterror", AMOUNT_FORMAT);
-            }
-        } catch (NumberFormatException e) {
-            model.addAttribute("Amounterror", "Wrong number format");
-        }
+        addOrderIdToModel(orderId, model);
+        addAmountToModel(amount, model);
         if (!StringUtils.isEmptyOrWhitespace(customerEmail) && !Pattern.compile(EMAIL_PATTERN)
                 .matcher(customerEmail)
                 .matches()) {
@@ -129,12 +112,40 @@ public class PaymentController {
         return "bluemedia";
     }
 
+    private void addOrderIdToModel(@RequestParam("OrderID") String orderId, Model model) {
+        if (StringUtils.isEmptyOrWhitespace(orderId)) {
+            model.addAttribute(ORDER_IDERROR, ORDER_ID_CANNOT_BE_EMPTY);
+        } else if (orderId.length() > 32) {
+            model.addAttribute(ORDER_IDERROR, ORDER_ID_TOO_LONG_MAXIMUM_32_SIGNS);
+        } else if (!Pattern.compile(ALFANUMERIC_REGEX)
+                .matcher(orderId)
+                .matches()) {
+            model.addAttribute(ORDER_IDERROR, ONLY_ALFANUMERIC_SIGNS_ARE_ALLOWED);
+        }
+    }
+
+    private void addAmountToModel(@RequestParam("Amount") String amount, Model model) {
+        try {
+            if (StringUtils.isEmptyOrWhitespace(amount)) {
+                model.addAttribute(AMOUNTERROR, AMOUNT_COULDNT_BE_NULL);
+            } else if (Double.parseDouble(amount) < 0) {
+                model.addAttribute(AMOUNTERROR, AMOUNT_MUST_NOT_BE_0);
+            } else if (!Pattern.compile(AMOUNT_REGEX)
+                    .matcher(amount)
+                    .matches()) {
+                model.addAttribute(AMOUNTERROR, AMOUNT_FORMAT);
+            }
+        } catch (NumberFormatException e) {
+            model.addAttribute(AMOUNTERROR, "Wrong number format");
+        }
+    }
+
 
     @RequestMapping(method = RequestMethod.POST,
                     value = "/pay")
     public String successRedirect(
             @ModelAttribute
-            BlueMediaPayment blueMediaPayment, Model model) {
+            BlueMediaPayment blueMediaPayment) {
         if (!StringUtils.isEmpty(blueMediaPayment.getNotificationURL())) {
             paymentStatusService.paymentStatusSuccessUpdate(blueMediaPayment);
         }
@@ -144,11 +155,10 @@ public class PaymentController {
 
     @RequestMapping(method = RequestMethod.POST,
                     value = "/pending")
-    public
     @ResponseBody
-    String pendingRedirect(
+    public String pendingRedirect(
             @ModelAttribute
-            BlueMediaPayment blueMediaPayment, Model model) {
+            BlueMediaPayment blueMediaPayment) {
 
         paymentStatusService.paymentStatusPendingUpdate(blueMediaPayment);
         return "OK";
@@ -158,7 +168,7 @@ public class PaymentController {
                     value = "/error")
     public String errorRedirect(
             @ModelAttribute
-            BlueMediaPayment blueMediaPayment, Model model) {
+            BlueMediaPayment blueMediaPayment) {
         if (!StringUtils.isEmpty(blueMediaPayment.getNotificationURL())) {
             paymentStatusService.paymentStatusFailureUpdate(blueMediaPayment);
         }

@@ -1,11 +1,6 @@
 package pl.hycom.mokka.security;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +11,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.google.common.collect.ImmutableMap;
-
 import pl.hycom.mokka.security.model.CurrentUser;
 import pl.hycom.mokka.security.model.Role;
 import pl.hycom.mokka.security.model.User;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.
@@ -30,6 +27,7 @@ import pl.hycom.mokka.security.model.User;
 @RestController
 public class UserController {
 
+	public static final String ROLE_ADMIN = "ROLE_ADMIN";
 	@Autowired
 	private UserManager userManager;
 
@@ -57,12 +55,8 @@ public class UserController {
 			return SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		}
 
-		if (StringUtils.isNumeric(id) && (request.isUserInRole("ROLE_ADMIN") || request.isUserInRole("ROLE_USER_ADMIN"))) {
-			try {
-				return userManager.getUser(Long.parseLong(id));
-			} catch (Exception e) {
-				log.error("", e);
-			}
+		if (StringUtils.isNumeric(id) && (request.isUserInRole(ROLE_ADMIN) || request.isUserInRole("ROLE_USER_ADMIN"))) {
+			return userManager.getUser(Long.parseLong(id));
 		}
 
 		return null;
@@ -71,22 +65,12 @@ public class UserController {
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER_ADMIN')")
 	@RequestMapping(value = "/user", method = RequestMethod.PUT)
 	public Object saveUser(@RequestBody User user, HttpServletRequest request) {
-
-		// Not admin can't add admin role
-		if (user != null && user.getId() == null && user.hasAnyRole(Role.ADMIN) && !request.isUserInRole("ROLE_ADMIN")) {
-			Iterator<Role> it = user.getRoles().iterator();
-			while (it.hasNext()) {
-				if (it.next() == Role.ADMIN) {
-					it.remove();
-					break;
-				}
-			}
-		}
+		removeAdminRole(user, request);
 
 		// Not admin can't change other admin user name and role
-		if (user.getId() != null) {
+		if (user != null && user.getId() != null) {
 			User user2 = userManager.getUser(user.getId());
-			if (user2 != null && user2.hasAnyRole(Role.ADMIN) && !request.isUserInRole("ROLE_ADMIN")) {
+			if (user2 != null && user2.hasAnyRole(Role.ADMIN) && !request.isUserInRole(ROLE_ADMIN)) {
 				user.setUserName(user2.getUserName());
 				if (!user.hasAnyRole(Role.ADMIN)) {
 					user.getRoles().add(Role.ADMIN);
@@ -102,12 +86,25 @@ public class UserController {
 		return userManager.saveOrUpdateUser(user);
 	}
 
+	private void removeAdminRole(@RequestBody User user, HttpServletRequest request) {
+		// Not admin can't add admin role
+		if (user != null && user.getId() == null && user.hasAnyRole(Role.ADMIN) && !request.isUserInRole(ROLE_ADMIN)) {
+			Iterator<Role> it = user.getRoles().iterator();
+			while (it.hasNext()) {
+				if (it.next() == Role.ADMIN) {
+					it.remove();
+					break;
+				}
+			}
+		}
+	}
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE)
 	public boolean removeUser(@PathVariable("id") long id, HttpServletRequest request) {
 
 		User user = userManager.getUser(id);
-		if (user != null && user.hasAnyRole(Role.ADMIN) && !request.isUserInRole("ROLE_ADMIN")) {
+		if (user != null && user.hasAnyRole(Role.ADMIN) && !request.isUserInRole(ROLE_ADMIN)) {
 			return false;
 		}
 
@@ -123,7 +120,7 @@ public class UserController {
 	public boolean setDisabled(@PathVariable("id") long id, HttpServletRequest request) {
 
 		User user = userManager.getUser(id);
-		if (user != null && user.hasAnyRole(Role.ADMIN) && !request.isUserInRole("ROLE_ADMIN")) {
+		if (user != null && user.hasAnyRole(Role.ADMIN) && !request.isUserInRole(ROLE_ADMIN)) {
 			return user.getDisabled();
 		}
 
@@ -136,8 +133,7 @@ public class UserController {
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER_ADMIN')")
 	@RequestMapping(value = "/user/{id}/reset-password", method = RequestMethod.POST)
-	public boolean resetPassword(@PathVariable("id") long id, HttpServletRequest request) {
-
+	public boolean resetPassword(@PathVariable("id") long id) {
 		userManager.resetPassword(id);
 		return true;
 	}
@@ -152,18 +148,30 @@ public class UserController {
 		}
 
 		Role role = Role.fromString(params.get("role"));
+		if (checkRole(request, user, role)) {
+			changeRoles(user, role);
+			userManager.saveOrUpdateUser(user);
+			return true;
+		}
+		return false;
+	}
+
+	private boolean checkRole(HttpServletRequest request, User user, Role role) {
 		if (role == Role.USER) {
 			return false;
 		}
 
-		if (role == Role.ADMIN && !request.isUserInRole("ROLE_ADMIN")) {
+		if (role == Role.ADMIN && !request.isUserInRole(ROLE_ADMIN)) {
 			return false;
 		}
 
 		if (user != null && user.hasAnyRole(Role.ADMIN) && userManager.numberOfAdmins() == 1) {
 			return false;
 		}
+		return true;
+	}
 
+	private void changeRoles(User user, Role role) {
 		if (user.hasAnyRole(role)) {
 			Iterator<Role> it = user.getRoles().iterator();
 			while (it.hasNext()) {
@@ -176,10 +184,6 @@ public class UserController {
 		} else {
 			user.getRoles().add(role);
 		}
-
-		userManager.saveOrUpdateUser(user);
-
-		return true;
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_USER')")

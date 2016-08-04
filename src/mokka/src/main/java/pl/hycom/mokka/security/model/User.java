@@ -1,6 +1,6 @@
 package pl.hycom.mokka.security.model;
 
-import java.util.Set;
+import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -11,8 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import lombok.Data;
+import java.io.Serializable;
+import java.util.Set;
 
 /**
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.
@@ -20,7 +20,7 @@ import lombok.Data;
 @Entity
 @Table(name = "users")
 @Data
-public class User {
+public class User implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

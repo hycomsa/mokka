@@ -1,5 +1,9 @@
 package pl.hycom.mokka.util.query;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Transformer;
+import org.apache.commons.lang3.StringUtils;
+
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,10 +12,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.Transformer;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Utilowa klasa pomocnicza wspierajaca budowe zapytan SQL. Klasa wiaze zapytanie od razu z parametrami
@@ -42,7 +42,7 @@ public class Q {
 	protected Integer maxResults = null;
 
 	protected StringBuilder where = new StringBuilder();
-	protected List<Object> params = new ArrayList<Object>();
+	protected List<Object> params = new ArrayList<>();
 
 	/** Flaga okreslajaca, ze jest to podzapytanie, nie dodajemy wtedy select i from przy generowaniu query */
 	protected boolean subquery = false;
@@ -539,11 +539,11 @@ public class Q {
 	}
 
 	public static Q contains(String field, String match, boolean ignorecase) {
-		return new Q((ignorecase ? "upper(" + field + ") LIKE ?" : field + " LIKE ?"), "%" + (ignorecase ? match.toUpperCase(Locale.getDefault()) : match) + "%");
+		return new Q(ignorecase ? "upper(" + field + ") LIKE ?" : field + " LIKE ?", "%" + (ignorecase ? match.toUpperCase(Locale.getDefault()) : match) + "%");
 	}
 
 	public static Q notContains(String field, String notMatch, boolean ignorecase) {
-		return new Q((ignorecase ? "upper(" + field + ") NOT LIKE ?" : field + " NOT LIKE ?"), "%" + (ignorecase ? notMatch.toUpperCase(Locale.getDefault()) : notMatch) + "%");
+		return new Q(ignorecase ? "upper(" + field + ") NOT LIKE ?" : field + " NOT LIKE ?", "%" + (ignorecase ? notMatch.toUpperCase(Locale.getDefault()) : notMatch) + "%");
 	}
 
 	protected void append(String prefix, String query, Object... params) {

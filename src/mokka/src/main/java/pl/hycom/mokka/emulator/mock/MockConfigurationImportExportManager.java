@@ -2,7 +2,6 @@ package pl.hycom.mokka.emulator.mock;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -48,7 +47,7 @@ public class MockConfigurationImportExportManager {
 	private MockConfigurationManager mockConfigurationManager;
 
 	@Transactional
-	public File createExportFile() throws IOException, IllegalArgumentException, IllegalAccessException {
+	public File createExportFile() throws IOException {
 		File file = File.createTempFile("mce-", ".xml");
 		file.deleteOnExit();
 
@@ -66,14 +65,15 @@ public class MockConfigurationImportExportManager {
 
 		} catch (JAXBException e) {
 			log.error("", e);
+		}finally {
+			out.close();
 		}
 
 		return file;
 	}
 
 	private JAXBContext getJaxbContext() throws JAXBException {
-		JAXBContext jaxbContext = JAXBContext.newInstance(XmlRoot.class, MockConfiguration.class, GroovyConfigurationContent.class, XmlConfigurationContent.class, StringConfigurationContent.class);
-		return jaxbContext;
+		return JAXBContext.newInstance(XmlRoot.class, MockConfiguration.class, GroovyConfigurationContent.class, XmlConfigurationContent.class, StringConfigurationContent.class);
 	}
 
 	public void loadMocks(InputStream stream) {
@@ -136,7 +136,7 @@ public class MockConfigurationImportExportManager {
 		return zipFile;
 	}
 
-	public File unzip(InputStream stream) throws FileNotFoundException, IOException {
+	public File unzip(InputStream stream) throws IOException {
 		File file = null;
 
 		@Cleanup
@@ -147,17 +147,16 @@ public class MockConfigurationImportExportManager {
 
 			if (!StringUtils.endsWith(ze.getName(), ".xml")) {
 				ze = zis.getNextEntry();
-				continue;
+			}else {
+				file = Files.createTempFile("mce-", "-" + ze.getName()).toFile();
+				file.deleteOnExit();
+
+				@Cleanup
+				FileOutputStream fos = new FileOutputStream(file);
+
+				IOUtils.copy(zis, fos);
+				break;
 			}
-
-			file = Files.createTempFile("mce-", "-" + ze.getName()).toFile();
-			file.deleteOnExit();
-
-			@Cleanup
-			FileOutputStream fos = new FileOutputStream(file);
-
-			IOUtils.copy(zis, fos);
-			break;
 		}
 
 		zis.closeEntry();
