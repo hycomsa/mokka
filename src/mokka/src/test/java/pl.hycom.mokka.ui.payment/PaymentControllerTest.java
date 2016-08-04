@@ -71,7 +71,7 @@ public class PaymentControllerTest extends AbstractTest{
     public void testSuccessRedirect() {
         Model model = new ExtendedModelMap();
         BlueMediaPayment blueMediaPayment =  createSampleBlueMediaPayment();
-        String result=paymentController.successRedirect(blueMediaPayment, model);
+        String result=paymentController.successRedirect(blueMediaPayment);
         Assert.assertEquals(redirectUrl(blueMediaPayment),result);
     }
 
@@ -79,7 +79,7 @@ public class PaymentControllerTest extends AbstractTest{
     public void testPendingRedirect() {
         Model model = new ExtendedModelMap();
         BlueMediaPayment blueMediaPayment =  createSampleBlueMediaPayment();
-        String result=paymentController.pendingRedirect(createSampleBlueMediaPayment(), model);
+        String result=paymentController.pendingRedirect(createSampleBlueMediaPayment());
         Assert.assertEquals("OK",result);
     }
 
@@ -87,7 +87,7 @@ public class PaymentControllerTest extends AbstractTest{
     public void testErrorRedirect() {
         Model model = new ExtendedModelMap();
         BlueMediaPayment blueMediaPayment =  createSampleBlueMediaPayment();
-        String result=paymentController.errorRedirect(blueMediaPayment, model);
+        String result=paymentController.errorRedirect(blueMediaPayment);
         Assert.assertEquals(redirectUrl(blueMediaPayment),result);
     }
 
