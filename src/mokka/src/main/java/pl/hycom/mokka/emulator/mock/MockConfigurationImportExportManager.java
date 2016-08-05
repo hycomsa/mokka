@@ -1,5 +1,24 @@
 package pl.hycom.mokka.emulator.mock;
 
+import lombok.Cleanup;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import pl.hycom.mokka.emulator.mock.model.GroovyConfigurationContent;
+import pl.hycom.mokka.emulator.mock.model.MockConfiguration;
+import pl.hycom.mokka.emulator.mock.model.StringConfigurationContent;
+import pl.hycom.mokka.emulator.mock.model.XmlConfigurationContent;
+import pl.hycom.mokka.emulator.mock.model.XmlRoot;
+import pl.hycom.mokka.util.query.Q;
+import pl.hycom.mokka.util.query.QManager;
+
+import javax.transaction.Transactional;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,27 +30,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
-import javax.transaction.Transactional;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import lombok.Cleanup;
-import pl.hycom.mokka.emulator.mock.model.GroovyConfigurationContent;
-import pl.hycom.mokka.emulator.mock.model.MockConfiguration;
-import pl.hycom.mokka.emulator.mock.model.StringConfigurationContent;
-import pl.hycom.mokka.emulator.mock.model.XmlConfigurationContent;
-import pl.hycom.mokka.emulator.mock.model.XmlRoot;
-import pl.hycom.mokka.util.query.Q;
-import pl.hycom.mokka.util.query.QManager;
 
 /**
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.
@@ -96,6 +94,7 @@ public class MockConfigurationImportExportManager {
 				if (databaseMocks.isEmpty()) {
 					mc.setId(null);
 					mc.setDescription("[FILE UPLOAD] " + mc.getDescription());
+					mc.getConfigurationContent().setId(null);
 					mockConfigurationManager.saveOrUpdateMockConfiguration(mc);
 
 				} else if (databaseMocks.size() == 1) {
