@@ -85,11 +85,17 @@
 									<label>Order</label>						
 									<input type="number" placeholder="" ng-model="mock.order" ng-disabled="!mock.editMode"/>
 								</md-input-container>
-							</div>								
-							<md-input-container class="full-width" md-is-error="mock.errors.pattern != null">
-								<label>Pattern</label>									
-								<input placeholder="" ng-model="mock.pattern" ng-disabled="!mock.editMode"/>
-							</md-input-container>
+							</div>
+							<div layout="row" layout-align="start center">
+								<md-input-container class="full-width" md-is-error="mock.errors.pattern != null" flex="75">
+									<label>Pattern</label>
+									<input placeholder="" ng-model="mock.pattern" ng-disabled="!mock.editMode"/>
+								</md-input-container>
+								<md-input-container class="full-width" md-is-error="mock.errors.name != null" flex="25">
+									<label>Name</label>
+									<input placeholder="" ng-model="mock.name" ng-disabled="!mock.editMode"/>
+								</md-input-container>
+							</div>
 							<md-input-container class="full-width" md-is-error="mock.errors.description != null">
 								<label>Description</label>									
 								<textarea placeholder="" ng-model="mock.description" ng-disabled="!mock.editMode"></textarea>
