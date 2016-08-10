@@ -108,7 +108,11 @@
 								<md-progress-circular md-mode="indeterminate"></md-progress-circular>
 							</div>
 							
-							<div ng-show="mock.showConfiguration || mock.editMode">							
+							<div ng-show="mock.showConfiguration || mock.editMode">
+								<md-input-container md-is-error="mock.errors.status != null">
+									<label>Status</label>
+									<textarea placeholder="" ng-model="mock.status" ng-disabled="!mock.editMode"></textarea>
+								</md-input-container>
 								<md-input-container>
 						            <label>Type</label>
 						            <md-select ng-model="mock.type" ng-disabled="!mock.editMode" ng-change="ctrl.clearConfiguration(mock)">
