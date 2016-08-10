@@ -202,11 +202,6 @@ public class MockConfigurationManager {
 			q.and(Q.like("l.description", req.getParameter("description")));
 		}
 
-		// text
-		if (StringUtils.isNotBlank(req.getParameter("description"))) {
-			q.and(Q.like("l.description", req.getParameter("description")));
-		}
-
 		//enabled
 		if (StringUtils.isNotBlank(req.getParameter("enabled"))) {
 			q.and(Q.eq("l.enabled", Boolean.valueOf(req.getParameter("enabled"))));
