@@ -2,7 +2,7 @@
 	xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
-	<meta charset="utf-8"></meta>
+	<meta charset="utf-8"/>
 </head>
 <body>
 	<div th:fragment="main">
@@ -45,13 +45,21 @@
 						            <label>Pattern</label>
 						            <input ng-model="ctrl.search.pattern" ng-change="ctrl.search.update = true"/>
 						        </md-input-container>
-
 								<md-input-container class="md-block" flex="33">
 						            <label>Description</label>
 						            <input ng-model="ctrl.search.description" ng-change="ctrl.search.update = true"/>
 						        </md-input-container>
 						</div>
-
+						<div layout="row">
+							<md-input-container class="md-block" flex="33">
+								<label>Status</label>
+								<md-select ng-model="ctrl.search.enabled" ng-change="ctrl.search.update = true">
+									<md-option value="">All</md-option>
+									<md-option value="true">Enabled</md-option>
+									<md-option value="false">Disabled</md-option>
+								</md-select>
+							</md-input-container>
+						</div>
 						<div layout-gt-xs="row">
 							<md-button class="md-raised md-primary" ng-click="ctrl.activateFilter()">{{ ctrl.search.update ? 'Update results' : 'Filter' }}</md-button>
 							<md-button class="md-raised" ng-click="ctrl.resetFilter()">Reset</md-button>
@@ -139,7 +147,7 @@
 					  <md-divider ></md-divider>
 
 					  <div layout="row" layout-align="end center">
-						  <span>					  	
+						  <span>
 						  		<md-tooltip md-direction="top" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">{{ mock.enabled ? 'Disable' : 'Enable'}}</md-tooltip>
 						  		<md-tooltip md-direction="top" sec:authorize="!hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">You don't have permision to change configuration</md-tooltip>
 							  	<md-switch ng-model="mock.enabled" class="md-primary" ng-change="ctrl.setEnabled(mock)" ng-disabled="!user.isAdmin &amp;&amp; !user.isEditor"></md-switch>
