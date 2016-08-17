@@ -2,7 +2,7 @@
 	xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
-	<meta charset="utf-8"></meta>
+	<meta charset="utf-8"/>
 </head>
 <body>
 	<div th:fragment="main">
@@ -60,7 +60,6 @@
 								</md-select>
 							</md-input-container>
 						</div>
-
 						<div layout-gt-xs="row">
 							<md-button class="md-raised md-primary" ng-click="ctrl.activateFilter()">{{ ctrl.search.update ? 'Update results' : 'Filter' }}</md-button>
 							<md-button class="md-raised" ng-click="ctrl.resetFilter()">Reset</md-button>
@@ -98,6 +97,10 @@
 							<md-input-container class="full-width" md-is-error="mock.errors.pattern != null">
 								<label>Pattern</label>
 								<input placeholder="" ng-model="mock.pattern" ng-disabled="!mock.editMode"/>
+							</md-input-container>
+							<md-input-container class="full-width" md-is-error="mock.errors.name != null">
+								<label>Name</label>
+								<input placeholder="" ng-model="mock.name" ng-disabled="!mock.editMode"/>
 							</md-input-container>
 							<md-input-container class="full-width" md-is-error="mock.errors.description != null">
 								<label>Description</label>
