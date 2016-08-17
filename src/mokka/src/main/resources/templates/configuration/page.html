@@ -45,13 +45,22 @@
 						            <label>Pattern</label>
 						            <input ng-model="ctrl.search.pattern" ng-change="ctrl.search.update = true"/>
 						        </md-input-container>
-						
 								<md-input-container class="md-block" flex="33">
 						            <label>Description</label>
 						            <input ng-model="ctrl.search.description" ng-change="ctrl.search.update = true"/>
 						        </md-input-container>
-						</div>					        
-						
+						</div>
+						<div layout="row">
+							<md-input-container class="md-block" flex="33">
+								<label>Status</label>
+								<md-select ng-model="ctrl.search.enabled" ng-change="ctrl.search.update = true">
+									<md-option value="">All</md-option>
+									<md-option value="true">Enabled</md-option>
+									<md-option value="false">Disabled</md-option>
+								</md-select>
+							</md-input-container>
+						</div>
+
 						<div layout-gt-xs="row">						
 							<md-button class="md-raised md-primary" ng-click="ctrl.activateFilter()">{{ ctrl.search.update ? 'Update results' : 'Filter' }}</md-button>
 							<md-button class="md-raised" ng-click="ctrl.resetFilter()">Reset</md-button>						
