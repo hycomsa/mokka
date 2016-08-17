@@ -72,12 +72,14 @@ public class MockInterceptor extends HandlerInterceptorAdapter {
 			Thread.sleep(mockConfiguration.getTimeout());
 		}
 
-		if(mockConfiguration.getStatus() != 200){
+		if(HttpStatus.valueOf(mockConfiguration.getStatus()).is4xxClientError() || HttpStatus.valueOf(mockConfiguration.getStatus()).is5xxServerError()){
 			try {
 				ctx.getResponse().sendError(HttpStatus.valueOf(mockConfiguration.getStatus()).value(), HttpStatus.valueOf(mockConfiguration.getStatus()).getReasonPhrase());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}else{
+			ctx.getResponse().setStatus(mockConfiguration.getStatus());
 		}
 
 		boolean handled = false;

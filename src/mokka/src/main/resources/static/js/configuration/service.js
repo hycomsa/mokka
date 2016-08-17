@@ -5,25 +5,25 @@ app.factory('ConfigurationService',function($http, $q){
 	    	 	return response.data
 	    	 });
 	   },
-	   
+
 	   removeMockConfiguration: function(id){
 	    	return $http.delete('/configuration/' + id).then(function(response){
-				return response.data 					    	 			
+				return response.data
    	 		});
 	   },
-	   
+
 	   getMockChanges: function(id) {
 		   return $http.get('/configuration/' + id + '/changes').then(function(response){
-				return response.data 					    	 			
+				return response.data
   	 		});
 	   },
-	   
+
 	   getMockConfiguration: function(id) {
 		   return $http.get('/configuration/'+id).then(function(response){
 			    if (!response.data.configurationContent) {
 			    	response.data.configurationContent = {};
 				}
-			   
+
 			    if (response.data.configurationContent.groovy) {
 			   		response.data.type='groovy';
 				} else if (response.data.configurationContent.xml) {
@@ -31,17 +31,17 @@ app.factory('ConfigurationService',function($http, $q){
 				} else {
 					response.data.type='string';
 				}
-				
+
                 return response.data;
 		   });
 	   },
-	   
+
 	   saveMockConfiguration: function(mock) {
 		   return $http.put('/configuration', mock).then(function(response){
                         return response.data;
 		   });
 	   },
-	   
+
 	   fetchMocks: function(params) {
 		   return $http.get('/configuration/', {
 				'params': params
@@ -50,19 +50,26 @@ app.factory('ConfigurationService',function($http, $q){
 					if (!e.configurationContent) {
 						e.configurationContent = {};
 					}
-					
+
 					if (e.configurationContent.groovy) {
 				   		e.type='groovy';
 					} else if (e.configurationContent.xml) {
 				   		e.type='xml';
 					} else {
 						e.type='string';
-					}								
+					}
 				});
-				
+
                 return response.data;
 		   });
+	   },
+
+	   getStatuses: function(mock) {
+		   return $http.post('/configuration/statuses').then(function(response){
+		   console.debug(response);
+                        return response.data;
+		   });
 	   }
-	   
+
    };
 });

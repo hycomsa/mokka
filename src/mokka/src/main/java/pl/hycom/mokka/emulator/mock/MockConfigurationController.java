@@ -1,26 +1,26 @@
 package pl.hycom.mokka.emulator.mock;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.fasterxml.jackson.annotation.JsonView;
+import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.annotation.JsonView;
-import com.google.common.collect.ImmutableMap;
-
 import pl.hycom.mokka.emulator.mock.model.Change;
 import pl.hycom.mokka.emulator.mock.model.MockConfiguration;
 import pl.hycom.mokka.web.json.View;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.
@@ -75,6 +75,12 @@ public class MockConfigurationController {
 	@RequestMapping(value = "/configuration/{id}/changes", method = RequestMethod.GET)
 	public List<Change> getChanges(@PathVariable("id") long id) {
 		return mockConfigurationManager.getChanges(id);
+	}
+
+	@PreAuthorize("hasAnyRole('ROLE_USER')")
+	@RequestMapping(value = "/configuration/statuses", method = RequestMethod.POST)
+	public List<Integer> getStatuses() {
+		return Arrays.stream(HttpStatus.values()).map(v -> v.value()).distinct().collect(Collectors.toList());
 	}
 
 }
