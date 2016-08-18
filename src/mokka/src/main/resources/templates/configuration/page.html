@@ -122,9 +122,9 @@
 
 							<div ng-show="mock.showConfiguration || mock.editMode">
 								<md-input-container md-is-error="mock.errors.status != null">
-									<label>Status</label>
+									<label>Response status</label>
 									<md-select ng-model="mock.status" ng-disabled="!mock.editMode">
-										<md-option ng-repeat="state in ctrl.statuses" value="{{state}}">{{state}}</md-option>
+										<md-option ng-repeat="(key, value) in  ctrl.statuses" value="{{key}}">{{key}} {{value}}</md-option>
 									</md-select>
 								</md-input-container>
 								<md-input-container>
