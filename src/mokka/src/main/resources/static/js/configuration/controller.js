@@ -91,6 +91,7 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
 
 			} else {
 				if (mock.isNew) {
+			        mock=angular.extend(mock,mock,m);
 					self.newMock = false;
 					mock.isNew = false;
 				}
@@ -100,6 +101,7 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
 				mock.changes = null;
 				mock.showChanges = false;
 				mock.showConfiguration = true;
+				mock.id=m.id;
 				$mdToast.show($mdToast.simple().position('bottom right').textContent('Mock configuration saved'));
 			}
 

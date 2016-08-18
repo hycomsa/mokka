@@ -76,7 +76,7 @@ public class MockInterceptor extends HandlerInterceptorAdapter {
 			try {
 				ctx.getResponse().sendError(HttpStatus.valueOf(mockConfiguration.getStatus()).value(), HttpStatus.valueOf(mockConfiguration.getStatus()).getReasonPhrase());
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.warn("HttpStatus exception", e);
 			}
 		}else{
 			ctx.getResponse().setStatus(mockConfiguration.getStatus());
