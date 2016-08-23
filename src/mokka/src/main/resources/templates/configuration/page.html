@@ -75,7 +75,7 @@
 				</md-card-content>
 			</md-card>
 
-			<div ng-show="ctrl.mocks.length &amp;&amp; !ctrl.loading">
+			<div ng-show="ctrl.mocks.length &amp;&amp; !ctrl.loading" ng-init="ctrl.getStatuses()">
 				<md-card id="mock-{{mock.id}}" ng-repeat="mock in ctrl.mocks" class="{{mock.editMode ? 'edit-mode' : ''}}">
 					<md-card-content>
 
@@ -121,15 +121,24 @@
 							</div>
 
 							<div ng-show="mock.showConfiguration || mock.editMode">
-								<md-input-container>
-						            <label>Type</label>
-						            <md-select ng-model="mock.type" ng-disabled="!mock.editMode" ng-change="ctrl.clearConfiguration(mock)">
-						              <md-option value="string">string</md-option>
-						              <md-option value="xml">xml</md-option>
-						              <md-option value="groovy">groovy</md-option>
-						            </md-select>
-					          	</md-input-container>
-
+								<div layout="row">
+									<md-input-container md-is-error="mock.errors.status != null" flex="25">
+										<label>Response status</label>
+										<md-select ng-model="mock.status" ng-disabled="!mock.editMode">
+											<md-option ng-repeat="(key, value) in  ctrl.statuses" value="{{key}}">{{key}} {{value}}</md-option>
+										</md-select>
+									</md-input-container>
+								</div>
+								<div layout="row">
+									<md-input-container>
+										<label>Type</label>
+										<md-select ng-model="mock.type" ng-disabled="!mock.editMode" ng-change="ctrl.clearConfiguration(mock)">
+										  <md-option value="string">string</md-option>
+										  <md-option value="xml">xml</md-option>
+										  <md-option value="groovy">groovy</md-option>
+										</md-select>
+									</md-input-container>
+								</div>
 								<div ng-show="mock.type == 'groovy'" class="full-width">
 									<div class="ui-ace" ng-readonly="!mock.editMode" ui-ace="{mode: 'groovy'}" ng-model="mock.configurationContent.groovy.script"></div>
 								</div>

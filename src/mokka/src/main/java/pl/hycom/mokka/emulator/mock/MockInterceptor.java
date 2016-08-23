@@ -1,12 +1,5 @@
 package pl.hycom.mokka.emulator.mock;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +7,17 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
 import pl.hycom.mokka.emulator.logs.LogManager;
 import pl.hycom.mokka.emulator.logs.LogStatus;
 import pl.hycom.mokka.emulator.mock.handler.MockHandler;
 import pl.hycom.mokka.emulator.mock.handler.MockHandlerException;
 import pl.hycom.mokka.emulator.mock.model.MockConfiguration;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.
@@ -74,7 +72,15 @@ public class MockInterceptor extends HandlerInterceptorAdapter {
 			Thread.sleep(mockConfiguration.getTimeout());
 		}
 
-		ctx.getResponse().setStatus(HttpStatus.OK.value());
+		if(HttpStatus.valueOf(mockConfiguration.getStatus()).is4xxClientError() || HttpStatus.valueOf(mockConfiguration.getStatus()).is5xxServerError()){
+			try {
+				ctx.getResponse().sendError(HttpStatus.valueOf(mockConfiguration.getStatus()).value(), HttpStatus.valueOf(mockConfiguration.getStatus()).getReasonPhrase());
+			} catch (IOException e) {
+				log.warn("HttpStatus exception", e);
+			}
+		}else{
+			ctx.getResponse().setStatus(mockConfiguration.getStatus());
+		}
 
 		boolean handled = false;
 		for (MockHandler handler : mockHandlers) {

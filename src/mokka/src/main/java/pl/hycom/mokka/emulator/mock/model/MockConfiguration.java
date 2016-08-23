@@ -78,6 +78,11 @@ public class MockConfiguration implements Serializable {
 	@TrackChanges
 	private int order = 0;
 
+	@JsonView(View.General.class)
+	@XmlElement
+	@TrackChanges
+	private int status = 200;
+
 	@JsonView(View.Detailed.class)
 	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@TrackChanges
