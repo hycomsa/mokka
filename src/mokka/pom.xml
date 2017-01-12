@@ -73,12 +73,7 @@
             <artifactId>diff-match-patch</artifactId>
             <version>1.1</version>
         </dependency>
-        <!-- TO BE VERIFIED - START-->
-        <!--<dependency>-->
-        <!--<groupId>com.h2database</groupId>-->
-        <!--<artifactId>h2</artifactId>-->
-        <!--<version>1.4.191</version>-->
-        <!--</dependency>-->
+
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -111,7 +106,7 @@
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc6</artifactId>
-            <version>11.2.0.4</version>
+            <version>11.2.0.4.0</version>
         </dependency>
 
         <dependency>
@@ -124,6 +119,21 @@
             <artifactId>lombok</artifactId>
             <version>1.16.8</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-maven-plugin</artifactId>
+            <version>3.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-json</artifactId>
+            <version>2.4.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-xml</artifactId>
+            <version>2.4.3</version>
         </dependency>
         <!-- TO BE VERIFIED - END-->
         <dependency>
@@ -151,11 +161,7 @@
             <scope>test</scope>
         </dependency>
 
-       <dependency>
-             <groupId>org.liquibase</groupId>
-             <artifactId>liquibase-maven-plugin</artifactId>
-             <version>3.5.1</version>
-         </dependency>
+
 
     </dependencies>
 
