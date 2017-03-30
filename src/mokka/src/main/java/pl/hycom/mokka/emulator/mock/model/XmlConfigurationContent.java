@@ -1,6 +1,7 @@
 package pl.hycom.mokka.emulator.mock.model;
 
 import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Lob;
@@ -29,11 +30,12 @@ import pl.hycom.mokka.web.json.View;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XmlConfigurationContent extends ConfigurationContent {
 
-	@Lob
-	@JsonView(View.General.class)
-	@Basic(fetch = FetchType.EAGER)
-	@TrackChanges
-	@XmlElement
-	private String value;
+    @Column(columnDefinition = "LONGVARCHAR(2000000)")
+    @Lob
+    @Basic(fetch = FetchType.EAGER)
+    @JsonView(View.General.class)
+    @TrackChanges
+    @XmlElement
+    private String value;
 
 }
