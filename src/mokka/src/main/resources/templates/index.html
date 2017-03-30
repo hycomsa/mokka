@@ -8,9 +8,9 @@
 
 	  	<title>Mokka</title>
 		<link rel="icon" type="image/png" href="static/favicon.ico"/>
-	  	<link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc4/angular-material.min.css" />
-	  	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
-	  	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/tomorrow.min.css" />
+	  	<link rel="stylesheet" type="text/css" th:href="@{css/angular-material.min.css}" />
+	  	<link rel="stylesheet" type="text/css" th:href="@{css/font-awesome.min.css}" />
+	  	<link rel="stylesheet" type="text/css" th:href="@{css/tomorrow.min.css}" />
 		<link rel="stylesheet" type="text/css" th:href="@{css/datetimepicker/picker.css}" />
 		<link rel="stylesheet" type="text/css" th:href="@{css/styles.css}" />
 	  	<link rel="stylesheet" type="text/css" th:href="@{css/{path}/styles.css(path=${path})}" />
@@ -72,16 +72,16 @@
 
 		<div id="main-container" ng-cloak="" th:include="${#strings.concat(path, '/page')} :: main"></div>
 
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc4/angular-material.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material-icons/0.7.0/angular-material-icons.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/danialfarid-angular-file-upload/12.0.4/ng-file-upload.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js"></script>
-		<script src="https://angular-ui.github.io/ui-ace/dist/ui-ace.min.js"></script>
+		<script th:src="@{js/angular.min.js}"></script>
+		<script th:src="@{js/angular-animate.min.js}"></script>
+		<script th:src="@{js/angular-aria.min.js}"></script>
+		<script th:src="@{js/angular-messages.min.js}"></script>
+		<script th:src="@{js/angular-material.js}"></script>
+		<script th:src="@{js/angular-material-icons.min.js}"></script>
+		<script th:src="@{js/moment.min.js}"></script>
+		<script th:src="@{js/ng-file-upload.min.js}"></script>
+		<script th:src="@{js/ace.js}"></script>
+		<script th:src="@{js/ui-ace.min.js}"></script>
 		<script th:src="@{js/datetimepicker/picker.js}"></script>
 		<script th:src="@{js/lazy-scroll.min.js}"></script>
 		<script th:src="@{js/script.js}"></script>
