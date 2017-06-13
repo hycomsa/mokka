@@ -33,4 +33,4 @@ URLs:
 ##Logs
 Logback is used as logging framework. By default logs are redirected to CONSOLE and FILE (/tmp/mokka.log).
 
-SonarQube: https://sonarqube.com/overview?id=1065675
+SonarQube: https://sonarcloud.io/dashboard?id=pl.hycom.mokka%3Amokka-parent
