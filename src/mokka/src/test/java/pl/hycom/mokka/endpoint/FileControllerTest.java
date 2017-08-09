@@ -6,7 +6,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+
 import pl.hycom.mokka.AbstractTest;
 
 import static com.jayway.restassured.RestAssured.expect;
@@ -15,7 +17,7 @@ import static com.jayway.restassured.RestAssured.expect;
  * @author Mariusz Krysztofowicz (mariusz.krysztofowicz@hycom.pl)
  */
 @Ignore
-@WebIntegrationTest(randomPort = true)
+@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
 public class FileControllerTest extends AbstractTest {
     @Value("${local.server.port}")
     protected int serverPort;

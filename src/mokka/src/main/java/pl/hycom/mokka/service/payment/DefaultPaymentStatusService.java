@@ -1,7 +1,6 @@
 package pl.hycom.mokka.service.payment;
 
 
-import org.apache.log4j.Logger;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -13,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import lombok.extern.slf4j.Slf4j;
 import pl.hycom.mokka.service.payment.constant.BlueMediaConstants;
 import pl.hycom.mokka.service.payment.pojo.BlueMediaPayment;
 import pl.hycom.mokka.util.validation.HashAlgorithm;
@@ -28,10 +29,10 @@ import java.util.Random;
  * Service implements PaymentStatusService. Used to changing payment status
  * @author Mariusz Krysztofowicz (mariusz.krysztofowicz@hycom.pl)
  */
-
+@Slf4j
 @Service(value = "paymentStatusService")
 public class DefaultPaymentStatusService implements PaymentStatusService {
-    private static final Logger LOG = (Logger) Logger.getInstance(DefaultPaymentStatusService.class);
+
     private static final String DATE_FORMAT = "yyyyMMddHHmmss";
     @Resource
     private HashGenerator hashGenerator;
@@ -71,17 +72,17 @@ public class DefaultPaymentStatusService implements PaymentStatusService {
         VelocityContext context = getVelocityContext(blueMediaPayment, status);
         StringWriter writer = new StringWriter();
         template.merge(context, writer);
-        LOG.info("Request :["+writer.toString()+"]");
+        log.info("Request :["+writer.toString()+"]");
         byte[] bytesEncoded = Base64.encodeBase64(writer.toString()
                                                           .getBytes());
         blueMediaPayment.setHash(calculateRedirectHash(blueMediaPayment));
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         String base64String=new String(bytesEncoded);
-        LOG.info("Request transformed to Base64:["+base64String+"]");
+        log.info("Request transformed to Base64:["+base64String+"]");
         params.add(BlueMediaConstants.TRANSACTIONS, base64String);
         ResponseEntity<String> response = restTemplate.postForEntity(blueMediaPayment.getNotificationURL() , params, String.class);
-        LOG.info("Response status: [" + response.getStatusCode() + "]");
-        LOG.info("Response body: [" + response.getBody() + "]");
+        log.info("Response status: [" + response.getStatusCode() + "]");
+        log.info("Response body: [" + response.getBody() + "]");
     }
 
     private String generateRandomString(int length) {
