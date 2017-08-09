@@ -80,7 +80,7 @@ public class MockConfigurationController {
 	@PreAuthorize("hasAnyRole('ROLE_USER')")
 	@RequestMapping(value = "/configuration/statuses", method = RequestMethod.POST)
 	public Map<Integer, String> getStatuses() {
-		return Arrays.stream(HttpStatus.values()).distinct().collect(Collectors.toMap(v -> v.value(), v -> v.getReasonPhrase(), (v1, v2) -> {return v1;}));
+		return Arrays.stream(HttpStatus.values()).distinct().collect(Collectors.toMap(HttpStatus::value, HttpStatus::getReasonPhrase, (v1, v2) -> v1));
 	}
 
 }

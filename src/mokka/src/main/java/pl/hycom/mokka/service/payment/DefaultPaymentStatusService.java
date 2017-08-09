@@ -72,7 +72,7 @@ public class DefaultPaymentStatusService implements PaymentStatusService {
         VelocityContext context = getVelocityContext(blueMediaPayment, status);
         StringWriter writer = new StringWriter();
         template.merge(context, writer);
-        log.info("Request :["+writer.toString()+"]");
+        log.info("Request :[{}]", writer.toString());
         byte[] bytesEncoded = Base64.encodeBase64(writer.toString()
                                                           .getBytes());
         blueMediaPayment.setHash(calculateRedirectHash(blueMediaPayment));
@@ -81,8 +81,8 @@ public class DefaultPaymentStatusService implements PaymentStatusService {
         log.info("Request transformed to Base64:["+base64String+"]");
         params.add(BlueMediaConstants.TRANSACTIONS, base64String);
         ResponseEntity<String> response = restTemplate.postForEntity(blueMediaPayment.getNotificationURL() , params, String.class);
-        log.info("Response status: [" + response.getStatusCode() + "]");
-        log.info("Response body: [" + response.getBody() + "]");
+        log.info("Response status: [{}]", response.getStatusCode());
+        log.info("Response body: [{}]", response.getBody());
     }
 
     private String generateRandomString(int length) {

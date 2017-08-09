@@ -2,7 +2,6 @@ package pl.hycom.mokka.emulator.configurator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import pl.hycom.mokka.emulator.configurator.model.LocalData;
 import pl.hycom.mokka.emulator.configurator.model.MockConfigurator;
 import pl.hycom.mokka.emulator.configurator.model.type.ThingType;
 
@@ -17,14 +16,13 @@ import java.util.List;
 @Component
 public class MockConfiguratorService {
 
-	@PersistenceContext
+	private static final String KEY_TIMEOUT = "timeout";
+
+    @PersistenceContext
 	private EntityManager entityManager;
 
 	@Autowired
 	private MockConfiguratorRepository mockConfiguratorRepository;
-
-	@Autowired
-	private LocalData localData;
 
 	public List<ThingType> getAllThingTypes() {
 		return entityManager.createQuery("SELECT e FROM ThingType e").getResultList();
@@ -36,12 +34,12 @@ public class MockConfiguratorService {
 
 	public void saveTimeout(int timeout) {
 
-		if (mockConfiguratorRepository.existsKey("timeout")) {
-			mockConfiguratorRepository.updateValueByKey("timeout", Integer.toString(timeout));
+		if (mockConfiguratorRepository.existsKey(KEY_TIMEOUT)) {
+			mockConfiguratorRepository.updateValueByKey(KEY_TIMEOUT, Integer.toString(timeout));
 		} else {
 
 			MockConfigurator configurator = new MockConfigurator();
-			configurator.setKeyConfigurator("timeout");
+			configurator.setKeyConfigurator(KEY_TIMEOUT);
 			configurator.setValueConfigurator(Integer.toString(timeout));
 
 			mockConfiguratorRepository.save(configurator);
@@ -49,7 +47,7 @@ public class MockConfiguratorService {
 	}
 
 	public int getTimeout() {
-		return Integer.parseInt(mockConfiguratorRepository.getValueByKey("timeout"));
+		return Integer.parseInt(mockConfiguratorRepository.getValueByKey(KEY_TIMEOUT));
 	}
 
 }

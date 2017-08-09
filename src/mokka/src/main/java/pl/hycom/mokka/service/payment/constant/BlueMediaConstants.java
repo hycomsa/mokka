@@ -23,6 +23,6 @@ public interface BlueMediaConstants {
     String SERVICE_ID_LABEL = "serviceID";
     String HASH_LABEL = "hash";
     String TRANSACTIONS = "transactions";
-    String PAYMENT_STATUS_UPDATE_VM = "paymentStatusUpdate.vm";
+    String PAYMENT_STATUS_UPDATE_VM = "templates/paymentStatusUpdate.vm";
     String PAYMENT_SCHEMA = "paymentSchema";
 }

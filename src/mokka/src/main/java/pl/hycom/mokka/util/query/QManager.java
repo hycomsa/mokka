@@ -8,12 +8,9 @@ import javax.persistence.Query;
 
 import org.springframework.stereotype.Service;
 
-import lombok.extern.java.Log;
-
 /**
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.
  */
-@Log
 @Service
 public class QManager {
 

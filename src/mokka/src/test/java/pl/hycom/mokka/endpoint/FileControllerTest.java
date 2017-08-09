@@ -3,7 +3,6 @@ package pl.hycom.mokka.endpoint;
 import com.jayway.restassured.RestAssured;
 import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +15,6 @@ import static com.jayway.restassured.RestAssured.expect;
 /**
  * @author Mariusz Krysztofowicz (mariusz.krysztofowicz@hycom.pl)
  */
-@Ignore
 @SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
 public class FileControllerTest extends AbstractTest {
     @Value("${local.server.port}")

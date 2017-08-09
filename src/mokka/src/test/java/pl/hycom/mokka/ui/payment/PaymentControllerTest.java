@@ -3,7 +3,6 @@ package pl.hycom.mokka.ui.payment;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
@@ -18,7 +17,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 /**
  * @author Jakub Muras <jakub.muras@hycom.pl>
  */
-@Ignore
 public class PaymentControllerTest extends AbstractTest{
     private static final String REDIRECT = "redirect:";
     private static final String ORDER_ID = "&OrderID=";
@@ -69,7 +67,6 @@ public class PaymentControllerTest extends AbstractTest{
 
     @Test
     public void testSuccessRedirect() {
-        Model model = new ExtendedModelMap();
         BlueMediaPayment blueMediaPayment =  createSampleBlueMediaPayment();
         String result=paymentController.successRedirect(blueMediaPayment);
         Assert.assertEquals(redirectUrl(blueMediaPayment),result);
@@ -77,15 +74,12 @@ public class PaymentControllerTest extends AbstractTest{
 
     @Test
     public void testPendingRedirect() {
-        Model model = new ExtendedModelMap();
-        BlueMediaPayment blueMediaPayment =  createSampleBlueMediaPayment();
         String result=paymentController.pendingRedirect(createSampleBlueMediaPayment());
         Assert.assertEquals("OK",result);
     }
 
     @Test
     public void testErrorRedirect() {
-        Model model = new ExtendedModelMap();
         BlueMediaPayment blueMediaPayment =  createSampleBlueMediaPayment();
         String result=paymentController.errorRedirect(blueMediaPayment);
         Assert.assertEquals(redirectUrl(blueMediaPayment),result);
