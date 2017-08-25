@@ -10,6 +10,7 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
     	self.paginationHasNext = false;
     	self.loading = false;
     	self.mocksPerPage = 10;
+    	self.paths = [];
 
     self.setEnabled = function(mock){
     	ConfigurationService.setEnabled(mock.id, mock.enabled).then (function(response){
@@ -157,7 +158,8 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
     	self.activeSearch = {};
     	self.search.update = false;
     	angular.extend(self.activeSearch, self.search);
-    	self.mocks=[];
+    	self.mocks = [];
+    	self.paths = [];
     	self.pagination = 0;
     	self.fetchMocks();
 
@@ -168,6 +170,7 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
     	self.search = {};
     	self.activeSearch = {};
     	self.mocks = [];
+    	self.paths = []
     	self.pagination = 0;
     	self.fetchMocks();
 
@@ -247,5 +250,11 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
     	ConfigurationService.getStatuses().then (function(response){
     	    self.statuses=response;
 		});
+    };
+
+    self.getPaths = function(){
+        ConfigurationService.getPaths().then (function(response){
+            self.paths=response;
+        });
     };
 });

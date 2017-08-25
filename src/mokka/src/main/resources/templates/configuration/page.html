@@ -38,9 +38,11 @@
 						<div layout="row">
 								<md-input-container class="md-block" flex="33">
 						            <label>Service</label>
-						            <input ng-model="ctrl.search.path" ng-change="ctrl.search.update = true"/>
+									<md-select ng-model="ctrl.search.path" ng-init="ctrl.getPaths()">
+										<md-option value="ALL"></md-option>
+										<md-option ng-repeat="path in ctrl.paths" value="{{path}}">{{path}}</md-option>
+									</md-select>
 						        </md-input-container>
-
 								<md-input-container class="md-block" flex="33">
 						            <label>Pattern</label>
 						            <input ng-model="ctrl.search.pattern" ng-change="ctrl.search.update = true"/>

@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +33,9 @@ public class MockConfigurationController {
 
 	@Autowired
 	private MockConfigurationManager mockConfigurationManager;
+
+	@Autowired
+	private MockConfigurationRepository mockConfigurationRepository;
 
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@JsonView(View.General.class)
@@ -81,6 +85,13 @@ public class MockConfigurationController {
 	@RequestMapping(value = "/configuration/statuses", method = RequestMethod.POST)
 	public Map<Integer, String> getStatuses() {
 		return Arrays.stream(HttpStatus.values()).distinct().collect(Collectors.toMap(HttpStatus::value, HttpStatus::getReasonPhrase, (v1, v2) -> v1));
+	}
+
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@JsonView(View.Detailed.class)
+	@RequestMapping(value = "/configuration/paths", method = RequestMethod.GET)
+	public Set<String> getPaths() {
+		return mockConfigurationRepository.findUniquePaths();
 	}
 
 }

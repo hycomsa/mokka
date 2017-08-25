@@ -69,7 +69,13 @@ app.factory('ConfigurationService',function($http, $q){
 		   console.debug(response);
                         return response.data;
 		   });
-	   }
+	   },
 
+       getPaths: function(mock) {
+           return $http.get('/configuration/paths').then(function (response) {
+               console.debug(response);
+               return response.data;
+           });
+       }
    };
 });
