@@ -170,7 +170,7 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
     	self.search = {};
     	self.activeSearch = {};
     	self.mocks = [];
-    	self.paths = []
+    	self.paths = [];
     	self.pagination = 0;
     	self.fetchMocks();
 

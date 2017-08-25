@@ -93,5 +93,4 @@ public class MockConfigurationController {
 	public Set<String> getPaths() {
 		return mockConfigurationRepository.findUniquePaths();
 	}
-
 }
