@@ -9,6 +9,7 @@ import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.scheduling.annotation.Async;
@@ -62,6 +63,9 @@ public class MockConfigurationManager {
 	private UserRepository userRepository;
 
 	private AtomicReference<Set<String>> pathCache = new AtomicReference<>();
+
+	@Value("${mocksPerPage}")
+	private Integer mocksPerPage;
 
 	@Scheduled(fixedDelay = 5 * 60 * 1000)
 	public void reportCurrentTime() {
@@ -177,12 +181,13 @@ public class MockConfigurationManager {
 		Q q = Q.select("l").from("MockConfig l").orderby("l.order ASC");
 
 		if (StringUtils.isNumeric(req.getParameter("from"))) {
-			q.startingIndex(Integer.parseInt(req.getParameter("from")));
+			q.startingIndex(Integer.parseInt(req.getParameter("from"))* mocksPerPage);
+
 		}
 
 		// start perPage & startFrom
 		if (StringUtils.isNumeric(req.getParameter("perPage"))) {
-			q.maxResults(Integer.parseInt(req.getParameter("perPage")));
+			q.maxResults(Integer.parseInt(req.getParameter("perPage"))* mocksPerPage);
 		} else {
 			q.maxResults(numberOfResultsPerQuery);
 		}

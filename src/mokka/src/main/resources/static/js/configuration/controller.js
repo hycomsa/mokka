@@ -9,7 +9,7 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
     	self.pagination = 0;
     	self.paginationHasNext = false;
     	self.loading = false;
-    	self.mocksPerPage = 10;
+    	// self.mocksPerPage = 10;
     	self.paths = [];
 
     self.setEnabled = function(mock){
@@ -180,8 +180,10 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
     self.fetchMocks = function(initParams){
     	self.loading = true;
     	var params = {
-    		'from': (self.pagination * self.mocksPerPage),
-    		'perPage': (self.mocksPerPage + 1),
+    		'from': (self.pagination),
+    		// 'from': (self.pagination * self.mocksPerPage),
+    		'perPage': (1),
+    		// 'perPage': (self.mocksPerPage + 1),
     	};
 
     	angular.extend(params, initParams);
@@ -195,9 +197,9 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
     	}
 
         ConfigurationService.fetchMocks(params).then(function(d) {
-        	self.paginationHasNext = (d.length > self.mocksPerPage);
-        	self.mocks = d.slice(0, self.mocksPerPage);
-
+        	// self.paginationHasNext = (d.length > self.mocksPerPage);
+        	self.paginationHasNext = true;
+        	self.mocks = d;
         	self.loading = false;
         	$location.hash('');
         	$anchorScroll();
