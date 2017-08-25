@@ -1,0 +1,101 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+</head>
+<body>
+<div th:fragment="main">
+
+    <div ng-controller="JmsConfigurationController as ctrl">
+        {{ctrl.greeting}}
+        <h1>{{ctrl.czyekstra}}</h1>
+
+        <md-fab-speed-dial md-direction="left" class="md-fling md-fab-bottom-right" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
+            <md-fab-trigger>
+                <md-button aria-label="menu" class="md-fab md-warn">
+                    <md-tooltip md-direction="top">Menu</md-tooltip>
+                    <ng-md-icon icon="menu" style="fill: #fff"></ng-md-icon>
+                </md-button>
+            </md-fab-trigger>
+            <md-fab-actions>
+                <md-button aria-label="add" class="md-fab md-raised md-mini" ng-click="ctrl.addMockConfiguration()">
+                    <md-tooltip md-direction="top">Add</md-tooltip>
+                    <ng-md-icon icon="add" style="fill:#666666"></ng-md-icon>
+                </md-button>
+                <md-button type="file" aria-label="import" class="md-fab md-raised md-mini" ngf-select="ctrl.importFromFile($file, $invalidFiles)">
+                    <md-tooltip md-direction="top">Import</md-tooltip>
+                    <ng-md-icon icon="file_upload" style="fill:#666666"></ng-md-icon>
+                </md-button>
+                <md-button aria-label="export" class="md-fab md-raised md-mini" th:href="@{/configurations/export}" target="_blank">
+                    <md-tooltip md-direction="top">Export</md-tooltip>
+                    <ng-md-icon icon="file_download" style="fill:#666666"></ng-md-icon>
+                </md-button>
+            </md-fab-actions>
+        </md-fab-speed-dial>
+
+        <md-card>
+            <md-card-content>
+                <md-content layout-padding="" layout="column">
+                    <div layout="row">
+                        <md-input-container class="md-block" flex="33">
+                            <label>Name</label>
+                            <input ng-model="ctrl.search.name" ng-change="ctrl.search.update = true"/>
+                        </md-input-container>
+                        <md-input-container class="md-block" flex="33">
+                            <label>Queue name</label>
+                            <input ng-model="ctrl.search.queue" ng-change="ctrl.search.update = true"/>
+                        </md-input-container>
+
+                        <md-input-container class="md-block" flex="33">
+                            <label>Pattern</label>
+                            <input ng-model="ctrl.search.pattern" ng-change="ctrl.search.update = true"/>
+                        </md-input-container>
+                    </div>
+                    <div layout="row">
+                        <md-input-container class="md-block" flex="33">
+                            <label>Status</label>
+                            <md-select ng-model="ctrl.search.enabled" ng-change="ctrl.search.update = true">
+                                <md-option value="">All</md-option>
+                                <md-option value="true">Enabled</md-option>
+                                <md-option value="false">Disabled</md-option>
+                            </md-select>
+                        </md-input-container>
+                        <md-input-container class="md-block" flex="33">
+                            <label>Description</label>
+                            <input ng-model="ctrl.search.description" ng-change="ctrl.search.update = true"/>
+                        </md-input-container>
+                    </div>
+                    <div layout-gt-xs="row">
+                        <md-button class="md-raised md-primary" ng-click="ctrl.activateFilter()">Filter</md-button>
+                        <md-button class="md-raised" ng-click="ctrl.sayHi()">Reset</md-button>
+                    </div>
+
+                </md-content>
+            </md-card-content>
+        </md-card>
+
+        <md-card ng-show="ctrl.loading">
+            <md-card-content layout="row" layout-align="center center">
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </md-card-content>
+        </md-card>
+
+        <md-card ng-show="!ctrl.mocks.length &amp;&amp; !ctrl.loading">
+            <md-card-content>
+                <h3>No mocks were found</h3>
+            </md-card-content>
+        </md-card>
+
+
+
+    </div>
+
+</div>
+</body>
+</html>
+
+// queue name
+// additional queue name
+//
+// enable / disable switch
