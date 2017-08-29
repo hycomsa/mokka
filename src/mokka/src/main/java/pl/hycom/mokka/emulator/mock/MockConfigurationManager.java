@@ -180,9 +180,12 @@ public class MockConfigurationManager {
 
 		Q q = Q.select("l").from("MockConfig l").orderby("l.order ASC");
 
+		if(mocksPerPage == null || mocksPerPage == 0) {
+			mocksPerPage = 10;
+		}
+
 		if (StringUtils.isNumeric(req.getParameter("from"))) {
 			q.startingIndex(Integer.parseInt(req.getParameter("from"))* mocksPerPage);
-
 		}
 
 		// start perPage & startFrom
