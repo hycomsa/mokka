@@ -232,7 +232,6 @@
                         </goals>
                         <configuration>
                             <tasks>
-
                                 <tstamp>
                                     <format property="last.updated" pattern="yyyy-MM-dd hh:mm:ss"/>
                                 </tstamp>

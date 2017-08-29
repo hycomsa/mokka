@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8"/>
 </head>
-<body>
+<body ng-enter="ctrl.activateFilter()">
 	<div th:fragment="main">
 
 		<div class="generic-container" ng-controller="ConfigurationController as ctrl">
@@ -34,28 +34,28 @@
 
 			<md-card>
 				<md-card-content>
-					<md-content layout-padding="" layout="column">
+					<md-content layout-padding="" layout="column" ng-enter="ctrl.activateFilter()">
 						<div layout="row">
 								<md-input-container class="md-block" flex="33">
 						            <label>Service</label>
-									<md-select ng-model="ctrl.search.path" ng-init="ctrl.getPaths()">
-										<md-option value="ALL"></md-option>
+									<md-select ng-model="ctrl.search.path" ng-init="ctrl.getPaths()" ng-enter="ctrl.activateFilter()">
+										<md-option value="ALL"  ng-enter="ctrl.activateFilter()"></md-option>
 										<md-option ng-repeat="path in ctrl.paths" value="{{path}}">{{path}}</md-option>
 									</md-select>
 						        </md-input-container>
 								<md-input-container class="md-block" flex="33">
 						            <label>Pattern</label>
-						            <input ng-model="ctrl.search.pattern" ng-change="ctrl.search.update = true"/>
-						        </md-input-container>
+									<input ng-model="ctrl.search.pattern" ng-change="ctrl.search.update = true" ng-enter="ctrl.activateFilter()"/>
+								</md-input-container>
 								<md-input-container class="md-block" flex="33">
 						            <label>Description</label>
-						            <input ng-model="ctrl.search.description" ng-change="ctrl.search.update = true"/>
+						            <input ng-model="ctrl.search.description" ng-change="ctrl.search.update = true" ng-enter="ctrl.activateFilter()"/>
 						        </md-input-container>
 						</div>
 						<div layout="row">
 							<md-input-container class="md-block" flex="33">
 								<label>Status</label>
-								<md-select ng-model="ctrl.search.enabled" ng-change="ctrl.search.update = true">
+								<md-select ng-model="ctrl.search.enabled" ng-change="ctrl.search.update = true"  ng-enter="ctrl.activateFilter()">
 									<md-option value="">All</md-option>
 									<md-option value="true">Enabled</md-option>
 									<md-option value="false">Disabled</md-option>
@@ -66,7 +66,6 @@
 							<md-button class="md-raised md-primary" ng-click="ctrl.activateFilter()">{{ ctrl.search.update ? 'Update results' : 'Filter' }}</md-button>
 							<md-button class="md-raised" ng-click="ctrl.resetFilter()">Reset</md-button>
 						</div>
-
 					</md-content>
 				</md-card-content>
 			</md-card>
