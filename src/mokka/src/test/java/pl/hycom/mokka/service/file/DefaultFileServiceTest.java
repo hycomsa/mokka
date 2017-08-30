@@ -1,6 +1,7 @@
 package pl.hycom.mokka.service.file;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import pl.hycom.mokka.AbstractTest;
 
@@ -11,6 +12,7 @@ import java.util.List;
 /**
  * @author Mariusz Krysztofowicz (mariusz.krysztofowicz@hycom.pl)
  */
+@Ignore
 public class DefaultFileServiceTest extends AbstractTest {
 
     DefaultFileService fileService = new DefaultFileService();
