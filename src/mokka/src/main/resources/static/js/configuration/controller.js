@@ -257,6 +257,7 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
     self.getPaths = function(){
         ConfigurationService.getPaths().then (function(response){
             self.paths=response;
+            self.newMock=false;
         });
     };
 });

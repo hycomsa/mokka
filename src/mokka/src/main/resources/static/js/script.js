@@ -49,6 +49,7 @@ app.directive('ngEnter', function () {
                 });
 
                 event.preventDefault();
+                event.stopPropagation();
             }
         });
     };
