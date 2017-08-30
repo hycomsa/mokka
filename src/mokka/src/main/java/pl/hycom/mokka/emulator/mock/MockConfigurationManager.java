@@ -20,6 +20,7 @@ import pl.hycom.mokka.emulator.mock.model.MockConfiguration;
 import pl.hycom.mokka.security.UserRepository;
 import pl.hycom.mokka.security.model.AuditedRevisionEntity;
 import pl.hycom.mokka.security.model.User;
+import pl.hycom.mokka.util.query.MockSearch;
 import pl.hycom.mokka.util.query.Q;
 import pl.hycom.mokka.util.query.QManager;
 
@@ -55,6 +56,9 @@ public class MockConfigurationManager {
 
 	@Autowired
 	private QManager qManager;
+
+	@Autowired
+	private MockSearch mockSearch;
 
 	@Autowired
 	private MockConfigurationRepository repository;
@@ -122,6 +126,7 @@ public class MockConfigurationManager {
 		Q q = Q.select("m").from("MockConfig m").where(Q.in("path", paths)).and(Q.eq("m.enabled", true)).orderby("m.order DESC");
 
 		List<MockConfiguration> result = qManager.execute(q, MockConfiguration.class);
+
 		for (MockConfiguration mc : result) {
 			if (StringUtils.isBlank(mc.getPattern())) {
 				return mc;
@@ -178,44 +183,38 @@ public class MockConfigurationManager {
 			return mc == null ? Collections.emptyList() : ImmutableList.of(mc);
 		}
 
-		Q q = Q.select("l").from("MockConfig l").orderby("l.order ASC");
-
-		if(mocksPerPage == null || mocksPerPage == 0) {
-			mocksPerPage = 10;
-		}
-
 		if (StringUtils.isNumeric(req.getParameter("from"))) {
-			q.startingIndex(Integer.parseInt(req.getParameter("from"))* mocksPerPage);
+			mockSearch.setStartingIndex(Integer.parseInt(req.getParameter("from"))* mocksPerPage);
 		}
 
 		// start perPage & startFrom
 		if (StringUtils.isNumeric(req.getParameter("perPage"))) {
-			q.maxResults(Integer.parseInt(req.getParameter("perPage"))* mocksPerPage);
+			mockSearch.setMaxResults(Integer.parseInt(req.getParameter("perPage"))* mocksPerPage);
 		} else {
-			q.maxResults(numberOfResultsPerQuery);
+			mockSearch.setMaxResults(numberOfResultsPerQuery);
 		}
 
 		// path
-		if (StringUtils.isNotBlank(req.getParameter("path"))) {
-			q.and(Q.like("l.path", req.getParameter("path")));
+		if (StringUtils.isNotBlank(req.getParameter(MockSearch.PATH))) {
+			mockSearch.add(MockSearch.PATH, req.getParameter(MockSearch.PATH));
 		}
 
-		// path
-		if (StringUtils.isNotBlank(req.getParameter(PATTERN))) {
-			q.and(Q.like("l.pattern", req.getParameter(PATTERN)));
-		}
+        // description
+        if (StringUtils.isNotBlank(req.getParameter(MockSearch.DESCRIPTION))) {
+            mockSearch.add(MockSearch.DESCRIPTION, req.getParameter(MockSearch.DESCRIPTION));
+        }
 
-		// text
-		if (StringUtils.isNotBlank(req.getParameter("description"))) {
-			q.and(Q.like("l.description", req.getParameter("description")));
-		}
+        // path
+        if (StringUtils.isNotBlank(req.getParameter(MockSearch.PATTERN))) {
+            mockSearch.add(MockSearch.PATTERN, req.getParameter(MockSearch.PATTERN));
+        }
 
 		//enabled
-		if (StringUtils.isNotBlank(req.getParameter("enabled"))) {
-			q.and(Q.eq("l.enabled", Boolean.valueOf(req.getParameter("enabled"))));
+		if (StringUtils.isNotBlank(req.getParameter(MockSearch.ENABLED))) {
+			mockSearch.add(MockSearch.ENABLED, req.getParameter(MockSearch.ENABLED));
 		}
 
-		return qManager.execute(q, MockConfiguration.class);
+		return mockSearch.find();
 	}
 
 	public List<Change> getChanges(Long id) {
