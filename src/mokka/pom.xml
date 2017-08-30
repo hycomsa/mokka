@@ -8,13 +8,20 @@
     <parent>
         <artifactId>mokka-parent</artifactId>
         <groupId>pl.hycom.mokka</groupId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.2.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>mokka</artifactId>
     <description>UI for mock management</description>
     <name>Mokka</name>
 
+
+    <properties></properties>
+
+    <!--<properties>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+    </properties>-->
     <repositories>
         <repository>
             <id>Internal repository</id>
@@ -117,16 +124,16 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
-<!--        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-maven-plugin</artifactId>
-            <version>3.5.1</version>
-        </dependency>-->
+        <!--        <dependency>
+                    <groupId>org.liquibase</groupId>
+                    <artifactId>liquibase-maven-plugin</artifactId>
+                    <version>3.5.1</version>
+                </dependency>-->
         <dependency>
-         <groupId>org.hsqldb</groupId>
-         <artifactId>hsqldb</artifactId>
-         <scope>runtime</scope>
-     </dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-json</artifactId>
@@ -162,12 +169,21 @@
         </dependency>
 
 
-
-        
     </dependencies>
 
     <!-- Package as an executable jar -->
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <filters>
+            <filter>src/filter/target/filter.properties</filter>
+        </filters>
+
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -179,32 +195,63 @@
                     <executable>true</executable>
                 </configuration>
             </plugin>
-          <!--  <plugin>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-maven-plugin</artifactId>
-                <version>3.4.1</version>
+            <!--  <plugin>
+                  <groupId>org.liquibase</groupId>
+                  <artifactId>liquibase-maven-plugin</artifactId>
+                  <version>3.4.1</version>
+                  <configuration>
+                      <propertyFile>src/main/resources/liquibase.properties</propertyFile>
+                  </configuration>
+                  <dependencies>
+                      <dependency>
+                          <groupId>org.liquibase.ext</groupId>
+                          <artifactId>liquibase-hibernate4</artifactId>
+                          <version>3.5</version>
+                      </dependency>
+                      <dependency>
+                          <groupId>org.springframework</groupId>
+                          <artifactId>spring-beans</artifactId>
+                          <version>4.1.7.RELEASE</version>
+                      </dependency>
+                      <dependency>
+                          <groupId>org.springframework.data</groupId>
+                          <artifactId>spring-data-jpa</artifactId>
+                          <version>1.7.3.RELEASE</version>
+                      </dependency>
+                  </dependencies>
+              </plugin>-->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <tstamp>
+                                    <format property="last.updated" pattern="yyyy-MM-dd hh:mm:ss"/>
+                                </tstamp>
+                                <echo file="src/filter/target/filter.properties"
+                                      message="build.time=${last.updated}"/>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <propertyFile>src/main/resources/liquibase.properties</propertyFile>
+                    <useDefaultManifestFile>true</useDefaultManifestFile>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.liquibase.ext</groupId>
-                        <artifactId>liquibase-hibernate4</artifactId>
-                        <version>3.5</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-beans</artifactId>
-                        <version>4.1.7.RELEASE</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.springframework.data</groupId>
-                        <artifactId>spring-data-jpa</artifactId>
-                        <version>1.7.3.RELEASE</version>
-                    </dependency>
-                </dependencies>
-            </plugin>-->
+            </plugin>
+
         </plugins>
+
     </build>
 
 </project>
