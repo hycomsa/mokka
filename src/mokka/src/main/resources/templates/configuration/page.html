@@ -8,6 +8,7 @@
 	<div th:fragment="main">
 
 		<div class="generic-container" ng-controller="ConfigurationController as ctrl">
+		<!--<div class="generic-container" ng-controller="ConfigurationController as ctrl" ng-enter="ctrl.activateFilter()">-->
 
 			<md-fab-speed-dial md-direction="left" class="md-fling md-fab-bottom-right" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
 				<md-fab-trigger>
@@ -33,29 +34,33 @@
 			</md-fab-speed-dial>
 
 			<md-card>
-				<md-card-content>
-					<md-content layout-padding="" layout="column" ng-enter="ctrl.activateFilter()">
+				<!--<md-card-content ng-init="ctrl.getPaths()"  ng-enter="ctrl.activateFilter()">-->
+				<md-card-content ng-init="ctrl.getPaths()" ng-filter="ctrl.activateFilter()">
+				<!--<md-card-content>-->
+					<md-content layout-padding="" layout="column">
 						<div layout="row">
-								<md-input-container class="md-block" flex="33">
+								<md-input-container class="md-block" flex="33" ng-click="ctrl.getPaths()">
 						            <label>Service</label>
-									<md-select ng-model="ctrl.search.path" ng-init="ctrl.getPaths()" ng-enter="ctrl.activateFilter()">
-										<md-option value="ALL"  ng-enter="ctrl.activateFilter()"></md-option>
+									<md-select ng-model="ctrl.search.path">
+										<md-option value="">All</md-option>
 										<md-option ng-repeat="path in ctrl.paths" value="{{path}}">{{path}}</md-option>
 									</md-select>
+									<!--<button ng-click="loadData()">Refresh Data</button>-->
 						        </md-input-container>
 								<md-input-container class="md-block" flex="33">
 						            <label>Pattern</label>
-									<input ng-model="ctrl.search.pattern" ng-change="ctrl.search.update = true" ng-enter="ctrl.activateFilter()"/>
+									<input ng-model="ctrl.search.pattern" ng-change="ctrl.search.update = true"/>
 								</md-input-container>
 								<md-input-container class="md-block" flex="33">
 						            <label>Description</label>
-						            <input ng-model="ctrl.search.description" ng-change="ctrl.search.update = true" ng-enter="ctrl.activateFilter()"/>
+						            <input ng-model="ctrl.search.description" ng-change="ctrl.search.update = true"/>
 						        </md-input-container>
 						</div>
 						<div layout="row">
 							<md-input-container class="md-block" flex="33">
 								<label>Status</label>
-								<md-select ng-model="ctrl.search.enabled" ng-change="ctrl.search.update = true"  ng-enter="ctrl.activateFilter()">
+								<md-select ng-model="ctrl.search.enabled" ng-change="ctrl.search.update = true">
+								<!--<md-select ng-model="ctrl.search.enabled" ng-change="ctrl.search.update = true"  ng-enter="ctrl.activateFilter()">-->
 									<md-option value="">All</md-option>
 									<md-option value="true">Enabled</md-option>
 									<md-option value="false">Disabled</md-option>
@@ -63,8 +68,8 @@
 							</md-input-container>
 						</div>
 						<div layout-gt-xs="row">
-							<md-button class="md-raised md-primary" ng-click="ctrl.activateFilter()">{{ ctrl.search.update ? 'Update results' : 'Filter' }}</md-button>
-							<md-button class="md-raised" ng-click="ctrl.resetFilter()">Reset</md-button>
+							<md-button class="md-raised md-primary" ng-click="ctrl.getPaths();ctrl.activateFilter()">{{ ctrl.search.update ? 'Update results' : 'Filter (F2)' }}</md-button>
+							<md-button class="md-raised" ng-click="ctrl.getPaths();ctrl.resetFilter()">Reset</md-button>
 						</div>
 					</md-content>
 				</md-card-content>
@@ -84,28 +89,28 @@
 							<div layout="row" layout-align="start center">
 								<md-input-container md-is-error="mock.errors.path != null" flex="50">
 									<label>Path</label>
-									<input placeholder="" ng-model="mock.path" required="" ng-disabled="!mock.editMode" md-no-asterisk="true"/>
+									<input placeholder="" ng-model="mock.path" required="" ng-disabled="!mock.editMode" md-no-asterisk="true" ng-enter="ctrl.saveEditMode(mock)"/>
 								</md-input-container>
 								<md-input-container md-is-error="mock.errors.timeout != null" flex="25">
 									<label>Delay (ms)</label>
-									<input type="number" placeholder="" ng-model="mock.timeout" ng-disabled="!mock.editMode"/>
+									<input type="number" placeholder="" ng-model="mock.timeout" ng-disabled="!mock.editMode" ng-enter="ctrl.saveEditMode(mock)"/>
 								</md-input-container>
 								<md-input-container md-is-error="mock.errors.order != null" flex="25">
 									<label>Order</label>
-									<input type="number" placeholder="" ng-model="mock.order" ng-disabled="!mock.editMode"/>
+									<input type="number" placeholder="" ng-model="mock.order" ng-disabled="!mock.editMode" ng-enter="ctrl.saveEditMode(mock)"/>
 								</md-input-container>
 							</div>
 							<md-input-container class="full-width" md-is-error="mock.errors.pattern != null">
 								<label>Pattern</label>
-								<input placeholder="" ng-model="mock.pattern" ng-disabled="!mock.editMode"/>
+								<input placeholder="" ng-model="mock.pattern" ng-disabled="!mock.editMode" ng-enter="ctrl.saveEditMode(mock)"/>
 							</md-input-container>
 							<md-input-container class="full-width" md-is-error="mock.errors.name != null">
 								<label>Name</label>
-								<input placeholder="" ng-model="mock.name" ng-disabled="!mock.editMode"/>
+								<input placeholder="" ng-model="mock.name" ng-disabled="!mock.editMode" ng-enter="ctrl.saveEditMode(mock)"/>
 							</md-input-container>
 							<md-input-container class="full-width" md-is-error="mock.errors.description != null">
 								<label>Description</label>
-								<textarea placeholder="" ng-model="mock.description" ng-disabled="!mock.editMode"></textarea>
+								<textarea placeholder="" ng-model="mock.description" ng-disabled="!mock.editMode" ng-enter="ctrl.saveEditMode(mock)"></textarea>
 							</md-input-container>
 						</div>
 
@@ -174,7 +179,7 @@
 								<md-tooltip md-direction="top">Duplicate</md-tooltip>
 								<ng-md-icon style="fill: #9a9a9a" icon="content_copy"></ng-md-icon>
 						  </md-button>
-						  <md-button ng-show="mock.editMode" class="md-icon-button" ng-click="ctrl.saveEditMode(mock)" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
+						  <md-button ng-show="mock.editMode" class="md-icon-button" ng-click="ctrl.getPaths();ctrl.saveEditMode(mock)" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
 								<md-tooltip md-direction="top">Save</md-tooltip>
 								<ng-md-icon style="fill: #9a9a9a" icon="save"></ng-md-icon>
 						  </md-button>
