@@ -46,7 +46,7 @@ app.factory('ConfigurationService',function($http, $q){
 		   return $http.get('/configuration/', {
 				'params': params
 			}).then(function(response){
-				angular.forEach(response.data, function(e) {
+				angular.forEach(response.data.mocks, function(e) {
 					if (!e.configurationContent) {
 						e.configurationContent = {};
 					}
@@ -60,7 +60,7 @@ app.factory('ConfigurationService',function($http, $q){
 					}
 				});
 
-                return response.data;
+                return response.data.mocks;
 		   });
 	   },
 

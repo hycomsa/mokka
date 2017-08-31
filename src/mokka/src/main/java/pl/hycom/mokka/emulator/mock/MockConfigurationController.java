@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import pl.hycom.mokka.emulator.mock.model.Change;
 import pl.hycom.mokka.emulator.mock.model.MockConfiguration;
+import pl.hycom.mokka.emulator.mock.model.MockPatryka;
 import pl.hycom.mokka.web.json.View;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,10 +39,16 @@ public class MockConfigurationController {
 	@Autowired
 	private MockConfigurationRepository mockConfigurationRepository;
 
-	@PreAuthorize("hasRole('ROLE_USER')")
+/*	@PreAuthorize("hasRole('ROLE_USER')")
 	@JsonView(View.General.class)
 	@RequestMapping(value = "/configuration", method = RequestMethod.GET)
 	public List<MockConfiguration> getMocks(HttpServletRequest request) {
+		return mockConfigurationManager.getMockConfigurations(request);
+	}*/
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@JsonView(View.General.class)
+	@RequestMapping(value = "/configuration", method = RequestMethod.GET)
+	public MockPatryka getMocks(HttpServletRequest request) {
 		return mockConfigurationManager.getMockConfigurations(request);
 	}
 
