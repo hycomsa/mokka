@@ -81,6 +81,9 @@ public class MockConfigurationManager {
 
 	@Async
 	private void updatePathcache() {
+		/*List<String> paths = new ArrayList<>(repository.findUniquePaths());
+		Collections.sort(paths);
+		pathCache.set(paths);*/
 		pathCache.set(repository.findUniquePaths());
 		log.debug("pathCache updated and contains " + pathCache.get().size() + " items");
 	}

@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,10 +18,7 @@ import pl.hycom.mokka.emulator.mock.model.MockPatryka;
 import pl.hycom.mokka.web.json.View;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -100,5 +96,9 @@ public class MockConfigurationController {
 	@RequestMapping(value = "/configuration/paths", method = RequestMethod.GET)
 	public Set<String> getPaths() {
 		return mockConfigurationRepository.findUniquePaths();
+	/*	public List<String> getPaths() {
+		List<String> paths = new ArrayList<>(mockConfigurationRepository.findUniquePaths());
+		Collections.sort(paths);
+		return paths;*/
 	}
 }
