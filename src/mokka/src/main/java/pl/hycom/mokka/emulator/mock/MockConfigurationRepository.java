@@ -13,7 +13,7 @@ import pl.hycom.mokka.emulator.mock.model.MockConfiguration;
  */
 public interface MockConfigurationRepository extends RevisionRepository<MockConfiguration, Long, Integer>, CrudRepository<MockConfiguration, Long> {
 
-	@Query("SELECT DISTINCT m.path FROM MockConfig m")
+	@Query("SELECT DISTINCT m.path FROM MockConfig m ORDER BY m.path ASC")
 	Set<String> findUniquePaths();
 
 }
