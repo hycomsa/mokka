@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.List;
 
 
-public class MockPatryka  implements Serializable {
+public class WrappedMockConfiguration implements Serializable {
 
     @JsonView(View.General.class)
     @TrackChanges

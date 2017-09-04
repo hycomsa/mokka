@@ -17,7 +17,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import pl.hycom.mokka.emulator.mock.model.Change;
 import pl.hycom.mokka.emulator.mock.model.MockConfiguration;
-import pl.hycom.mokka.emulator.mock.model.MockPatryka;
+import pl.hycom.mokka.emulator.mock.model.WrappedMockConfiguration;
 import pl.hycom.mokka.security.UserRepository;
 import pl.hycom.mokka.security.model.AuditedRevisionEntity;
 import pl.hycom.mokka.security.model.User;
@@ -72,7 +72,7 @@ public class MockConfigurationManager {
 	@Value("${mocksPerPage}")
 	private Integer mocksPerPage;
 
-	MockPatryka mockPatryka = new MockPatryka();
+	WrappedMockConfiguration wrappedMockConfiguration = new WrappedMockConfiguration();
 
 	@Scheduled(fixedDelay = 5 * 60 * 1000)
 	public void reportCurrentTime() {
@@ -81,9 +81,6 @@ public class MockConfigurationManager {
 
 	@Async
 	private void updatePathcache() {
-		/*List<String> paths = new ArrayList<>(repository.findUniquePaths());
-		Collections.sort(paths);
-		pathCache.set(paths);*/
 		pathCache.set(repository.findUniquePaths());
 		log.debug("pathCache updated and contains " + pathCache.get().size() + " items");
 	}
@@ -183,12 +180,7 @@ public class MockConfigurationManager {
 		return repository.findOne(id);
 	}
 
-	/*public List<MockConfiguration> getMockConfigurations(HttpServletRequest req) {
-		if (StringUtils.isNumeric(req.getParameter("show"))) {
-			MockConfiguration mc = repository.findOne(Long.parseLong(req.getParameter("show")));
-			return mc == null ? Collections.emptyList() : ImmutableList.of(mc);
-		}*/
-	public MockPatryka getMockConfigurations(HttpServletRequest req) {
+	public WrappedMockConfiguration getMockConfigurations(HttpServletRequest req) {
 		if (StringUtils.isNumeric(req.getParameter("show"))) {
 			MockConfiguration mc = repository.findOne(Long.parseLong(req.getParameter("show")));
 
@@ -232,15 +224,15 @@ public class MockConfigurationManager {
 			mockSearch.add(MockSearch.ENABLED, req.getParameter(MockSearch.ENABLED));
 		}
 
-		mockPatryka.mocks = mockSearch.find();
+		wrappedMockConfiguration.mocks = mockSearch.find();
 
-		if(mockPatryka.mocks.size() >= mocksPerPage +1) {
-			mockPatryka.hasNext = true;
+		if(wrappedMockConfiguration.mocks.size() >= mocksPerPage +1) {
+			wrappedMockConfiguration.hasNext = true;
 		} else {
-			mockPatryka.hasNext = false;
+			wrappedMockConfiguration.hasNext = false;
 		}
 
-		return mockPatryka;
+		return wrappedMockConfiguration;
 	}
 
 	public List<Change> getChanges(Long id) {
