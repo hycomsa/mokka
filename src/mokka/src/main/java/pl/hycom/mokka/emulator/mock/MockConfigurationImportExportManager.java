@@ -91,7 +91,7 @@ public class MockConfigurationImportExportManager {
 				}
 
 				List<MockConfiguration> databaseMocks = qManager.execute(q, MockConfiguration.class);
-				if (databaseMocks.isEmpty()) {
+				if (databaseMocks.isEmpty() && mc.getConfigurationContent() != null) {
 					mc.setId(null);
 					mc.setDescription("[FILE UPLOAD] " + mc.getDescription());
 					mc.getConfigurationContent().setId(null);

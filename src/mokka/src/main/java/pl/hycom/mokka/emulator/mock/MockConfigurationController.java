@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import pl.hycom.mokka.emulator.mock.model.Change;
 import pl.hycom.mokka.emulator.mock.model.MockConfiguration;
-import pl.hycom.mokka.emulator.mock.model.MockPatryka;
+import pl.hycom.mokka.emulator.mock.model.WrappedMockConfiguration;
 import pl.hycom.mokka.web.json.View;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,16 +35,10 @@ public class MockConfigurationController {
 	@Autowired
 	private MockConfigurationRepository mockConfigurationRepository;
 
-/*	@PreAuthorize("hasRole('ROLE_USER')")
-	@JsonView(View.General.class)
-	@RequestMapping(value = "/configuration", method = RequestMethod.GET)
-	public List<MockConfiguration> getMocks(HttpServletRequest request) {
-		return mockConfigurationManager.getMockConfigurations(request);
-	}*/
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@JsonView(View.General.class)
 	@RequestMapping(value = "/configuration", method = RequestMethod.GET)
-	public MockPatryka getMocks(HttpServletRequest request) {
+	public WrappedMockConfiguration getMocks(HttpServletRequest request) {
 		return mockConfigurationManager.getMockConfigurations(request);
 	}
 
@@ -96,9 +90,5 @@ public class MockConfigurationController {
 	@RequestMapping(value = "/configuration/paths", method = RequestMethod.GET)
 	public Set<String> getPaths() {
 		return mockConfigurationRepository.findUniquePaths();
-	/*	public List<String> getPaths() {
-		List<String> paths = new ArrayList<>(mockConfigurationRepository.findUniquePaths());
-		Collections.sort(paths);
-		return paths;*/
 	}
 }
