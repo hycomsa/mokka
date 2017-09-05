@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pl.hycom.mokka.emulator.mock.model.JmsMockConfiguration;
 
 /**
  * @author Tomasz Wozniak (tomasz.wozniak@hycom.pl)
@@ -18,8 +19,14 @@ public class JmsMockConfigurationController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')")
     @RequestMapping(value = "/jmsconfiguration/{name}", method = RequestMethod.GET)
-    public @ResponseBody String sayHello(@PathVariable("name") String name) {
-        return configurationManager.hello() + name;
+    public JmsMockConfiguration sayHello(@PathVariable("name") String name) {
+        return configurationManager.hello(name);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')")
+    @RequestMapping(value = "/jmsconfiguration/list", method = RequestMethod.POST)
+    public JmsMockConfiguration listJmsMocks() {
+        return configurationManager.returnSampleJmsMock();
     }
 
 

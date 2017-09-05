@@ -23,7 +23,8 @@
 	          <span>Mokka</span>
 	          <span th:if="${path == 'login'}">&nbsp;>&nbsp;Login</span>
 	          <span th:if="${path == 'log'}">&nbsp;>&nbsp;Logs</span>
-	          <span th:if="${path == 'configuration'}">&nbsp;>&nbsp;Configuration</span>
+	          <span th:if="${path == 'configuration'}">&nbsp;>&nbsp;Http Mock Configuration</span>
+	          <span th:if="${path == 'jmsconfiguration'}">&nbsp;>&nbsp;Jms Mock Configuration</span>
 	        </h2>
 
 			<md-menu sec:authorize="hasRole('ROLE_USER')">
@@ -35,14 +36,17 @@
 			      <md-button th:href="@{/logs}" target="_self">Logs</md-button>
 			    </md-menu-item>
 			    <md-menu-item th:if="${path != 'configuration'}">
-			      <md-button th:href="@{/configurations}" target="_self">Configuration</md-button>
+			      <md-button th:href="@{/configurations}" target="_self">Http Mock Configuration</md-button>
 			    </md-menu-item>
+				  <md-menu-item th:if="${path != 'jmsconfiguration'}">
+					  <md-button th:href="@{/jmsconfigurations}" target="_self">Jms Mock Configuration</md-button>
+				  </md-menu-item>
 			    <md-menu-item th:if="${path != 'model'}" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
 			      <md-button th:href="@{/models}" target="_self">Model</md-button>
 			    </md-menu-item>
-			    <md-menu-item th:if="${path != 'user'}" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER_ADMIN')">
+			    <md-menujmsconfiguration-item th:if="${path != 'user'}" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER_ADMIN')">
 			      <md-button th:href="@{/users}" target="_self">Users</md-button>
-			    </md-menu-item>
+			    </md-menujmsconfiguration-item>
 			  </md-menu-content>
 			</md-menu>
 
@@ -54,7 +58,6 @@
 	        		&nbsp;
 	        		<span sec:authentication="principal.lastName">Bob</span>
 		        </h2>
-
 
 		        <md-menu>
 					<md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">

@@ -1,13 +1,17 @@
 app.factory('JmsConfigurationService',function($http, $q){
     return {
 
+        activateFilter: function (param) {
+            return $http.get('/jmsconfiguration/' + param).then(function(response){
+                return response.data.description
+            });
+        },
 
-        powiedzCzesc: function (imie) {
-            return $http.get('/jmsconfiguration/' + self.name).then(function(response){
-                return response.data
+        listJmsMocks: function () {
+            return $http.post('/jmsconfiguration/list').then(function (response) {
+               return response.data
             });
         }
-
 
     };
 });

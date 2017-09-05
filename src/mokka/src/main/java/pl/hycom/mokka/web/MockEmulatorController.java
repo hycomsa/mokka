@@ -48,6 +48,11 @@ public class MockEmulatorController {
 		return handleResponse("configuration", model);
 	}
 
+	@RequestMapping(path = "/jmsconfigurations")
+	public String jmsconfigurations(ModelMap model) {
+		return handleResponse("jmsconfiguration", model);
+	}
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER_ADMIN')")
 	@RequestMapping(path = "/users")
 	public String users(ModelMap model) {
