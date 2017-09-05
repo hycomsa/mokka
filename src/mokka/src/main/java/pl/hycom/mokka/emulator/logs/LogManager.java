@@ -45,13 +45,6 @@ public class LogManager {
 		Q q = Q.select("l").from("LogsMocks l").orderby("l.date " + (descSort ? "DESC" : "ASC")).maxResults(NUMBER_OF_RESULTS_PER_QUERY);
 
 		Long lastId = StringUtils.isNumeric(req.getParameter("lastId")) ? Long.parseLong(req.getParameter("lastId")) : null;
-		if (lastId == null) {
-			List<Log> latest = qManager.execute(Q.select("l").from("LogsMocks l").orderby("l.date DESC").maxResults(NUMBER_OF_RESULTS_PER_QUERY), Log.class);
-			if (!latest.isEmpty()) {
-				lastId = latest.get(descSort ? 0 : (latest.size() - 1)).getId();
-			}
-		}
-
 		createLog(req, descSort, q, lastId);
 
 		return qManager.execute(q, Log.class);

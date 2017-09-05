@@ -7,28 +7,28 @@
 <body>
 	<div th:fragment="main">
 		<div class="generic-container" ng-controller="LogsController as ctrl">
-			
+
 			<md-card class="log-search-form">
 				<md-card-content>
 					<md-content layout-padding="" layout="column">
-						
-						<div layout="row">	
+
+						<div layout="row">
 							<md-input-container class="md-block" flex="33">
 					            <label>Service</label>
 					            <input ng-model="ctrl.search.path" ng-change="ctrl.search.update = true"/>
 					        </md-input-container>
-					
+
 							<md-input-container class="md-block" flex="33">
 					            <label>From</label>
 					            <input ng-model="ctrl.search.from" ng-change="ctrl.search.update = true"/>
 					        </md-input-container>
-					
+
 							<md-input-container class="md-block" flex="33">
 					            <label>Text</label>
 					            <input ng-model="ctrl.search.text" ng-change="ctrl.search.update = true"/>
 					        </md-input-container>
-						</div>					        
-						
+						</div>
+
 						<div layout-gt-sm="row">
 							<md-input-container class="md-input-has-placeholder">
 								<sm-date-time-picker
@@ -55,38 +55,38 @@
 							<!--<md-datepicker ng-model="ctrl.search.dateFrom" md-placeholder="'From' date" ng-change="ctrl.search.update = true"></md-datepicker>
 	        				<md-datepicker ng-model="ctrl.search.dateTo" md-placeholder="'To' date" ng-change="ctrl.search.update = true"></md-datepicker>-->
 						</div>
-													
-						<div layout-gt-xs="row">						
+
+						<div layout-gt-xs="row">
 							<md-button class="md-raised md-primary" ng-click="ctrl.activateFilter()">{{ ctrl.search.update ? 'Update results' : 'Filter' }}</md-button>
-							<md-button class="md-raised" ng-click="ctrl.resetFilter()">Reset</md-button>						
+							<md-button class="md-raised" ng-click="ctrl.resetFilter()">Reset</md-button>
 						</div>
-						
-					</md-content>	
+
+					</md-content>
 				</md-card-content>
 			</md-card>
-				
+
 			<md-card>
 				<md-card-content layout="column">
 						<md-list ng-show="ctrl.logs.length" class="md-dense" flex="" lazy-scroll="ctrl.fetchLogs()">
-							<md-subheader class="md-no-sticky">								
+							<md-subheader class="md-no-sticky">
 								<md-button class="btn btn-primary" ng-click="ctrl.changeFetchMethod()">
 									<md-tooltip md-direction="top">Scroll down to see more logs</md-tooltip>
-									{{ ctrl.fetchMethod == 'old' ? 'Oldest' : 'Newest'}} logs on bottom										
-								</md-button>								
+									{{ ctrl.fetchMethod == 'old' ? 'Oldest' : 'Newest'}} logs on bottom
+								</md-button>
 							</md-subheader>
 				            <md-divider ></md-divider>
 			            	<div ng-repeat="log in ctrl.logs" class="log">
-						        <md-list-item>	
+						        <md-list-item>
 								      <ng-md-icon icon="{{ log.status == 'OK' ? 'check_circle' : 'error' }}" class="md-avatar" style="{{ log.status == 'OK' ? 'fill: #DFF2BF' : 'fill: #FFBABA' }}" size="48"></ng-md-icon>
-								          
+
 							          <div class="md-list-item-text" layout="column" flex="100">
 							            <h4>Service: {{ log.uri }}</h4>
-							            <p>{{ log.date | date:"yyyy.MM.dd HH:mm:ss" }} from {{ log.from }}</p>						            
-							            
+							            <p>{{ log.date | date:"yyyy.MM.dd HH:mm:ss" }} from {{ log.from }}</p>
+
 							            <div id="log-{{log.id}}-details" class="log-details">
 							            	<div flex="">
 							            		<h4>Request</h4>
-							            		<md-button class="md-icon-button md-ink-ripple" type="button" ng-click="ctrl.showDetails(log, 'request')">												
+							            		<md-button class="md-icon-button md-ink-ripple" type="button" ng-click="ctrl.showDetails(log, 'request')">
 													<md-tooltip md-direction="top">{{log.request == null ? 'show' : 'hide'}} request</md-tooltip>
 								            		<ng-md-icon ng-show="log.request == null" class="request-expand-more-icon" style="fill: #000000" icon="expand_more"></ng-md-icon>
 								            		<ng-md-icon ng-show="log.request != null" class="request-expand-less-icon" style="fill: #000000" icon="expand_less"></ng-md-icon>
@@ -96,10 +96,10 @@
 												<md-progress-circular md-mode="indeterminate"></md-progress-circular>
 											</div>
 							            	<div class="ui-ace" ng-readonly="true" ui-ace="{mode: 'xml'}" ng-model="log.request" ng-if="log.request"></div>
-							            	
+
 							            	<div flex="">
 							            		<h4>Response</h4>
-							            		<md-button class="md-icon-button md-ink-ripple" type="button" ng-click="ctrl.showDetails(log, 'response')">												
+							            		<md-button class="md-icon-button md-ink-ripple" type="button" ng-click="ctrl.showDetails(log, 'response')">
 													<md-tooltip md-direction="top">{{log.response == null ? 'show' : 'hide'}} response</md-tooltip>
 								            		<ng-md-icon ng-show="log.response == null" class="response-expand-more-icon" style="fill: #000000" icon="expand_more"></ng-md-icon>
 								            		<ng-md-icon ng-show="log.response != null" class="response-expand-less-icon" style="fill: #000000" icon="expand_less"></ng-md-icon>
@@ -108,10 +108,10 @@
 											<div layout="row" layout-align="center center" ng-show="log.response == null &amp;&amp; log.responseLoading">
 												<md-progress-circular md-mode="indeterminate"></md-progress-circular>
 											</div>
-											<div class="ui-ace" ng-readonly="true" ui-ace="{mode: 'xml'}" ng-model="log.response" ng-if="log.response"></div>						            							            	
-							            </div>						            
+											<div class="ui-ace" ng-readonly="true" ui-ace="{mode: 'xml'}" ng-model="log.response" ng-if="log.response"></div>
+							            </div>
 							          </div>
-							          
+
 							          <md-button class="md-icon-button md-primary md-button md-ink-ripple" type="button" href="/configurations#mock-{{log.configurationId}}" ng-if="log.configurationId">
 										<md-tooltip md-direction="top">Edit configuration</md-tooltip>
 										<ng-md-icon style="fill: #9a9a9a" icon="edit"></ng-md-icon>
@@ -120,22 +120,22 @@
  						    	<md-divider ></md-divider>
 				        	</div>
 					    </md-list>
-					
+
 						<h3 ng-show="!ctrl.logs.length &amp;&amp; !ctrl.fetchingLogs">No logs to show</h3>
-			
+
 						<div layout="row" layout-align="center center" ng-show="ctrl.fetchingLogs">
 							<md-progress-circular md-mode="indeterminate"></md-progress-circular>
 						</div>
-						
+
 						<div layout="row" layout-align="center center" ng-hide="ctrl.fetchingLogs">
 							<md-button class="btn btn-primary" ng-click="ctrl.fetchLogs()">
-									Load more										
+									Load more
 							</md-button>
 						</div>
-					
+
 				</md-card-content>
 			</md-card>
-				
+
 		</div>
 	</div>
 </body>
