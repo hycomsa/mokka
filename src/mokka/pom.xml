@@ -8,7 +8,7 @@
     <parent>
         <artifactId>mokka-parent</artifactId>
         <groupId>pl.hycom.mokka</groupId>
-        <version>0.2.2-SNAPSHOT</version>
+        <version>0.2.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>mokka</artifactId>
@@ -18,10 +18,6 @@
 
     <properties></properties>
 
-    <!--<properties>
-        <timestamp>${maven.build.timestamp}</timestamp>
-        <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
-    </properties>-->
     <repositories>
         <repository>
             <id>Internal repository</id>
