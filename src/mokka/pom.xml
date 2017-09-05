@@ -8,7 +8,7 @@
     <parent>
         <artifactId>mokka-parent</artifactId>
         <groupId>pl.hycom.mokka</groupId>
-        <version>0.2.3-SNAPSHOT</version>
+        <version>0.2.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>mokka</artifactId>
