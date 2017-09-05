@@ -29,7 +29,7 @@ public class LogManager {
 	@Autowired
 	private QManager qManager;
 
-	private static int NUMBER_OF_RESULTS_PER_QUERY = 5;
+	private static int NUMBER_OF_RESULTS_PER_QUERY = 3;
 
 	private static final String[] dateFormats = new String[] { "yyyy-MM-dd'T'HH:mm:ss.S'Z'" , "yyyy-MM-dd HH:mm"};
 
@@ -45,14 +45,14 @@ public class LogManager {
 		Q q = Q.select("l").from("LogsMocks l").orderby("l.date " + (descSort ? "DESC" : "ASC")).maxResults(NUMBER_OF_RESULTS_PER_QUERY);
 
 		Long lastId = StringUtils.isNumeric(req.getParameter("lastId")) ? Long.parseLong(req.getParameter("lastId")) : null;
-		if (lastId == null) {
+		createLog(req, descSort, q, lastId);
+		/*if (lastId == null) {
 			List<Log> latest = qManager.execute(Q.select("l").from("LogsMocks l").orderby("l.date DESC").maxResults(NUMBER_OF_RESULTS_PER_QUERY), Log.class);
 			if (!latest.isEmpty()) {
 				lastId = latest.get(descSort ? 0 : (latest.size() - 1)).getId();
 			}
 		}
-
-		createLog(req, descSort, q, lastId);
+*/
 
 		return qManager.execute(q, Log.class);
 	}
