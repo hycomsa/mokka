@@ -1,6 +1,7 @@
 package pl.hycom.mokka.emulator.logs;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -26,11 +27,22 @@ public class LogsController {
 	@Autowired
 	private LogManager logManager;
 
+	@Autowired
+	private LogRepository logRepository;
+
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@JsonView(View.General.class)
 	@RequestMapping(value = "/logs", method = RequestMethod.GET)
 	public List<Log> getLogs(HttpServletRequest request) {
 		return logManager.getLogs(request);
+	}
+
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@JsonView(View.General.class)
+	@RequestMapping(value = "/logs/logiPatryka", method = RequestMethod.GET)
+	public Set<Log> getLogss() {
+		return logRepository.findUniqueLogs();
+//		return logManager.getLogs(request);
 	}
 
 	@PreAuthorize("hasRole('ROLE_USER')")
