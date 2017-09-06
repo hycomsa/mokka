@@ -67,6 +67,9 @@ public class MockContext {
 			return result;
 		} catch (IOException e) {
 			log.error("", e);
+		}catch(DocumentException e){
+			log.error("",e);
+			return StringUtils.EMPTY;
 		}
 
 		return null;
