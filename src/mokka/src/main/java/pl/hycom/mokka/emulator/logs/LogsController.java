@@ -40,7 +40,7 @@ public class LogsController {
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@JsonView(View.General.class)
 	@RequestMapping(value = "/logs/getLogs", method = RequestMethod.GET)
-	public Set<Log> getLogss() {
+	public Set<Log> getSetOfLogs() {
 		return logRepository.findUniqueLogs();
 	}
 

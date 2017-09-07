@@ -81,8 +81,8 @@ app.controller('LogsController', function($rootScope, $mdToast, LogsService){
 
     // self.fetchLogs();
 
-    self.getLogss = function() {
-        LogsService.getLogss().then (function(response){
+    self.getSetOfLogs = function() {
+        LogsService.getSetOfLogs().then (function(response){
             self.getLogs=response;
         });
 	};

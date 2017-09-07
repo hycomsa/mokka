@@ -27,7 +27,7 @@ app.factory('LogsService', function($http, $q){
 			);
 		},
 
-        getLogss: function(logs){
+        getSetOfLogs: function(logs){
             return $http.get('/logs/getLogs').then(function(response){
                 	console.debug(response);
                     return response.data;

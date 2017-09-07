@@ -60,7 +60,7 @@ app.factory('ConfigurationService',function($http, $q){
 					}
 				});
 
-                return response.data.mocks;
+                return response.data;
 		   });
 	   },
 

@@ -9,12 +9,12 @@
 		<div class="generic-container" ng-controller="LogsController as ctrl">
 
 			<md-card class="log-search-form">
-				<md-card-content ng-filter="ctrl.activateFilter();ctrl.getLogss()">
+				<md-card-content ng-filter="ctrl.activateFilter();ctrl.getSetOfLogs()">
 					<md-content layout-padding="" layout="column">
 						<div layout="row">
 							<md-input-container class="md-block" flex="33">
 					            <label>Service</label>
-								<md-select ng-model="ctrl.search.path"  ng-click="ctrl.getLogss()"  ng-enter="ctrl.activateFilter()">
+								<md-select ng-model="ctrl.search.path"  ng-click="ctrl.getSetOfLogs()"  ng-enter="ctrl.activateFilter()">
 									<md-option value="">All</md-option>
 									<md-option ng-repeat="path in ctrl.getLogs" value="{{path}}">{{path}}</md-option>
 								</md-select>

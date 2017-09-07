@@ -198,9 +198,8 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
     	}
 
         ConfigurationService.fetchMocks(params).then(function(d) {
-        	// self.paginationHasNext = (d.length > self.mocksPerPage);
-        	self.paginationHasNext = true;
-        	self.mocks = d;
+        	self.paginationHasNext = d.hasNext;
+        	self.mocks = d.mocks;
         	self.loading = false;
         	$location.hash('');
         	$anchorScroll();
