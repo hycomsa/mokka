@@ -8,7 +8,6 @@
 	<div th:fragment="main">
 		<div class="generic-container" ng-controller="LogsController as ctrl">
 
-			<!--<md-card>-->
 			<md-card class="log-search-form">
 				<md-card-content ng-filter="ctrl.activateFilter();ctrl.getLogss()">
 					<md-content layout-padding="" layout="column">
@@ -17,7 +16,7 @@
 					            <label>Service</label>
 								<md-select ng-model="ctrl.search.path"  ng-click="ctrl.getLogss()"  ng-enter="ctrl.activateFilter()">
 									<md-option value="">All</md-option>
-									<md-option ng-repeat="path in ctrl.logiPatryka" value="{{path}}">{{path}}</md-option>
+									<md-option ng-repeat="path in ctrl.getLogs" value="{{path}}">{{path}}</md-option>
 								</md-select>
 					        </md-input-container>
 

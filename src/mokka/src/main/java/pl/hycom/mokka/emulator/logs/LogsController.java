@@ -39,10 +39,9 @@ public class LogsController {
 
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@JsonView(View.General.class)
-	@RequestMapping(value = "/logs/logiPatryka", method = RequestMethod.GET)
+	@RequestMapping(value = "/logs/getLogs", method = RequestMethod.GET)
 	public Set<Log> getLogss() {
 		return logRepository.findUniqueLogs();
-//		return logManager.getLogs(request);
 	}
 
 	@PreAuthorize("hasRole('ROLE_USER')")

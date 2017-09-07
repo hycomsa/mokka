@@ -9,6 +9,7 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
     	self.pagination = 0;
     	self.paginationHasNext = false;
     	self.loading = false;
+    	self.hasNext=false;
     	// self.mocksPerPage = 10;
     	self.paths = [];
 

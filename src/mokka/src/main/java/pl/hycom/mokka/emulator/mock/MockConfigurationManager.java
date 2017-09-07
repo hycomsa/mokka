@@ -191,8 +191,6 @@ public class MockConfigurationManager {
 			}
 		}
 
-
-
 		if (StringUtils.isNumeric(req.getParameter("from"))) {
 			mockSearch.setStartingIndex(Integer.parseInt(req.getParameter("from"))* mocksPerPage);
 		}

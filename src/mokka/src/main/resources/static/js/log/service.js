@@ -28,7 +28,7 @@ app.factory('LogsService', function($http, $q){
 		},
 
         getLogss: function(logs){
-            return $http.get('/logs/logiPatryka').then(function(response){
+            return $http.get('/logs/getLogs').then(function(response){
                 	console.debug(response);
                     return response.data;
                 });

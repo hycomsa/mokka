@@ -5,7 +5,7 @@ app.controller('LogsController', function($rootScope, $mdToast, LogsService){
     	self.fetchMethod = 'new';
     	self.search = {};
     	self.activeSearch = {};
-    	self.logiPatryka = []
+    	self.getLogs = []
 
     self.fetchLogs = function(){
     	if (self.fetchingLogs) {
@@ -79,11 +79,11 @@ app.controller('LogsController', function($rootScope, $mdToast, LogsService){
     	$mdToast.show($mdToast.simple().position('bottom right').textContent('Filters reseted'));
     }
 
-    self.fetchLogs();
+    // self.fetchLogs();
 
     self.getLogss = function() {
         LogsService.getLogss().then (function(response){
-            self.logiPatryka=response;
+            self.getLogs=response;
         });
 	};
 });

@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import pl.hycom.mokka.emulator.logs.model.Log;
@@ -38,8 +39,13 @@ public class LogManager {
 
 	private AtomicReference<Set<Log>> logCache = new AtomicReference<>();
 
+	@Scheduled(fixedDelay = 5 * 60 * 1000)
+	public void reportCurrentTime() {
+		updateLogCache();
+	}
+
 	@Async
-	private void updatePathcache() {
+	private void updateLogCache() {
 		logCache.set(repository.findUniqueLogs());
 		log.debug("logCache updated and contains " + logCache.get().size() + " items");
 	}

@@ -26,7 +26,6 @@ import pl.hycom.mokka.web.json.View;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GroovyConfigurationContent extends ConfigurationContent {
 
-	@Column(columnDefinition = "LONGVARCHAR(2000000)")
 	@Lob
 	@JsonView(View.General.class)
 	@Basic(fetch = FetchType.EAGER)
