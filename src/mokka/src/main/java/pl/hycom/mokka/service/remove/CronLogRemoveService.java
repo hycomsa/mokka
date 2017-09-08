@@ -1,4 +1,4 @@
-package pl.hycom.mokka.service.backup;
+package pl.hycom.mokka.service.remove;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

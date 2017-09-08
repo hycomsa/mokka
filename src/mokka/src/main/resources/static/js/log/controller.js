@@ -5,7 +5,7 @@ app.controller('LogsController', function($rootScope, $mdToast, LogsService){
     	self.fetchMethod = 'new';
     	self.search = {};
     	self.activeSearch = {};
-    	self.getLogs = []
+    	self.setOfLogs = [];
 
     self.fetchLogs = function(){
     	if (self.fetchingLogs) {
@@ -36,14 +36,14 @@ app.controller('LogsController', function($rootScope, $mdToast, LogsService){
     	});
     };
 
+
     self.changeFetchMethod = function() {
     	if (self.fetchMethod === 'new') {
     		self.fetchMethod = 'old';
     	} else {
     		self.fetchMethod = 'new';
     	}
-
-    	self.logs = self.logs.reverse();
+    	self.logs=[];
     	self.fetchLogs();
     };
 
@@ -77,13 +77,12 @@ app.controller('LogsController', function($rootScope, $mdToast, LogsService){
     	self.fetchLogs();
 
     	$mdToast.show($mdToast.simple().position('bottom right').textContent('Filters reseted'));
-    }
+    };
 
-    // self.fetchLogs();
 
     self.getSetOfLogs = function() {
         LogsService.getSetOfLogs().then (function(response){
-            self.getLogs=response;
+            self.setOfLogs=response;
         });
 	};
 });
