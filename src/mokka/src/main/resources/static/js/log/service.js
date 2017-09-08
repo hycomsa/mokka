@@ -1,10 +1,10 @@
 app.factory('LogsService', function($http, $q){
 	return {
-		
+
 		fetchLogs: function(params){
 			return $http.get('/logs/', {
 				'params': params
-			}).then(										
+			}).then(
 					function(response){
 						return response.data;
 					},
@@ -14,7 +14,7 @@ app.factory('LogsService', function($http, $q){
 					}
 			);
 		},
-		
+
 		getLog: function(id){
 			return $http.get('/logs/' + id).then(
 					function(response){
@@ -25,6 +25,13 @@ app.factory('LogsService', function($http, $q){
 						return $q.reject(errResponse);
 					}
 			);
-		}		
+		},
+
+        getSetOfLogs: function(logs){
+            return $http.get('/logs/getLogs').then(function(response){
+                	console.debug(response);
+                    return response.data;
+                });
+		}
 	};
 });

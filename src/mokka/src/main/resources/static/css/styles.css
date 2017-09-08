@@ -1,4 +1,4 @@
-body {	
+body {
 	height: 100%;
 }
 
@@ -36,10 +36,10 @@ input[type='number'] {
     -moz-appearance:textfield !important;
 }
 
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-  -webkit-appearance: none !important; 
-  margin: 0 !important; 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
 }
 
 .flex-right {
@@ -47,7 +47,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 md-content {
-	background: inherit !important;
+	background: inherit;
 }
 
 .ui-ace {

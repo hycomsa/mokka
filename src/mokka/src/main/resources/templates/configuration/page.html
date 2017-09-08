@@ -33,12 +33,12 @@
 			</md-fab-speed-dial>
 
 			<md-card>
-				<md-card-content ng-init="ctrl.getPaths()" ng-filter="ctrl.activateFilter();ctrl.getPaths()">
+				<md-card-content ng-filter="ctrl.activateFilter();ctrl.getPaths()">
 					<md-content layout-padding="" layout="column">
 						<div layout="row">
-								<md-input-container class="md-block" flex="33" ng-click="ctrl.getPaths()">
+								<md-input-container class="md-block" flex="33">
 						            <label>Service</label>
-									<md-select ng-model="ctrl.search.path" ng-enter="ctrl.activateFilter();ctrl.getPaths()">
+									<md-select ng-model="ctrl.search.path" ng-click="ctrl.getPaths()" ng-enter="ctrl.activateFilter();ctrl.getPaths()">
 										<md-option value="">All</md-option>
 										<md-option ng-repeat="path in ctrl.paths" value="{{path}}">{{path}}</md-option>
 									</md-select>
@@ -63,7 +63,7 @@
 							</md-input-container>
 						</div>
 						<div layout-gt-xs="row">
-							<md-button class="md-raised md-primary" ng-click="ctrl.getPaths();ctrl.activateFilter()">{{ ctrl.search.update ? 'Update results' : 'Filter (F2)' }}</md-button>
+							<md-button class="md-raised md-primary" ng-click="ctrl.getPaths();ctrl.activateFilter()">{{ ctrl.search.update ? 'Update results (F2)' : 'Filter (F2)' }}</md-button>
 							<md-button class="md-raised" ng-click="ctrl.getPaths();ctrl.resetFilter()">Reset</md-button>
 						</div>
 					</md-content>

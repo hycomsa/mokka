@@ -41,12 +41,10 @@ public class Log implements Serializable {
 
 	@Lob
 	@JsonView(View.Detailed.class)
-	@Column(columnDefinition = "LONGVARCHAR(2000000)")
 	private String request;
 
 	@Lob
 	@JsonView(View.Detailed.class)
-	@Column(columnDefinition = "LONGVARCHAR(2000000)")
 	private String response;
 
 	@Column(name = "log_timestamp")

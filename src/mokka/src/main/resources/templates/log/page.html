@@ -2,30 +2,33 @@
 	xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
-	<meta charset="utf-8"></meta>
+	<meta charset="utf-8"/>
 </head>
 <body>
 	<div th:fragment="main">
 		<div class="generic-container" ng-controller="LogsController as ctrl">
 
 			<md-card class="log-search-form">
-				<md-card-content>
+				<md-card-content ng-filter="ctrl.activateFilter();ctrl.getSetOfLogs()">
 					<md-content layout-padding="" layout="column">
-
 						<div layout="row">
 							<md-input-container class="md-block" flex="33">
 					            <label>Service</label>
-					            <input ng-model="ctrl.search.path" ng-change="ctrl.search.update = true"/>
+								<md-select ng-model="ctrl.search.path"  ng-click="ctrl.getSetOfLogs()"  ng-enter="ctrl.activateFilter()">
+									<md-option value="">All</md-option>
+									<md-option ng-repeat="path in ctrl.setOfLogs" value="{{path}}">{{path}}</md-option>
+									<!--zmienic nazwe tablicy na z getLogs na np. setOfLogs -->
+								</md-select>
 					        </md-input-container>
 
 							<md-input-container class="md-block" flex="33">
 					            <label>From</label>
-					            <input ng-model="ctrl.search.from" ng-change="ctrl.search.update = true"/>
+					            <input ng-model="ctrl.search.from" ng-change="ctrl.search.update = true"  ng-enter="ctrl.activateFilter()"/>
 					        </md-input-container>
 
 							<md-input-container class="md-block" flex="33">
 					            <label>Text</label>
-					            <input ng-model="ctrl.search.text" ng-change="ctrl.search.update = true"/>
+					            <input ng-model="ctrl.search.text" ng-change="ctrl.search.update = true"  ng-enter="ctrl.activateFilter()"/>
 					        </md-input-container>
 						</div>
 
@@ -57,7 +60,7 @@
 						</div>
 
 						<div layout-gt-xs="row">
-							<md-button class="md-raised md-primary" ng-click="ctrl.activateFilter()">{{ ctrl.search.update ? 'Update results' : 'Filter' }}</md-button>
+							<md-button class="md-raised md-primary" ng-click="ctrl.activateFilter()">{{ ctrl.search.update ? 'Update results (F2)' : 'Filter (F2)' }}</md-button>
 							<md-button class="md-raised" ng-click="ctrl.resetFilter()">Reset</md-button>
 						</div>
 
@@ -67,7 +70,7 @@
 
 			<md-card>
 				<md-card-content layout="column">
-						<md-list ng-show="ctrl.logs.length" class="md-dense" flex="" lazy-scroll="ctrl.fetchLogs()">
+						<md-list ng-show="ctrl.logs.length" class="md-dense" flex="" ng-init="ctrl.fetchLogs()" lazy-scroll="ctrl.fetchLogs()">
 							<md-subheader class="md-no-sticky">
 								<md-button class="btn btn-primary" ng-click="ctrl.changeFetchMethod()">
 									<md-tooltip md-direction="top">Scroll down to see more logs</md-tooltip>

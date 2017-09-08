@@ -102,7 +102,7 @@ import java.util.Map;
             }
 
             if (getMaxResults() != null) {
-                query.setMaxResults(getMaxResults());
+                query.setMaxResults(getMaxResults()+1);
             }
 
             parameterMap.clear();
