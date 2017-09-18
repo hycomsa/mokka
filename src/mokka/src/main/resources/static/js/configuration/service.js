@@ -76,7 +76,17 @@ app.factory('ConfigurationService',function($http, $q){
                console.debug(response);
                return response.data;
            });
+       },
+
+	   restoreChange: function(configId, changeId) {
+           return $http.get('/configuration/' + configId + '/restore/' + changeId).then(function (response) {
+               console.debug(response);
+			   return response.data.diffs.configurationContent;
+               // mock.configurationContent.value
+
+           });
        }
+
 
    };
 });

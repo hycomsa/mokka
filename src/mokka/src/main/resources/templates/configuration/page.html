@@ -200,10 +200,16 @@
 							</p>
 							<ul ng-show="mock.changes">
 								<li ng-repeat="change in mock.changes">
-									<h5>{{ change.author }} / {{ change.date | date:"yyyy.MM.dd HH:mm:ss" }}</h5>
+									<h5>{{ change.author }} / {{ change.date | date:"yyyy.MM.dd HH:mm:ss" }}
+										<md-button class="md-icon-button" ng-click="ctrl.restoreChange(mock, change)">
+											<md-tooltip md-direction="top">Restore change</md-tooltip>
+											<ng-md-icon style="fill: #9a9a9a" icon="settings_backup_restore"></ng-md-icon>
+										</md-button>
+									</h5>
 						            <ul>
 							            <li ng-repeat="(key, value) in change.diffs">
-							            	<h5>Field: {{ key }}</h5>
+							            	<h5>Field: {{ key }}
+											</h5>
 							            	<div ng-if="value.diff != null" class="diff-value">
 								            	Diff:<br />
 							            		<pre ng-bind-html="value.diff | to_trusted"></pre>
@@ -220,7 +226,7 @@
 						            </ul>
 								</li>
 							</ul>
-						</div>
+                      </div>
 
 					</md-card-actions>
 				</md-card>
