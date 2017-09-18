@@ -80,6 +80,12 @@ public class MockConfigurationController {
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_USER')")
+	@RequestMapping(value = "/configuration/{configId}/restore/{changeId}", method = RequestMethod.GET)
+	public Change restoreChange(@PathVariable("configId") long configId, @PathVariable("changeId") long changeId) {
+		return mockConfigurationManager.restoreChange(configId, changeId);
+	}
+
+	@PreAuthorize("hasAnyRole('ROLE_USER')")
 	@RequestMapping(value = "/configuration/statuses", method = RequestMethod.POST)
 	public Map<Integer, String> getStatuses() {
 		return Arrays.stream(HttpStatus.values()).distinct().collect(Collectors.toMap(HttpStatus::value, HttpStatus::getReasonPhrase, (v1, v2) -> v1));

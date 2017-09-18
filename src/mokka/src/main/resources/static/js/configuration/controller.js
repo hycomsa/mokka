@@ -12,6 +12,10 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
     	self.hasNext=false;
     	// self.mocksPerPage = 10;
     	self.paths = [];
+    	self.restoredChange = [];
+    	self.oldValue = "";
+    	self.newValue = "";
+
 
     self.setEnabled = function(mock){
     	ConfigurationService.setEnabled(mock.id, mock.enabled).then (function(response){
@@ -248,16 +252,22 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
     	'show': ($location.hash() ? $location.hash().replace('mock-','') : '')
     });
 
-    self.getStatuses = function(){
+    self.getStatuses = function() {
     	ConfigurationService.getStatuses().then (function(response){
     	    self.statuses=response;
 		});
     };
 
-    self.getPaths = function(){
+    self.getPaths = function() {
         ConfigurationService.getPaths().then (function(response){
             self.paths=response;
             self.newMock=false;
+        });
+    };
+
+    self.restoreChange = function (mock, change) {
+        ConfigurationService.restoreChange(mock.id, change.id).then(function (response) {
+            $mdToast.show($mdToast.simple().position('bottom right start').textContent('Change restored'));
         });
     };
 });

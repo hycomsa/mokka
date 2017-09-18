@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 import org.hibernate.Hibernate;
@@ -15,9 +16,7 @@ import org.springframework.data.history.Revisions;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import pl.hycom.mokka.emulator.mock.model.Change;
-import pl.hycom.mokka.emulator.mock.model.MockConfiguration;
-import pl.hycom.mokka.emulator.mock.model.WrappedMockConfiguration;
+import pl.hycom.mokka.emulator.mock.model.*;
 import pl.hycom.mokka.security.UserRepository;
 import pl.hycom.mokka.security.model.AuditedRevisionEntity;
 import pl.hycom.mokka.security.model.User;
@@ -25,10 +24,11 @@ import pl.hycom.mokka.util.query.MockSearch;
 import pl.hycom.mokka.util.query.Q;
 import pl.hycom.mokka.util.query.QManager;
 
-import javax.persistence.Lob;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -54,7 +54,7 @@ public class MockConfigurationManager {
 	public static final String OLD_VALUE = "oldValue";
 	public static final String NOT_VALID = "not-valid";
 	private static int numberOfResultsPerQuery = 10;
-
+	private static final Map<String, Class> map;
 	@Autowired
 	private QManager qManager;
 
@@ -79,7 +79,15 @@ public class MockConfigurationManager {
 		updatePathcache();
 	}
 
-	@Async
+    static {
+        map = new HashMap<>();
+
+        map.put("StringConfigurationContent", StringConfigurationContent.class);
+        map.put("XmlConfigurationContent", XmlConfigurationContent.class);
+        map.put("GroovyConfigurationContent", GroovyConfigurationContent.class);
+    }
+
+    @Async
 	private void updatePathcache() {
 		pathCache.set(repository.findUniquePaths());
 		log.debug("pathCache updated and contains " + pathCache.get().size() + " items");
@@ -184,7 +192,7 @@ public class MockConfigurationManager {
 		if (StringUtils.isNumeric(req.getParameter("show"))) {
 			MockConfiguration mc = repository.findOne(Long.parseLong(req.getParameter("show")));
 
-			if(mc == null) {
+			if (mc == null) {
 				Collections.emptyList();
 			} else {
 				ImmutableList.of(mc);
@@ -192,12 +200,12 @@ public class MockConfigurationManager {
 		}
 
 		if (StringUtils.isNumeric(req.getParameter("from"))) {
-			mockSearch.setStartingIndex(Integer.parseInt(req.getParameter("from"))* mocksPerPage);
+			mockSearch.setStartingIndex(Integer.parseInt(req.getParameter("from")) * mocksPerPage);
 		}
 
-		// start perPage & startFrom
+		// start perPage & startFromc
 		if (StringUtils.isNumeric(req.getParameter("perPage"))) {
-			mockSearch.setMaxResults(Integer.parseInt(req.getParameter("perPage"))* mocksPerPage);
+			mockSearch.setMaxResults(Integer.parseInt(req.getParameter("perPage")) * mocksPerPage);
 		} else {
 			mockSearch.setMaxResults(numberOfResultsPerQuery);
 		}
@@ -207,15 +215,15 @@ public class MockConfigurationManager {
 			mockSearch.add(MockSearch.PATH, req.getParameter(MockSearch.PATH));
 		}
 
-        // description
-        if (StringUtils.isNotBlank(req.getParameter(MockSearch.DESCRIPTION))) {
-            mockSearch.add(MockSearch.DESCRIPTION, req.getParameter(MockSearch.DESCRIPTION));
-        }
+		// description
+		if (StringUtils.isNotBlank(req.getParameter(MockSearch.DESCRIPTION))) {
+			mockSearch.add(MockSearch.DESCRIPTION, req.getParameter(MockSearch.DESCRIPTION));
+		}
 
-        // path
-        if (StringUtils.isNotBlank(req.getParameter(MockSearch.PATTERN))) {
-            mockSearch.add(MockSearch.PATTERN, req.getParameter(MockSearch.PATTERN));
-        }
+		// path
+		if (StringUtils.isNotBlank(req.getParameter(MockSearch.PATTERN))) {
+			mockSearch.add(MockSearch.PATTERN, req.getParameter(MockSearch.PATTERN));
+		}
 
 		//enabled
 		if (StringUtils.isNotBlank(req.getParameter(MockSearch.ENABLED))) {
@@ -224,7 +232,7 @@ public class MockConfigurationManager {
 
 		wrappedMockConfiguration.mocks = mockSearch.find();
 
-		if(wrappedMockConfiguration.mocks.size() >= mocksPerPage +1) {
+		if (wrappedMockConfiguration.mocks.size() >= mocksPerPage + 1) {
 			wrappedMockConfiguration.hasNext = true;
 		} else {
 			wrappedMockConfiguration.hasNext = false;
@@ -243,10 +251,8 @@ public class MockConfigurationManager {
 		List<Change> changes = new ArrayList<>(revisions.getContent().size());
 		DiffMatchPatch dmp = new DiffMatchPatch();
 		MockConfiguration mc = null;
-
 		for (Revision<Integer, MockConfiguration> r : revisions.getContent()) {
 			Change c = new Change();
-
 			c.setAuthor(((AuditedRevisionEntity) r.getMetadata().getDelegate()).getAuthor());
 			userRepository.findOneByUserName(c.getAuthor()).ifPresent(new Consumer<User>() {
 				@Override
@@ -254,12 +260,12 @@ public class MockConfigurationManager {
 					c.setAuthor(u.getFirstName() + " " + u.getLastName());
 				}
 			});
-
 			c.setDate(r.getRevisionDate());
 
 			c.getDiffs().putAll(getChangesForObject("", mc, r.getEntity(), MockConfiguration.class, dmp));
 
 			if (!c.getDiffs().isEmpty()) {
+				c.setId(r.getRevisionNumber());
 				changes.add(c);
 			}
 
@@ -285,71 +291,66 @@ public class MockConfigurationManager {
 
 	private void getObjectChangesForTrackChanges(String fieldPrefix, Object o1, Object o2, DiffMatchPatch dmp, Map<String, Map<String, Object>> result, Field f) {
 		try {
-            f.setAccessible(true);
+			f.setAccessible(true);
 
-            Object o1Value = o1 == null ? null : f.get(o1);
-            Object o2Value = o2 == null ? null : f.get(o2);
+			Object o1Value = o1 == null ? null : f.get(o1);
+			Object o2Value = o2 == null ? null : f.get(o2);
 
-            if (!ClassUtils.isPrimitiveOrWrapper(f.getType()) && f.getType() != String.class) {
-
-                o1Value = initializeAndUnproxy(o1Value);
-                o2Value = initializeAndUnproxy(o2Value);
-
-                putObjectChangesToResult(fieldPrefix, dmp, result, f, o1Value, o2Value);
-
-            } else {
-                if (o1Value == null && o2Value == null) {
+			if (!ClassUtils.isPrimitiveOrWrapper(f.getType()) && f.getType() != String.class) {
+				o1Value = initializeAndUnproxy(o1Value);
+				o2Value = initializeAndUnproxy(o2Value);
+				putObjectChangesToResult(fieldPrefix, dmp, result, f, o1Value, o2Value);
+			} else {
+				if (o1Value == null && o2Value == null) {
 					return;
-                }
-                putPrimitiveChangeToResult(fieldPrefix, dmp, result, f, o1Value, o2Value);
-            }
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            log.error("", e);
-        }
+				}
+				putPrimitiveChangeToResult(fieldPrefix, dmp, result, f, o1Value, o2Value);
+			}
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			log.error("", e);
+		}
 	}
 
 	private void putPrimitiveChangeToResult(String fieldPrefix, DiffMatchPatch dmp, Map<String, Map<String, Object>> result, Field f, Object o1Value, Object o2Value) {
 		Map<String, Object> changeValue = new HashMap<>();
 		if ((o1Value == null && o2Value != null) || (o2Value == null && o1Value != null)) {
-            changeValue.put(NEW_VALUE, o2Value);
-            changeValue.put(OLD_VALUE, o1Value);
+			changeValue.put(NEW_VALUE, o2Value);
+			changeValue.put(OLD_VALUE, o1Value);
 
-        } else if (o1Value != null && !o1Value.equals(o2Value)) {
-            if (f.getAnnotation(Lob.class) != null) {
-                changeValue.put("diff", dmp.patchToText(dmp.patchMake((String) o1Value, (String) o2Value)));
-            } else {
-                changeValue.put(NEW_VALUE, o2Value);
-                changeValue.put(OLD_VALUE, o1Value);
-            }
-        }
+		} else if (o1Value != null && !o1Value.equals(o2Value)) {
+
+			changeValue.put(NEW_VALUE, o2Value);
+			changeValue.put(OLD_VALUE, o1Value);
+
+		}
 
 		if (!changeValue.isEmpty()) {
-            result.put(fieldPrefix + f.getName(), changeValue);
-        }
+			result.put(fieldPrefix + f.getName(), changeValue);
+		}
 	}
 
 	private void putObjectChangesToResult(String fieldPrefix, DiffMatchPatch dmp, Map<String, Map<String, Object>> result, Field f, Object o1Value, Object o2Value) {
 		Class<?> fieldType = f.getType();
 		if (o1Value != null && o2Value != null) {
-            fieldType = o2Value.getClass();
-            if (o1Value.getClass() != o2Value.getClass()) {
-                Map<String, Object> changeValue = new HashMap<>();
-                changeValue.put(NEW_VALUE, o2Value.getClass()
-                        .getSimpleName());
-                changeValue.put(OLD_VALUE, o1Value.getClass()
-                        .getSimpleName());
-                result.put(fieldPrefix + f.getName(), changeValue);
-                o1Value = null;
-            }
-        }
+			fieldType = o2Value.getClass();
+			if (o1Value.getClass() != o2Value.getClass()) {
+				Map<String, Object> changeValue = new HashMap<>();
+				changeValue.put(NEW_VALUE, o2Value.getClass()
+						.getSimpleName());
+				changeValue.put(OLD_VALUE, o1Value.getClass()
+						.getSimpleName());
+				result.put(fieldPrefix + f.getName(), changeValue);
+				o1Value = null;
+			}
+		}
 
 		if (o1Value == null && o2Value != null) {
-            fieldType = o2Value.getClass();
-        }
+			fieldType = o2Value.getClass();
+		}
 
 		if (o1Value != null && o2Value == null) {
-            fieldType = o1Value.getClass();
-        }
+			fieldType = o1Value.getClass();
+		}
 
 		result.putAll(getChangesForObject(fieldPrefix + f.getName() + ".", o1Value, o2Value, fieldType, dmp));
 	}
@@ -388,4 +389,111 @@ public class MockConfigurationManager {
 
 		return out;
 	}
+
+	public Change restoreChange(long configId, long changeId) {
+		String oldValue = "";
+		Integer intOldValue;
+		MockConfiguration config = getMockConfiguration(configId);
+		List<Change> changes = getChanges(configId);
+		Change change = changes.stream().filter(c -> c.getId().longValue() == changeId).findFirst().get();
+
+		if (!change.getDiffs().containsKey("configurationContent") && (change.getDiffs().containsKey("configurationContent.script")
+				|| change.getDiffs().containsKey("configurationContent.value"))) {
+
+			if (change.getDiffs().containsKey("configurationContent.script")) {
+				oldValue = (String) change.getDiffs().get("configurationContent.script").get("oldValue");
+			}
+
+			if (change.getDiffs().containsKey("configurationContent.value")) {
+				oldValue = (String) change.getDiffs().get("configurationContent.value").get("oldValue");
+			}
+
+			if (config.getConfigurationContent() instanceof StringConfigurationContent) {
+				StringConfigurationContent content = (StringConfigurationContent) config.getConfigurationContent();
+				content.setValue(oldValue);
+
+			} else if (config.getConfigurationContent() instanceof XmlConfigurationContent) {
+				XmlConfigurationContent content = (XmlConfigurationContent) config.getConfigurationContent();
+				content.setValue(oldValue);
+
+			} else if (config.getConfigurationContent() instanceof GroovyConfigurationContent) {
+				GroovyConfigurationContent content = (GroovyConfigurationContent) config.getConfigurationContent();
+				content.setScript(oldValue);
+			}
+		} else if (change.getDiffs().containsKey("configurationContent")) {
+			Change change1 = changes.stream().filter(c -> c.getId().longValue() < changeId)
+					.filter(c -> change.getDiffs().containsKey("configurationContent.script") ||
+							c.getDiffs().containsKey("configurationContent.value")).findFirst().orElse(null);
+			Class<?> configurationContentClass = map.get(change.getDiffs().get("configurationContent").get("oldValue"));
+			Object configurationContentNewInstance = null;
+            Object newValue = change1.getDiffs().get("configurationContent.value").get("newValue");
+			try {
+				configurationContentNewInstance = configurationContentClass.getConstructor().newInstance();
+				Method method = configurationContentNewInstance.getClass().getMethod("setValue", String.class);
+				setValueMethodInvoke(method, configurationContentNewInstance, newValue);
+				config.setConfigurationContent((ConfigurationContent) configurationContentNewInstance);
+			} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+				log.warn("Exception: ", e);
+			} catch (NoSuchMethodException e) {
+				try {
+					Method method = configurationContentNewInstance.getClass().getMethod("setScript", String.class);
+                    setValueMethodInvoke(method, configurationContentNewInstance, newValue);
+					config.setConfigurationContent((ConfigurationContent) configurationContentNewInstance);
+				} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+					log.warn("Exception: ", ex);
+				}
+			}
+		}
+
+		if (change.getDiffs().containsKey("path")) {
+			oldValue = (String) change.getDiffs().get("path").get("oldValue");
+			oldValue = ObjectUtils.defaultIfNull(oldValue, "");
+			config.setPath(oldValue);
+		}
+
+		if (change.getDiffs().containsKey("pattern")) {
+			oldValue = (String) change.getDiffs().get("pattern").get("oldValue");
+			oldValue = ObjectUtils.defaultIfNull(oldValue, "");
+			config.setPattern(oldValue);
+		}
+
+		if (change.getDiffs().containsKey("name")) {
+			oldValue = (String) change.getDiffs().get("name").get("oldValue");
+			oldValue = ObjectUtils.defaultIfNull(oldValue, "");
+			config.setName(oldValue);
+		}
+
+		if (change.getDiffs().containsKey("description")) {
+			oldValue = (String) change.getDiffs().get("description").get("oldValue");
+			oldValue = ObjectUtils.defaultIfNull(oldValue, "");
+			config.setDescription(oldValue);
+		}
+
+		if (change.getDiffs().containsKey("timeout")) {
+			intOldValue = (Integer) change.getDiffs().get("timeout").get("oldValue");
+			intOldValue = ObjectUtils.defaultIfNull(intOldValue, 0);
+			config.setTimeout(intOldValue);
+		}
+
+		if (change.getDiffs().containsKey("order")) {
+			intOldValue = (Integer) change.getDiffs().get("order").get("oldValue");
+			intOldValue = ObjectUtils.defaultIfNull(intOldValue, 0);
+			config.setOrder(intOldValue);
+
+		}
+
+		if (change.getDiffs().containsKey("status")) {
+			intOldValue = (Integer) change.getDiffs().get("status").get("oldValue");
+			intOldValue = ObjectUtils.defaultIfNull(intOldValue, 0);
+			config.setStatus(intOldValue);
+		}
+
+		saveOrUpdateMockConfiguration(config);
+		return change;
+
+
+	}
+		private void setValueMethodInvoke(Method method, Object newInstance, Object newValue) throws InvocationTargetException, IllegalAccessException {
+			method.invoke(newInstance, newValue);
+		}
 }
