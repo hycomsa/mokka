@@ -38,129 +38,131 @@ import java.util.zip.ZipOutputStream;
 @Slf4j
 public class MockConfigurationImportExportManager {
 
-	@Autowired
-	private QManager qManager;
+    @Autowired
+    private QManager qManager;
 
-	@Autowired
-	private MockConfigurationManager mockConfigurationManager;
+    @Autowired
+    private MockConfigurationManager mockConfigurationManager;
 
-	@Transactional
-	public File createExportFile() throws IOException {
-		File file = File.createTempFile("mce-", ".xml");
-		file.deleteOnExit();
+    @Transactional
+    public File createExportFile() throws IOException {
+        File file = File.createTempFile("mce-", ".xml");
+        file.deleteOnExit();
 
-		@Cleanup
-		FileWriter out = new FileWriter(file);
+        @Cleanup
+        FileWriter out = new FileWriter(file);
 
-		try {
-			JAXBContext jaxbContext = getJaxbContext();
-			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        try {
+            JAXBContext jaxbContext = getJaxbContext();
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-			XmlRoot root = new XmlRoot();
-			root.setMocks(qManager.execute(Q.select("m").from("MockConfig m"), MockConfiguration.class));
-			jaxbMarshaller.marshal(root, out);
+            XmlRoot root = new XmlRoot();
+            root.setMocks(qManager.execute(Q.select("m").from("MockConfig m"), MockConfiguration.class));
+            jaxbMarshaller.marshal(root, out);
 
-		} catch (JAXBException e) {
-			log.error("", e);
-		}finally {
-			out.close();
-		}
+        } catch (JAXBException e) {
+            log.error("", e);
+        } finally {
+            out.close();
+        }
 
-		return file;
-	}
+        return file;
+    }
 
-	private JAXBContext getJaxbContext() throws JAXBException {
-		return JAXBContext.newInstance(XmlRoot.class, MockConfiguration.class, GroovyConfigurationContent.class, XmlConfigurationContent.class, StringConfigurationContent.class);
-	}
+    private JAXBContext getJaxbContext() throws JAXBException {
+        return JAXBContext.newInstance(XmlRoot.class, MockConfiguration.class, GroovyConfigurationContent.class,
+                                       XmlConfigurationContent.class, StringConfigurationContent.class);
+    }
 
-	public void loadMocks(InputStream stream) {
+    public void loadMocks(InputStream stream) {
 
-		try {
-			JAXBContext jaxbContext = getJaxbContext();
-			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+        try {
+            JAXBContext jaxbContext = getJaxbContext();
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 
-			XmlRoot root = (XmlRoot) jaxbUnmarshaller.unmarshal(stream);
+            XmlRoot root = (XmlRoot) jaxbUnmarshaller.unmarshal(stream);
 
-			for (MockConfiguration mc : root.getMocks()) {
-				Q q = Q.select("m").from("MockConfig m").where(Q.eq("m.path", mc.getPath()));
-				if (StringUtils.isNotBlank(mc.getPattern())) {
-					q.and(Q.eq("m.pattern", mc.getPattern()));
-				} else {
-					q.and(Q.isNull("m.pattern"));
-				}
+            for (MockConfiguration mc : root.getMocks()) {
+                Q q = Q.select("m").from("MockConfig m").where(Q.eq("m.path", mc.getPath()));
+                if (StringUtils.isNotBlank(mc.getPattern())) {
+                    q.and(Q.eq("m.pattern", mc.getPattern()));
+                } else {
+                    q.and(Q.isNull("m.pattern"));
+                }
 
-				List<MockConfiguration> databaseMocks = qManager.execute(q, MockConfiguration.class);
-				if (databaseMocks.isEmpty() && mc.getConfigurationContent() != null) {
-					mc.setId(null);
-					mc.setDescription("[FILE UPLOAD] " + mc.getDescription());
-					mc.getConfigurationContent().setId(null);
-					mockConfigurationManager.saveOrUpdateMockConfiguration(mc);
+                List<MockConfiguration> databaseMocks = qManager.execute(q, MockConfiguration.class);
+                if (databaseMocks.isEmpty() && mc.getConfigurationContent() != null) {
+                    mc.setId(null);
+                    mc.setDescription("[FILE UPLOAD] " + mc.getDescription());
+                    mc.getConfigurationContent().setId(null);
+                    mockConfigurationManager.saveOrUpdateMockConfiguration(mc);
 
-				} else if (databaseMocks.size() == 1) {
-					mc.setId(databaseMocks.get(0).getId());
-					mockConfigurationManager.saveOrUpdateMockConfiguration(mc);
+                } else if (databaseMocks.size() == 1) {
+                    mc.setId(databaseMocks.get(0).getId());
+                    mockConfigurationManager.saveOrUpdateMockConfiguration(mc);
 
-				} else {
-					mc.setId(null);
-					mc.setEnabled(false);
-					mc.setDescription("[FILE UPLOAD] " + mc.getDescription());
-					mockConfigurationManager.saveOrUpdateMockConfiguration(mc);
-				}
-			}
+                } else {
+                    mc.setId(null);
+                    mc.setEnabled(false);
+                    mc.setDescription("[FILE UPLOAD] " + mc.getDescription());
+                    mockConfigurationManager.saveOrUpdateMockConfiguration(mc);
+                }
+            }
 
-		} catch (JAXBException e) {
-			log.error("", e);
-		}
-	}
+        } catch (JAXBException e) {
+            log.error("", e);
+        }
+    }
 
-	public File zipFile(File file) throws IOException {
-		File zipFile = new File(StringUtils.removeEnd(System.getProperty("java.io.tmpdir"), File.separator) + File.separator + "mock-configuration-export.zip");
-		zipFile.deleteOnExit();
+    public File zipFile(File file) throws IOException {
+        File zipFile = new File(StringUtils.removeEnd(System.getProperty("java.io.tmpdir"),
+                                                      File.separator) + File.separator + "mock-configuration-export" + ".zip");
+        zipFile.deleteOnExit();
 
-		@Cleanup
-		FileOutputStream fos = new FileOutputStream(zipFile, false);
-		@Cleanup
-		ZipOutputStream zos = new ZipOutputStream(fos);
-		ZipEntry ze = new ZipEntry(file.getName());
-		zos.putNextEntry(ze);
+        @Cleanup
+        FileOutputStream fos = new FileOutputStream(zipFile, false);
+        @Cleanup
+        ZipOutputStream zos = new ZipOutputStream(fos);
+        ZipEntry ze = new ZipEntry(file.getName());
+        zos.putNextEntry(ze);
 
-		@Cleanup
-		FileInputStream in = new FileInputStream(file);
+        @Cleanup
+        FileInputStream in = new FileInputStream(file);
 
-		IOUtils.copy(in, zos);
+        IOUtils.copy(in, zos);
 
-		zos.closeEntry();
+        zos.closeEntry();
 
-		return zipFile;
-	}
+        return zipFile;
+    }
 
-	public File unzip(InputStream stream) throws IOException {
-		File file = null;
+    public File unzip(InputStream stream) throws IOException {
+        File file = null;
 
-		@Cleanup
-		ZipInputStream zis = new ZipInputStream(stream);
-		ZipEntry ze = zis.getNextEntry();
+        @Cleanup
+        ZipInputStream zis = new ZipInputStream(stream);
+        ZipEntry ze = zis.getNextEntry();
 
-		while (ze != null) {
+        while (ze != null) {
 
-			if (!StringUtils.endsWith(ze.getName(), ".xml")) {
-				ze = zis.getNextEntry();
-			}else {
-				file = Files.createTempFile("mce-", "-" + ze.getName()).toFile();
-				file.deleteOnExit();
+            if (!StringUtils.endsWith(ze.getName(), ".xml")) {
+                ze = zis.getNextEntry();
+            } else {
+                file = Files.createTempFile("mce-", "-" + ze.getName()).toFile();
+                file.deleteOnExit();
 
-				@Cleanup
-				FileOutputStream fos = new FileOutputStream(file);
+                @Cleanup
+                FileOutputStream fos = new FileOutputStream(file);
 
-				IOUtils.copy(zis, fos);
-				break;
-			}
-		}
+                IOUtils.copy(zis, fos);
+                break;
+            }
+        }
 
-		zis.closeEntry();
+        zis.closeEntry();
 
-		return file;
-	}
+        return file;
+    }
 
 }

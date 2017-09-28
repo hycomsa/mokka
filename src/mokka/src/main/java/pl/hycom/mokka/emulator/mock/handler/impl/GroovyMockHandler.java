@@ -44,9 +44,11 @@ public class GroovyMockHandler implements MockHandler {
 			binding.setVariable("httpHelper", httpHelper);
 
 			Object value = new GroovyShell(binding).evaluate(content.getScript());
-
-			ctx.getResponse().getWriter().write(value != null ? value.toString() : StringUtils.EMPTY);
-
+if(ctx.getResponse()!=null) {
+	ctx.getResponse().getWriter().write(value != null ? value.toString() : StringUtils.EMPTY);
+}else{
+	ctx.getResponseMessage().setText(value != null ? value.toString() : StringUtils.EMPTY);
+}
 			StringBuilder responseLog = createResponseLog(content, binding, value);
 
 			ctx.getLogBuilder().response(responseLog.toString()).status(LogStatus.OK);

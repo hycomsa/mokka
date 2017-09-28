@@ -17,23 +17,28 @@ import pl.hycom.mokka.emulator.mock.model.StringConfigurationContent;
 @Slf4j
 public class StringMockHandler implements MockHandler {
 
-	@Override
-	public boolean canHandle(MockConfiguration mockConfiguration, MockContext ctx) {
-		return mockConfiguration != null && mockConfiguration.getConfigurationContent() instanceof StringConfigurationContent;
-	}
+    @Override
+    public boolean canHandle(MockConfiguration mockConfiguration, MockContext ctx) {
+        return mockConfiguration != null && mockConfiguration
+                .getConfigurationContent() instanceof StringConfigurationContent;
+    }
 
-	@Override
-	public void handle(MockConfiguration mockConfiguration, MockContext ctx) throws MockHandlerException {
-		try {
-			StringConfigurationContent content = (StringConfigurationContent) mockConfiguration.getConfigurationContent();
+    @Override
+    public void handle(MockConfiguration mockConfiguration, MockContext ctx) throws MockHandlerException {
+        try {
+            StringConfigurationContent content = (StringConfigurationContent) mockConfiguration
+                    .getConfigurationContent();
+            if (ctx.getResponse() != null) {
+                ctx.getResponse().getWriter().write(content.getValue());
+            } else {
+                ctx.getResponseMessage().setText(content.getValue());
+            }
+            ctx.getLogBuilder().response(content.getValue()).status(LogStatus.OK);
 
-			ctx.getResponse().getWriter().write(content.getValue());
-			ctx.getLogBuilder().response(content.getValue()).status(LogStatus.OK);
+        } catch (Exception e) {
+            log.error("", e);
+            ctx.getLogBuilder().response(e.getMessage()).status(LogStatus.ERROR);
+        }
 
-		} catch (Exception e) {
-			log.error("", e);
-			ctx.getLogBuilder().response(e.getMessage()).status(LogStatus.ERROR);
-		}
-
-	}
+    }
 }

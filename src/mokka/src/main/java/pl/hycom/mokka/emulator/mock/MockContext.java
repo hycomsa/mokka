@@ -2,6 +2,7 @@ package pl.hycom.mokka.emulator.mock;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.activemq.command.ActiveMQTextMessage;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.DocumentException;
@@ -11,6 +12,9 @@ import org.dom4j.io.XMLWriter;
 import pl.hycom.mokka.emulator.logs.model.Log;
 import pl.hycom.mokka.emulator.logs.model.Log.LogBuilder;
 
+import javax.jms.JMSException;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,52 +30,71 @@ import java.sql.Timestamp;
 @Slf4j
 public class MockContext {
 
-	private String uri;
-	private String requestBody;
-	private String from;
+    private String uri;
 
-	private LogBuilder logBuilder;
+    private String requestBody;
 
-	private HttpServletRequest request;
-	private HttpServletResponse response;
+    private String from;
 
-	public MockContext(HttpServletRequest request, HttpServletResponse response) throws DocumentException {
-		this.request = request;
-		this.response = response;
-		uri = StringUtils.removeStart((String) request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI), "/");
-		requestBody = getRequestBody(request);
-		from = getSenderAddress(request);
+    private LogBuilder logBuilder;
 
-		logBuilder = Log.builder().uri(uri).request(requestBody).from(from).date(new Timestamp(System.currentTimeMillis()));
-	}
+    private HttpServletRequest request;
 
-	private static String getSenderAddress(HttpServletRequest request) {
-		if (StringUtils.isNotBlank(request.getHeader("X-Forwarded-For"))) {
-			return request.getHeader("X-Forwarded-For");
-		}
+    private HttpServletResponse response;
 
-		if (StringUtils.isNotBlank(request.getRemoteHost())) {
-			return request.getRemoteHost();
-		}
+    private ActiveMQTextMessage requestMessage;
 
-		return request.getRemoteAddr();
-	}
+    private TextMessage responseMessage;
 
-	private static String getRequestBody(HttpServletRequest req) throws DocumentException {
-		try {
-			String result = IOUtils.toString(new InputStreamReader(req.getInputStream()));
-			StringWriter sw = new StringWriter();
-			new XMLWriter(sw, OutputFormat.createPrettyPrint()).write(DocumentHelper.parseText(result));
-			result = sw.toString();
 
-			return result;
-		} catch (IOException e) {
-			log.error("", e);
-		}catch(DocumentException e){
-			log.error("",e);
-			return StringUtils.EMPTY;
-		}
+    public MockContext(HttpServletRequest request, HttpServletResponse response) throws DocumentException {
+        this.request = request;
+        this.response = response;
+        uri = StringUtils.removeStart((String) request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI), "/");
+        requestBody = getRequestBody(request);
+        from = getSenderAddress(request);
 
-		return null;
-	}
+        logBuilder = Log.builder().uri(uri).request(requestBody).from(from)
+                .date(new Timestamp(System.currentTimeMillis()));
+    }
+
+    public MockContext(ActiveMQTextMessage requestMessage, TextMessage responseMessage) throws DocumentException, JMSException {
+        this.requestMessage = requestMessage;
+        this.responseMessage = responseMessage;
+        uri = requestMessage.getDestination().getPhysicalName();
+        requestBody = requestMessage.getText();
+
+        logBuilder = Log.builder().uri(uri).request(requestBody).from(from)
+                .date(new Timestamp(System.currentTimeMillis()));
+    }
+
+    private static String getSenderAddress(HttpServletRequest request) {
+        if (StringUtils.isNotBlank(request.getHeader("X-Forwarded-For"))) {
+            return request.getHeader("X-Forwarded-For");
+        }
+
+        if (StringUtils.isNotBlank(request.getRemoteHost())) {
+            return request.getRemoteHost();
+        }
+
+        return request.getRemoteAddr();
+    }
+
+    private static String getRequestBody(HttpServletRequest req) throws DocumentException {
+        try {
+            String result = IOUtils.toString(new InputStreamReader(req.getInputStream()));
+            StringWriter sw = new StringWriter();
+            new XMLWriter(sw, OutputFormat.createPrettyPrint()).write(DocumentHelper.parseText(result));
+            result = sw.toString();
+
+            return result;
+        } catch (IOException e) {
+            log.error("", e);
+        } catch (DocumentException e) {
+            log.error("", e);
+            return StringUtils.EMPTY;
+        }
+
+        return null;
+    }
 }

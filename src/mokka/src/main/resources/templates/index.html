@@ -1,95 +1,103 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en" ng-app="ConfiguratorApp">
 
-	<head>
-	  	<meta charset="utf-8"></meta>
-	  	<meta name="_csrf" th:content="${_csrf.token}"/>
-  		<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+<head>
+    <meta charset="utf-8"></meta>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
-	  	<title>Mokka</title>
-		<link rel="icon" type="image/png" href="static/favicon.ico"/>
-	  	<link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc4/angular-material.min.css" />
-	  	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
-	  	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/tomorrow.min.css" />
-		<link rel="stylesheet" type="text/css" th:href="@{css/datetimepicker/picker.css}" />
-		<link rel="stylesheet" type="text/css" th:href="@{css/styles.css}" />
-	  	<link rel="stylesheet" type="text/css" th:href="@{css/{path}/styles.css(path=${path})}" />
-	</head>
+    <title>Mokka</title>
+    <link rel="icon" type="image/png" href="static/favicon.ico"/>
+    <link rel="stylesheet" type="text/css"
+          href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc4/angular-material.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/tomorrow.min.css"/>
+    <link rel="stylesheet" type="text/css" th:href="@{css/datetimepicker/picker.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{css/styles.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{css/{path}/styles.css(path=${path})}"/>
+</head>
 
-	<body>
-		<md-toolbar>
-	      <div class="md-toolbar-tools">
-	        <h2>
-	          <span>Mokka</span>
-	          <span th:if="${path == 'login'}">&nbsp;>&nbsp;Login</span>
-	          <span th:if="${path == 'log'}">&nbsp;>&nbsp;Logs</span>
-	          <span th:if="${path == 'configuration'}">&nbsp;>&nbsp;Http Mock Configuration</span>
-	          <span th:if="${path == 'jmsconfiguration'}">&nbsp;>&nbsp;Jms Mock Configuration</span>
-	        </h2>
+<body>
+<md-toolbar>
+    <div class="md-toolbar-tools">
+        <h2>
+            <span>Mokka</span>
+            <span th:if="${path == 'login'}">&nbsp;>&nbsp;Login</span>
+            <span th:if="${path == 'log'}">&nbsp;>&nbsp;Logs</span>
+            <span th:if="${path == 'configuration'}">&nbsp;>&nbsp;Mock Configuration</span>
+            <!--<span th:if="${path == 'jmsconfiguration'}">&nbsp;>&nbsp;Jms Mock Configuration</span>-->
+        </h2>
 
-			<md-menu sec:authorize="hasRole('ROLE_USER')">
-			  <md-button aria-label="Navigation" class="md-icon-button" ng-click="$mdOpenMenu($event)">
-			    <ng-md-icon icon="menu" style="fill: #fff"></ng-md-icon>
-			  </md-button>
-			  <md-menu-content width="4">
-			    <md-menu-item th:if="${path != 'log'}">
-			      <md-button th:href="@{/logs}" target="_self">Logs</md-button>
-			    </md-menu-item>
-			    <md-menu-item th:if="${path != 'configuration'}">
-			      <md-button th:href="@{/configurations}" target="_self">Http Mock Configuration</md-button>
-			    </md-menu-item>
-				  <md-menu-item th:if="${path != 'jmsconfiguration'}">
-					  <md-button th:href="@{/jmsconfigurations}" target="_self">Jms Mock Configuration</md-button>
-				  </md-menu-item>
-			    <md-menu-item th:if="${path != 'model'}" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
-			      <md-button th:href="@{/models}" target="_self">Model</md-button>
-			    </md-menu-item>
-			    <md-menujmsconfiguration-item th:if="${path != 'user'}" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER_ADMIN')">
-			      <md-button th:href="@{/users}" target="_self">Users</md-button>
-			    </md-menujmsconfiguration-item>
-			  </md-menu-content>
-			</md-menu>
+        <md-menu sec:authorize="hasRole('ROLE_USER')">
+            <md-button aria-label="Navigation" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                <ng-md-icon icon="menu" style="fill: #fff"></ng-md-icon>
+            </md-button>
+            <md-menu-content width="4">
+                <md-menu-item th:if="${path != 'log'}">
+                    <md-button th:href="@{/logs}" target="_self">Logs</md-button>
+                </md-menu-item>
+                <md-menu-item th:if="${path != 'configuration'}">
+                    <md-button th:href="@{/configurations}" target="_self">Mock Configuration</md-button>
+                </md-menu-item>
+                <!--<md-menu-item th:if="${path != 'jmsconfiguration'}">
+                    <md-button th:href="@{/jmsconfigurations}" target="_self">Jms Mock Configuration</md-button>
+                </md-menu-item>-->
+                <md-menu-item th:if="${path != 'model'}" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
+                    <md-button th:href="@{/models}" target="_self">Model</md-button>
+                </md-menu-item>
+                <md-menujmsconfiguration-item th:if="${path != 'user'}"
+                                              sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER_ADMIN')">
+                    <md-button th:href="@{/users}" target="_self">Users</md-button>
+                </md-menujmsconfiguration-item>
+            </md-menu-content>
+        </md-menu>
 
-	        <span flex=""></span>
+        <span flex=""></span>
 
-	        <div sec:authorize="hasRole('ROLE_USER')" layout="row" layout-align="space-around center">
-	        	<h2>
-	        		<span sec:authentication="principal.firstName">Bob</span>
-	        		&nbsp;
-	        		<span sec:authentication="principal.lastName">Bob</span>
-		        </h2>
+        <div sec:authorize="hasRole('ROLE_USER')" layout="row" layout-align="space-around center">
+            <h2>
+                <span sec:authentication="principal.firstName">Bob</span>
+                &nbsp;
+                <span sec:authentication="principal.lastName">Bob</span>
+            </h2>
 
-		        <md-menu>
-					<md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">
-					  	<ng-md-icon icon="arrow_drop_down" style="fill: #fff"></ng-md-icon>
-					</md-button>
-					<md-menu-content width="4">
-						<md-menu-item><md-button th:href="@{/change-password}" target="_self">Change password</md-button></md-menu-item>
-						<md-menu-item><md-button th:href="@{/logout}" target="_self">Logout</md-button></md-menu-item>
-					</md-menu-content>
-		        </md-menu>
+            <md-menu>
+                <md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                    <ng-md-icon icon="arrow_drop_down" style="fill: #fff"></ng-md-icon>
+                </md-button>
+                <md-menu-content width="4">
+                    <md-menu-item>
+                        <md-button th:href="@{/change-password}" target="_self">Change password</md-button>
+                    </md-menu-item>
+                    <md-menu-item>
+                        <md-button th:href="@{/logout}" target="_self">Logout</md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
 
-	        </div>
-	      </div>
-	    </md-toolbar>
+        </div>
+    </div>
+</md-toolbar>
 
-		<div id="main-container" ng-cloak="" th:include="${#strings.concat(path, '/page')} :: main"></div>
+<div id="main-container" ng-cloak="" th:include="${#strings.concat(path, '/page')} :: main"></div>
 
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc4/angular-material.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material-icons/0.7.0/angular-material-icons.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/danialfarid-angular-file-upload/12.0.4/ng-file-upload.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js"></script>
-		<script src="https://angular-ui.github.io/ui-ace/dist/ui-ace.min.js"></script>
-		<script th:src="@{js/datetimepicker/picker.js}"></script>
-		<script th:src="@{js/lazy-scroll.min.js}"></script>
-		<script th:src="@{js/script.js}"></script>
-		<script th:src="@{js/{path}/service.js(path=${path})}"></script>
-		<script th:src="@{js/{path}/controller.js(path=${path})}"></script>
-	</body>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc4/angular-material.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material-icons/0.7.0/angular-material-icons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/danialfarid-angular-file-upload/12.0.4/ng-file-upload.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js"></script>
+<script src="https://angular-ui.github.io/ui-ace/dist/ui-ace.min.js"></script>
+<script th:src="@{js/datetimepicker/picker.js}"></script>
+<script th:src="@{js/lazy-scroll.min.js}"></script>
+<script th:src="@{js/script.js}"></script>
+<script th:src="@{js/{path}/service.js(path=${path})}"></script>
+<script th:src="@{js/{path}/controller.js(path=${path})}"></script>
+</body>
 
 </html>

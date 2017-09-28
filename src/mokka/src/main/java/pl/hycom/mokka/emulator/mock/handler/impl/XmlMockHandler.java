@@ -21,28 +21,40 @@ import pl.hycom.mokka.util.thymeleaf.TemplateParser;
 @Slf4j
 public class XmlMockHandler implements MockHandler {
 
-	@Autowired
-	private TemplateParser templateParser;
+    @Autowired
+    private TemplateParser templateParser;
 
-	@Override
-	public boolean canHandle(MockConfiguration mockConfiguration, MockContext ctx) {
-		return mockConfiguration != null && mockConfiguration.getConfigurationContent() instanceof XmlConfigurationContent;
-	}
+    @Override
+    public boolean canHandle(MockConfiguration mockConfiguration, MockContext ctx) {
+        return mockConfiguration != null && mockConfiguration
+                .getConfigurationContent() instanceof XmlConfigurationContent;
+    }
 
-	@Override
-	public void handle(MockConfiguration mockConfiguration, MockContext ctx) throws MockHandlerException {
-		try {
-			XmlConfigurationContent content = (XmlConfigurationContent) mockConfiguration.getConfigurationContent();
+    @Override
+    public void handle(MockConfiguration mockConfiguration, MockContext ctx) throws MockHandlerException {
+        try {
+            XmlConfigurationContent content = (XmlConfigurationContent) mockConfiguration.getConfigurationContent();
+            String response;
+            if (ctx.getRequest()!=null) {
 
-			String response = templateParser.parse(content.getValue(), ImmutableMap.of("ctx", ctx, "mockConfiguration", mockConfiguration), ctx.getRequest(), ctx.getResponse());
+                 response = templateParser
+                        .parse(content.getValue(), ImmutableMap.of("ctx", ctx, "mockConfiguration", mockConfiguration),
+                               ctx.getRequest(), ctx.getResponse());
+            }else{
+                response=content.getValue();
+            }
+            if (ctx.getResponse() != null) {
+                ctx.getResponse().getWriter().write(response);
+            } else {
+                ctx.getResponseMessage().setText(response);
 
-			ctx.getResponse().getWriter().write(response);
-			ctx.getLogBuilder().response(response).status(LogStatus.OK);
+            }
+            ctx.getLogBuilder().response(response).status(LogStatus.OK);
 
-		} catch (Exception e) {
-			log.error("", e);
-			ctx.getLogBuilder().response(e.getMessage()).status(LogStatus.ERROR);
-		}
+        } catch (Exception e) {
+            log.error("", e);
+            ctx.getLogBuilder().response(e.getMessage()).status(LogStatus.ERROR);
+        }
 
-	}
+    }
 }
