@@ -9,7 +9,7 @@ addons:
 before_install:
 - cd src
 script:
-- mvn org.jacoco:jacoco-maven-plugin:prepare-agent sonar:sonar
+- mvn package org.jacoco:jacoco-maven-plugin:prepare-agent sonar:sonar
 cache:
   directories:
     - '$HOME/.m2/repository'
