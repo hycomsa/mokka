@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -408,7 +409,13 @@ public class MockConfigurationManager {
         Integer intOldValue;
         MockConfiguration config = getMockConfiguration(configId);
         List<Change> changes = getChanges(configId);
-        Change change = changes.stream().filter(c -> c.getId().longValue() == changeId).findFirst().get();
+        Optional<Change> optionalChange = changes.stream().filter(c -> c.getId().longValue() == changeId).findFirst();
+
+        if (!optionalChange.isPresent()) {
+            throw new IllegalArgumentException("No change found for config id " + configId + " with change id " + changeId);
+        }
+
+        Change change = optionalChange.get();
 
         if (!change.getDiffs().containsKey("configurationContent") && (change.getDiffs()
                 .containsKey("configurationContent.script") || change.getDiffs()
