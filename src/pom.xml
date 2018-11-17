@@ -12,7 +12,7 @@
 
     <groupId>pl.hycom.mokka</groupId>
     <artifactId>mokka-parent</artifactId>
-    <version>0.2.2-SNAPSHOT</version>
+    <version>0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Mokka :: Parent</name>
 

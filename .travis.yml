@@ -8,11 +8,12 @@ addons:
       secure: $SONAR_TOKEN
 before_install:
 - cd src
-install:
-- mvn org.jacoco:jacoco-maven-plugin:prepare-agent install -DskipTests=true -Dmaven.javadoc.skip=true
-  -B -V
 script:
-- mvn test sonar:sonar
+- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
+cache:
+  directories:
+    - '$HOME/.m2/repository'
+    - '$HOME/.sonar/cache'
 deploy:
   provider: releases
   overwrite: true
