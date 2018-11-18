@@ -3,8 +3,11 @@ package pl.hycom.mokka.util.thymeleaf;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.spring4.SpringTemplateEngine;
-import org.thymeleaf.spring4.context.SpringWebContext;
+import org.thymeleaf.context.IContext;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.context.WebEngineContext;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.templateresolver.StringTemplateResolver;
 import pl.hycom.mokka.Application;
 
 import javax.servlet.ServletContext;
@@ -32,10 +35,10 @@ public class TemplateParser {
 			return content;
 		}
 
-		SpringWebContext context = new SpringWebContext(request, response, servletContext, Locale.getDefault(), variables, Application.APPLICATION_CONTEXT);
+		IContext context = new WebEngineContext(request, response, servletContext, Locale.getDefault(), variables, Application.APPLICATION_CONTEXT);
 
 		SpringTemplateEngine engine = new SpringTemplateEngine();
-		engine.setTemplateResolver(new StringTemplateResolver(content));
+		engine.setTemplateResolver(new StringTemplateResolver());
 
 		return engine.process(Integer.toString(content.hashCode()), context);
 	}
