@@ -1,6 +1,6 @@
 package pl.hycom.mokka.endpoint;
 
-import com.jayway.restassured.RestAssured;
+import io.restassured.RestAssured;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 import pl.hycom.mokka.AbstractTest;
 
-import static com.jayway.restassured.RestAssured.expect;
+import static io.restassured.RestAssured.expect;
+
 
 /**
  * @author Mariusz Krysztofowicz (mariusz.krysztofowicz@hycom.pl)

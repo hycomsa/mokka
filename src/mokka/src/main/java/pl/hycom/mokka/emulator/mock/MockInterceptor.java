@@ -23,7 +23,7 @@ import java.util.List;
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.
  */
 @Slf4j
-@Component
+//@Component
 @Scope("request")
 public class MockInterceptor extends HandlerInterceptorAdapter {
 

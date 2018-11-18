@@ -16,7 +16,13 @@ import org.springframework.data.history.Revisions;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import pl.hycom.mokka.emulator.mock.model.*;
+import pl.hycom.mokka.emulator.mock.model.Change;
+import pl.hycom.mokka.emulator.mock.model.ConfigurationContent;
+import pl.hycom.mokka.emulator.mock.model.GroovyConfigurationContent;
+import pl.hycom.mokka.emulator.mock.model.MockConfiguration;
+import pl.hycom.mokka.emulator.mock.model.StringConfigurationContent;
+import pl.hycom.mokka.emulator.mock.model.WrappedMockConfiguration;
+import pl.hycom.mokka.emulator.mock.model.XmlConfigurationContent;
 import pl.hycom.mokka.security.UserRepository;
 import pl.hycom.mokka.security.model.AuditedRevisionEntity;
 import pl.hycom.mokka.security.model.User;
@@ -29,6 +35,8 @@ import javax.transaction.Transactional;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -121,7 +129,7 @@ public class MockConfigurationManager {
     @Synchronized
     public boolean removeMockConfiguration(Long id) {
         try {
-            repository.delete(id);
+            repository.deleteById(id);
             log.info(MOCK_ID + id + ") deleted");
             return true;
         } catch (Exception e) {
@@ -130,7 +138,7 @@ public class MockConfigurationManager {
 
         updatePathcache();
 
-        return repository.findOne(id) == null;
+        return !repository.findById(id).isPresent();
     }
 
     public MockConfiguration findFirstAvailableMockConfiguration(String path, String requestBody) {
@@ -168,15 +176,11 @@ public class MockConfigurationManager {
             return false;
         }
 
-        MockConfiguration mock = repository.findOne(id);
-        if (mock == null) {
-            return false;
-        }
+        Optional<MockConfiguration> mock = repository.findById(id);
+        mock.ifPresent(m -> m.setEnabled(enabled));
+        mock.ifPresent(this::saveOrUpdateMockConfiguration);
 
-        mock.setEnabled(enabled);
-        saveOrUpdateMockConfiguration(mock);
-
-        return true;
+        return mock.isPresent();
     }
 
     public boolean existsPath(String path) {
@@ -194,18 +198,15 @@ public class MockConfigurationManager {
     }
 
     public MockConfiguration getMockConfiguration(long id) {
-        return repository.findOne(id);
+        return repository.findById(id).orElse(null);
     }
 
     public WrappedMockConfiguration getMockConfigurations(HttpServletRequest req) {
         if (StringUtils.isNumeric(req.getParameter("show"))) {
-            MockConfiguration mc = repository.findOne(Long.parseLong(req.getParameter("show")));
+            Optional<MockConfiguration> mc = repository.findById(Long.parseLong(req.getParameter("show")));
 
-            if (mc == null) {
-                Collections.emptyList();
-            } else {
-                ImmutableList.of(mc);
-            }
+            wrappedMockConfiguration.mocks = mc.<List<MockConfiguration>>map(ImmutableList::of)
+                .orElse(Collections.emptyList());
         }
 
         if (StringUtils.isNumeric(req.getParameter("from"))) {
@@ -269,12 +270,12 @@ public class MockConfigurationManager {
                     c.setAuthor(u.getFirstName() + " " + u.getLastName());
                 }
             });
-            c.setDate(r.getRevisionDate());
 
+            r.getRevisionInstant().ifPresent(i -> c.setDate(LocalDateTime.ofInstant(i, ZoneOffset.UTC)));
             c.getDiffs().putAll(getChangesForObject("", mc, r.getEntity(), MockConfiguration.class, dmp));
 
             if (!c.getDiffs().isEmpty()) {
-                c.setId(r.getRevisionNumber());
+                r.getRevisionNumber().ifPresent(c::setId);
                 changes.add(c);
             }
 

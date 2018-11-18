@@ -1,18 +1,16 @@
 package pl.hycom.mokka.emulator.mock.model;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonView;
-import org.joda.time.DateTime;
-
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import lombok.Data;
 import pl.hycom.mokka.emulator.mock.TrackChanges;
 import pl.hycom.mokka.web.json.JsonJodaDateTimeSerializer;
 import pl.hycom.mokka.web.json.View;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.
@@ -25,7 +23,7 @@ public class Change implements Serializable {
 	private Integer id;
 
 	@JsonSerialize(using = JsonJodaDateTimeSerializer.class)
-	private DateTime date;
+	private LocalDateTime date;
 
 	private String author;
 

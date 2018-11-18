@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -72,7 +73,7 @@ public class UserManager {
 
 	@Transactional
 	public User getUser(long id) {
-		return userRepository.findOne(id);
+		return userRepository.findById(id).orElse(null);
 	}
 
 	@Transactional
@@ -81,28 +82,24 @@ public class UserManager {
 			return false;
 		}
 
-		User user = userRepository.findOne(id);
-		if (user == null) {
-			return false;
-		}
+		Optional<User> user = userRepository.findById(id);
+		user.ifPresent(u -> u.setDisabled(disable));
+		user.ifPresent(u -> userRepository.save(u));
 
-		user.setDisabled(disable);
-		userRepository.save(user);
-
-		return true;
+		return user.isPresent();
 	}
 
 	@Transactional
 	public boolean removeUser(long id) {
 		try {
-			userRepository.delete(id);
+			userRepository.deleteById(id);
 			log.info("User (id: " + id + ") deleted");
 			return true;
 		} catch (Exception e) {
 			log.error("Userk (id: " + id + ") could not be deleted", e);
 		}
 
-		return userRepository.findOne(id) == null;
+		return userRepository.findById(id).isPresent();
 	}
 
 	@Transactional

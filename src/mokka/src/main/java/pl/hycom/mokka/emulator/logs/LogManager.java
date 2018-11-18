@@ -45,7 +45,7 @@ public class LogManager {
 	}
 
 	@Async
-	private void updateLogCache() {
+	protected void updateLogCache() {
 		logCache.set(repository.findUniqueLogs());
 		log.debug("logCache updated and contains " + logCache.get().size() + " items");
 	}
@@ -111,12 +111,12 @@ public class LogManager {
 	}
 
 	public Log getLog(long id) {
-		return repository.findOne(id);
+		return repository.findById(id).orElse(null);
 	}
 
 	public boolean removeLog(Long id) {
 		try {
-			repository.delete(id);
+			repository.deleteById(id);
 			log.info("Log (id: " + id + ") deleted");
 			return true;
 		} catch (Exception e) {
