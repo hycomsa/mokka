@@ -4,6 +4,9 @@
 # Ignore eclipse project files
 **/.externalToolBuilders
 **/.settings
+**/.classpath
+**/.project
+**/.springBeans
 **/target
 
 **/eclipsebin
