@@ -4,11 +4,10 @@ package pl.hycom.mokka.util.validation;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Component;
-import sun.security.jca.ProviderList;
-import sun.security.jca.Providers;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 
 /**
  * @author Mariusz Krysztofowicz (mariusz.krysztofowicz@hycom.pl)
@@ -24,8 +23,8 @@ public class DefaultHashGenerator implements HashGenerator {
         if (chain == null || algorithm == null || key == null) {
             return "";
         }
-        Providers.setProviderList(ProviderList.add(Providers.getProviderList(), new BouncyCastleProvider()));
-        MessageDigest md = null;
+        Security.addProvider(new BouncyCastleProvider());
+        MessageDigest md;
         try {
             md = MessageDigest.getInstance(algorithm.name());
         } catch (NoSuchAlgorithmException e) {
