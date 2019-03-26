@@ -64,7 +64,7 @@ public class FileController {
         String contentDisposition = StringUtils.defaultIfEmpty(requestContentDisposition, defaultContentDisposition);
         headers.add("Content-Disposition", contentDisposition + "; filename=" + file.getName());
         String mimeType = URLConnection.guessContentTypeFromName(file.getName());
-        if (StringUtils.isNotBlank(mimeType) && MediaType.parseMediaType(mimeType) != null) {
+        if (StringUtils.isNotBlank(mimeType)) {
             headers.setContentType(MediaType.parseMediaType(mimeType));
         }
         headers.setContentLength(file.length());
