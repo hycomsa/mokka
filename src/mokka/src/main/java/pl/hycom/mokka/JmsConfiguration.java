@@ -41,7 +41,7 @@ public class JmsConfiguration {
     }
 
     @Bean
-    public DefaultMessageListenerContainer defaultMessageListenerContainer() throws Exception {
+    public DefaultMessageListenerContainer defaultMessageListenerContainer() {
         DefaultMessageListenerContainer defaultMessageListenerContainer = new DefaultMessageListenerContainer();
 
         defaultMessageListenerContainer.setMessageListener(jmsSessionAwareMessageListenerImpl());
@@ -51,9 +51,8 @@ public class JmsConfiguration {
     }
 
     @Bean
-    public JmsSessionAwareMessageListenerImpl jmsSessionAwareMessageListenerImpl() throws Exception {
-        JmsSessionAwareMessageListenerImpl jmsSessionAwareMessageListenerImpl = new JmsSessionAwareMessageListenerImpl();
-        return jmsSessionAwareMessageListenerImpl;
+    public JmsSessionAwareMessageListenerImpl jmsSessionAwareMessageListenerImpl() {
+        return new JmsSessionAwareMessageListenerImpl();
     }
 
 }

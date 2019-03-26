@@ -39,16 +39,15 @@ public class JmsSessionAwareMessageListenerImpl implements SessionAwareMessageLi
         try {
             TextMessage response = session.createTextMessage();
             if (message instanceof ActiveMQTextMessage) {
-                TextMessage txtMsg = (TextMessage) message;
                 MockContext mockContext=new MockContext((ActiveMQTextMessage)message,response);
                 MockConfiguration mockConfiguration =    mockFinder.findMock(mockContext);
                 handleMockResponse(mockContext,mockConfiguration);
             }
 
             response.setJMSCorrelationID(message.getJMSCorrelationID());
-            MessageProducer replyProducer = session.createProducer(null);
-
-            replyProducer.send(message.getJMSReplyTo(), response);
+            try (MessageProducer replyProducer = session.createProducer(null)) {
+                replyProducer.send(message.getJMSReplyTo(), response);
+            }
         }catch (Exception e) {
             log.error("Unexpected error occurred during message handling {}",e);
         }
