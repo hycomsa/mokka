@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -39,6 +40,9 @@ public class LogManager {
 
 	private AtomicReference<Set<Log>> logCache = new AtomicReference<>();
 
+	@Value("${create.logs.enabled}")
+	private boolean createLogsEnabled;
+
 	@Scheduled(fixedDelay = 5 * 60 * 1000)
 	public void reportCurrentTime() {
 		updateLogCache();
@@ -52,7 +56,10 @@ public class LogManager {
 
 	@Transactional
 	public void saveLog(LogBuilder logBuilder) {
-		repository.save(logBuilder.build());
+		log.debug("CreateLogsEnabled flag has been set to[{}]",createLogsEnabled);
+		if(createLogsEnabled) {
+			repository.save(logBuilder.build());
+		}
 	}
 
 	public List<Log> getLogs(HttpServletRequest req) {
