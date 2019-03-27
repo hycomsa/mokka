@@ -26,9 +26,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().ignoringAntMatchers("/bluemedia/**").and()
-				.authorizeRequests().antMatchers("/bluemedia/**", "/files/**").permitAll().and()
-				.authorizeRequests().anyRequest().authenticated()
-				.and()
+            // mgmt console
+            .authorizeRequests().antMatchers("/configurations/**", "/logs/**", "/change-password/**", "/users/**", "/models/**").authenticated().and()
+            // bluemedia and files pattern are redundantly listed on purpose - to remember we have such
+            .authorizeRequests().antMatchers("/bluemedia/**", "/files/**", "/**").permitAll()
+            .and()
 				.formLogin()
 				.loginPage("/login")
 				.permitAll()
@@ -36,7 +38,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.logout()
 				.permitAll();
 	}
-	
+
 	@Override
     public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/js/**", "/css/**");
