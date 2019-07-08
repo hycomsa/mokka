@@ -33,7 +33,9 @@ public class UserController {
 
 	@RequestMapping(value = "/user/current", method = RequestMethod.GET)
 	public CurrentUser getCurrentUser() {
-		if (SecurityContextHolder.getContext() == null || SecurityContextHolder.getContext().getAuthentication() == null) {
+		if (SecurityContextHolder.getContext() == null || SecurityContextHolder.getContext()
+				.getAuthentication() == null || !(SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal() instanceof CurrentUser)) {
 			return null;
 		}
 		return (CurrentUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

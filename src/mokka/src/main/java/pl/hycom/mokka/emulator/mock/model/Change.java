@@ -2,9 +2,9 @@ package pl.hycom.mokka.emulator.mock.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Data;
 import pl.hycom.mokka.emulator.mock.TrackChanges;
-import pl.hycom.mokka.web.json.JsonJodaDateTimeSerializer;
 import pl.hycom.mokka.web.json.View;
 
 import java.io.Serializable;
@@ -22,7 +22,7 @@ public class Change implements Serializable {
 	@TrackChanges
 	private Integer id;
 
-	@JsonSerialize(using = JsonJodaDateTimeSerializer.class)
+	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime date;
 
 	private String author;

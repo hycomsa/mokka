@@ -3,25 +3,24 @@ jdk:
 - oraclejdk8
 addons:
   sonarcloud:
-    organization: "hycom"
+    organization: hycom
     token:
-      secure: $SONAR_TOKEN
+      secure: "$SONAR_TOKEN"
 before_install:
 - cd src
 script:
 - mvn test org.jacoco:jacoco-maven-plugin:prepare-agent sonar:sonar
 cache:
   directories:
-    - '$HOME/.m2/repository'
-    - '$HOME/.sonar/cache'
+  - "$HOME/.m2/repository"
+  - "$HOME/.sonar/cache"
 deploy:
   provider: releases
   overwrite: true
   api_key:
-    secure: CEetRH+3aLa+yX9koWD9owehFiqBlEdg6fGi1mGHqf/nYWQHPb5AVWF/G2fVKAckL4pArSi+Zpx5ERBYknKnwe4DjXqlHcubUxpOi99Gd1/fiiqQFsKseMwo4amQplZMdFtTS0fNR0a/vzYFaSunK4FtDzJOSyj9v/jw3u5Cmbp8Hi09sxA+wUzBSowpTZkAawMJKKjEIKxYVacbSolZBtN4wgZpuDwmcfQJPeyv/9AvQaNDgk1QvBtAOXWIx3t6z/1gNpjqfdCg33X1Ql/tzs40GzvoQY7fdco0SyaJqusHxCI3mqEacYPe8DfB/Rly/xYYf7PVWmwqMOvDTGsu2m14TUX7kDQYrE+JBdJaDZGIBUGIaKUjuDHCg9EBXmgseHrKUkzb/kTdA7Ga98w0GYurMigOzOvjFyrEMxuy7RYyz346HuQJ1jgCOmCtQ5UQfmHoEvGPTPzROGt3ta7TOAsoKMx7FuLh2Ljfj9zEq7pyofIPSAuW3zOZv3kW+/xI6YfUlTBkrWUMXU7+OlJv1TvzoMjsa+fpdV+hQpdmBQthVwGOK6A+Rhg9xKYRFoZORSNO85H66kUzgk3tGfNURtlD9ij0JcyHAAJ1O503N85mphlfuJqLZNsfIyH5PgXLCUZQezGSGYvTaQgB7ShBN7FaP7BA8ekCEkIZtWCjB84=
+    secure: N7obXL0TL+XczhZGjobVRYzWoSt01bjYQntMWdUXrg6TnD91fWqfdTJS23ZhE5pPrS640rLguaH/P0yJXwylWxCw1SJEOkei/+L7fLH1PxJtxIznDRsamdc+rDgqksgoAIYFUv66XpXf99zju5C9Z4jHmvGAjSir/wnbnFplKrFfPoJE3VwutpcujwLpykTMtPTO+SG+VLEJ1rXoJV0aai0qPIeAdglYOwU4eh78PnzUme4zLhwfhJAVOhGeE9+HFxB+38a6p4c7ItLpUtTyAxOf3P2V6vtMopyUCC3GS/M2xPd3MXYbq5ARCEorGwMSFdKVcoAONmcnm7Y9LP2nsBLPPp+JamEcX5DJ2XsEySzQUw3alRKraX61nqXZi7Lz6om0qI6vhhD2iDlgZnmeqOq/qo9QWwvjTst7H/yQuj51eYJmTEywbwIB/Rmne4S6I7s6STbG1i2vx3gpseOXwD4tgblcahTKGwlRToXshdGy5t47PSUTBpcb+T1hlzW/n5HoCoSgXlYNiMFEVIqEbzUkanlk8Lv/j4UkxQRkXEBkyjxqkmNl/t5cpK1ufv7nmZ3MIUFGR9SnvjXAGAcvCWHh4qDIcLMQ8JXh7fLb9RybbdvlCxwO/mivoB8YYrJAkfHvaimpTGZPdcf5MJNfmhPpakd7cIcY01J4ScYxZQc=
   skip_cleanup: true
-
-  file: mokka/target/mokka-0.3-SNAPSHOT.jar
+  file: mokka/target/mokka-0.3.1-SNAPSHOT.jar
 
   on:
-      tags: true
+    tags: true
