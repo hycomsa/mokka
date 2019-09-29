@@ -1,0 +1,21 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/release/1-0/C4_Container.puml
+
+title C2 Mokka (draft)
+
+Person(user, "User", "")
+Person(adm, "Administrator", "")
+System_Ext(externalSystem, "External System", "")
+
+System_Boundary(c1, "Mokka"){
+    Container(web_app, "Web Aplication", "Spring Boot", "")
+    ContainerDb(db, "Database", "SQL", "")
+}
+
+Rel(user, web_app, "Configures mocks", "HTTPS")
+Rel(adm, web_app, "Administers", "HTTPS")
+Rel(externalSystem, web_app, "Uses mocks", "SOAP/HTTPS, JMS, HTTP")
+Rel(web_app, db, "Uses mocks", "JDBC")
+
+
+@enduml

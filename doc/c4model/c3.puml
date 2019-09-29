@@ -1,0 +1,29 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/release/1-0/C4_Component.puml
+
+title C3 Mokka (draft)
+
+Person(user, "User", "")
+Person(adm, "Administrator", "")
+System_Ext(externalSystem, "External System", "")
+ContainerDb(db, "Database", "SQL", "")
+
+Container_Boundary(c1, "Web Application") {
+    Component(signInController, "Sign In Controller", "Spring MVC Rest Controller", "")
+    Component(userMgmtComponent, "User Mgmt Component", "Spring Bean", "")
+    Component(mockController, "Mocks Controller", "Spring MVC Rest Controller", "")
+    Component(mockComponent, "Mocks Component", "Spring Bean", "")
+    Component(activemq, "Embedded ActiveMQ", "Spring Boot Embedded Active MQ", "")
+}
+
+Rel(user, signInController, "Sign in")
+Rel(user, mockController, "Defines mocks")
+Rel(externalSystem, mockController, "Uses mocks")
+Rel(signInController, userMgmtComponent, "Uses mocks")
+Rel(userMgmtComponent, db, "Uses mocks", "JDBC")
+Rel(mockController, mockComponent, "Uses mocks")
+Rel(mockComponent, db, "Uses mocks", "JDBC")
+Rel(activemq, db, "Uses mocks", "JDBC")
+Rel(externalSystem, activemq, "Uses mocks", "JDBC")
+Rel(activemq, externalSystem, "Uses mocks", "JDBC")
+@enduml
