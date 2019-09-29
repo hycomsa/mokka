@@ -3,9 +3,9 @@ package pl.hycom.mokka.emulator.mock;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import pl.hycom.mokka.emulator.logs.LogManager;
 import pl.hycom.mokka.emulator.logs.LogStatus;
@@ -23,7 +23,6 @@ import java.util.List;
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.
  */
 @Slf4j
-//@Component
 @Scope("request")
 public class MockInterceptor extends HandlerInterceptorAdapter {
 
@@ -38,6 +37,9 @@ public class MockInterceptor extends HandlerInterceptorAdapter {
 
 	@Autowired
 	private List<MockHandler> mockHandlers;
+
+    @Value("${mock.response.addDebugHeaders}")
+    private boolean rspDebugHeadersEnabled;
 
 	@Override
 	public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object arg2) throws Exception {
@@ -58,7 +60,7 @@ public class MockInterceptor extends HandlerInterceptorAdapter {
 			return false;
 		}
 
-		log.debug("Mock for uri[" + ctx.getUri() + "] found: " + mockConfiguration);
+		log.debug("Mock for uri[{}] found: {}", ctx.getUri(), mockConfiguration);
 
 		handleMockResponse(ctx, mockConfiguration);
 
@@ -68,9 +70,13 @@ public class MockInterceptor extends HandlerInterceptorAdapter {
 	private void handleMockResponse(MockContext ctx, MockConfiguration mockConfiguration) throws InterruptedException, MockHandlerException {
 
 		if (mockConfiguration.getTimeout() > 0) {
-			log.info("Waiting for timeout: " + mockConfiguration.getTimeout());
+			log.info("Waiting for timeout: {}", mockConfiguration.getTimeout());
 			Thread.sleep(mockConfiguration.getTimeout());
 		}
+
+		if (rspDebugHeadersEnabled) {
+            ctx.getResponse().addHeader("X-Mock-Id", mockConfiguration.getId().toString());
+        }
 
 		if(HttpStatus.valueOf(mockConfiguration.getStatus()).is4xxClientError() || HttpStatus.valueOf(mockConfiguration.getStatus()).is5xxServerError()){
 			try {
@@ -92,7 +98,7 @@ public class MockInterceptor extends HandlerInterceptorAdapter {
 		}
 
 		if (!handled) {
-			log.warn("No handler for mock[" + mockConfiguration.getId() + "]!");
+			log.warn("No handler for mock[{}]!", mockConfiguration.getId());
 			ctx.getLogBuilder().status(LogStatus.NOT_FOUND).response("No handler found!");
 		}
 
@@ -100,7 +106,7 @@ public class MockInterceptor extends HandlerInterceptorAdapter {
 	}
 
 	private void handleNoMockResposne(MockContext ctx) throws IOException {
-		log.warn("Mock for uri[" + ctx.getUri() + "] not found!");
+		log.warn("Mock for uri[{}] not found!", ctx.getUri());
 
 		ctx.getResponse().setStatus(HttpStatus.NOT_FOUND.value());
 		ctx.getResponse().getWriter().write("Mock for uri[" + ctx.getUri() + "] not found");
