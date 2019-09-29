@@ -22,8 +22,8 @@ import java.util.Map;
         public static final String DESCRIPTION = "description";
         public static final String PATTERN = "pattern";
         public static final String ENABLED = "enabled";
-        public static final String PERCENT = "%";
-        public static final String WHERE = "where ";
+        private static final String PERCENT = "%";
+        private static final String WHERE = "where ";
 
         @PersistenceContext
         private EntityManager em;
@@ -44,24 +44,24 @@ import java.util.Map;
             }
 
             if(parameterMap.containsKey(PATH)) {
-                base.append("lower(m.path) like lower(?1) ");
+                base.append("lower(m.path) like lower(:path) ");
             }
 
             if(parameterMap.containsKey(PATTERN)){
                 if(base.toString().endsWith(WHERE)) {
-                    base.append("lower(m.pattern) like lower(?3) ");
+                    base.append("lower(m.pattern) like lower(:pattern) ");
                 }
                 else {
-                    base.append("and lower(m.pattern) like lower(?3) ");
+                    base.append("and lower(m.pattern) like lower(:pattern) ");
                 }
             }
 
             if(parameterMap.containsKey(DESCRIPTION)){
                 if(base.toString().endsWith(WHERE)){
-                    base.append("lower(m.description) like lower(?2) ");
+                    base.append("lower(m.description) like lower(:description) ");
                 }
                 else {
-                    base.append("and lower(m.description) like lower(?2) ");
+                    base.append("and lower(m.description) like lower(:description) ");
                 }
             }
 
@@ -86,15 +86,15 @@ import java.util.Map;
             query = em.createQuery(base.toString(), MockConfiguration.class);
 
             if(parameterMap.containsKey(PATH)) {
-                query.setParameter(1, PERCENT + parameterMap.get(PATH) + PERCENT);
+                query.setParameter("path", PERCENT + parameterMap.get(PATH) + PERCENT);
             }
 
             if(parameterMap.containsKey(DESCRIPTION)){
-                query.setParameter(2, PERCENT + parameterMap.get(DESCRIPTION) + PERCENT);
+                query.setParameter("description", PERCENT + parameterMap.get(DESCRIPTION) + PERCENT);
             }
 
             if(parameterMap.containsKey(PATTERN)){
-                query.setParameter(3, PERCENT + parameterMap.get(PATTERN) + PERCENT);
+                query.setParameter("pattern", PERCENT + parameterMap.get(PATTERN) + PERCENT);
             }
 
             if (getStartingIndex() != null) {
