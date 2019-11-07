@@ -8,15 +8,12 @@
     <parent>
         <artifactId>mokka-parent</artifactId>
         <groupId>pl.hycom.mokka</groupId>
-        <version>0.3.3-SNAPSHOT</version>
+        <version>0.3.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>mokka</artifactId>
     <description>Mokka - HTTP/JMS mocking tool</description>
     <name>Mokka</name>
-
-
-    <properties></properties>
 
     <repositories>
         <repository>
@@ -148,33 +145,6 @@
             <version>4.5.5</version>
         </dependency>
 
-        <!--<dependency>-->
-        <!--<groupId>org.json</groupId>-->
-        <!--<artifactId>json</artifactId>-->
-        <!--<version>20160212</version>-->
-        <!--</dependency>-->
-        <!--        <dependency>
-                    <groupId>org.liquibase</groupId>
-                    <artifactId>liquibase-maven-plugin</artifactId>
-                    <version>3.5.1</version>
-                </dependency>-->
-
-        <!-- https://mvnrepository.com/artifact/org.springframework/spring-jms -->
-        <!--<dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jms</artifactId>
-            <version>4.3.7.RELEASE</version>
-        </dependency>-->
-
-        <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-broker -->
-        <!--        <dependency>
-                    <groupId>org.apache.activemq</groupId>
-                    <artifactId>activemq-broker</artifactId>
-                    <version>5.15.0</version>
-                </dependency>-->
-
-        <!-- TO BE VERIFIED - END-->
-
         <!-- Developer Tools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -187,9 +157,6 @@
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency><!-- http://mvnrepository.com/artifact/junit/junit -->
-
-
-
 
 
         <!-- TEST DEPENDENCIES -->
@@ -231,6 +198,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.2.0.RELEASE</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <profiles>
                         <profile>dev</profile>
@@ -238,7 +213,6 @@
                     <jvmArguments>
                         -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5007
                     </jvmArguments>
-                    <executable>true</executable>
                 </configuration>
             </plugin>
             <!--  <plugin>
