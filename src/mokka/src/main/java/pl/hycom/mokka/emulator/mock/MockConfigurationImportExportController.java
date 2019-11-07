@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -34,13 +35,13 @@ import java.util.regex.Pattern;
 @Slf4j
 public class MockConfigurationImportExportController {
 
-    public static final String STATUS = "status";
+    private static final String STATUS = "status";
 
     @Autowired
     private pl.hycom.mokka.emulator.mock.MockConfigurationImportExportManager importExportManager;
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_EDITOR')")
-    @RequestMapping(value = "/configurations/export")
+    @GetMapping(value = "/configurations/export")
     public Object export() {
 
         byte[] documentBody = new byte[0];

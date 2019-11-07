@@ -19,30 +19,30 @@ public class ConfiguratorController {
 	private MockConfiguratorService configuratorService;
 
 	@RequestMapping(path = "/thing-types", method = RequestMethod.GET)
-	private Object getAllThingTypes() {
+	public Object getAllThingTypes() {
 		return configuratorService.getAllThingTypes();
 	}
 
 	@RequestMapping(path = "/thing-types", method = RequestMethod.PUT)
-	private void addThingType(@RequestBody ThingType thingType) {
+	public void addThingType(@RequestBody ThingType thingType) {
 		configuratorService.addThingType(thingType);
 	}
 
 	@RequestMapping(path = "/thing-types/{id}", method = RequestMethod.POST)
-	private Object updateThingType() {
+	public Object updateThingType() {
 
 		return null;
 	}
 
 	@RequestMapping(path = "/thing-types/{id}", method = RequestMethod.DELETE)
-	private Object deleteThingType() {
+	public Object deleteThingType() {
 		// sprawdzic czy nie ma powiazan!
 
 		return null;
 	}
 
 	@RequestMapping(path = "/saveTimeout", method = RequestMethod.POST)
-	private void saveTimeout(@RequestBody int timeout) {
+	public void saveTimeout(@RequestBody int timeout) {
 		configuratorService.saveTimeout(timeout);
 	}
 
