@@ -13,7 +13,6 @@ import pl.hycom.mokka.emulator.logs.model.Log;
 import pl.hycom.mokka.emulator.logs.model.Log.LogBuilder;
 
 import javax.jms.JMSException;
-import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +46,7 @@ public class MockContext {
     private TextMessage responseMessage;
 
 
-    public MockContext(HttpServletRequest request, HttpServletResponse response) throws DocumentException {
+    public MockContext(HttpServletRequest request, HttpServletResponse response) {
         this.request = request;
         this.response = response;
         uri = StringUtils.removeStart((String) request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI), "/");
@@ -58,7 +57,7 @@ public class MockContext {
                 .date(new Timestamp(System.currentTimeMillis()));
     }
 
-    public MockContext(ActiveMQTextMessage requestMessage, TextMessage responseMessage) throws DocumentException, JMSException {
+    public MockContext(ActiveMQTextMessage requestMessage, TextMessage responseMessage) throws JMSException {
         this.requestMessage = requestMessage;
         this.responseMessage = responseMessage;
         uri = requestMessage.getDestination().getPhysicalName();
@@ -80,21 +79,28 @@ public class MockContext {
         return request.getRemoteAddr();
     }
 
-    private static String getRequestBody(HttpServletRequest req) throws DocumentException {
-        try {
-            String result = IOUtils.toString(new InputStreamReader(req.getInputStream()));
-            StringWriter sw = new StringWriter();
-            new XMLWriter(sw, OutputFormat.createPrettyPrint()).write(DocumentHelper.parseText(result));
-            result = sw.toString();
+    private static String getRequestBody(HttpServletRequest req) {
 
-            return result;
+        String requestBody = StringUtils.EMPTY;
+        try {
+            requestBody = IOUtils.toString(new InputStreamReader(req.getInputStream()));
         } catch (IOException e) {
-            log.error("", e);
-        } catch (DocumentException e) {
-            log.error("", e);
-            return StringUtils.EMPTY;
+            log.error("Error occured when reading body of the request", e);
+            return requestBody;
         }
 
-        return null;
+        if (StringUtils.isBlank(requestBody)) {
+            log.info("Request body is empty.");
+            return requestBody;
+        }
+
+        try {
+            StringWriter sw = new StringWriter();
+            new XMLWriter(sw, OutputFormat.createPrettyPrint()).write(DocumentHelper.parseText(requestBody));
+            return sw.toString();
+        } catch (IOException | DocumentException e) {
+            log.error("Error occured when XML parsing body of the request. Raw string will be returned", e);
+            return requestBody;
+        }
     }
 }
