@@ -7,12 +7,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.0.RELEASE</version>
+        <version>2.2.1.RELEASE</version>
     </parent>
 
     <groupId>pl.hycom.mokka</groupId>
     <artifactId>mokka-parent</artifactId>
-    <version>0.3.3-SNAPSHOT</version>
+    <version>0.3.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Mokka :: Parent</name>
 
