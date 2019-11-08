@@ -10,16 +10,16 @@ app.config(function ($httpProvider) {
 	var metaTags=document.getElementsByTagName("meta");
 	var token = '';
 	var header = '';
-	
+
 	for (var i = 0; i < metaTags.length; i++) {
 	    if (metaTags[i].getAttribute("name") == "_csrf") {
-	    	token = metaTags[i].getAttribute("content");	        
+	    	token = metaTags[i].getAttribute("content");
 	    }
 	    if (metaTags[i].getAttribute("name") == "_csrf_header") {
-	    	header = metaTags[i].getAttribute("content");	        
+	    	header = metaTags[i].getAttribute("content");
 	    }
-	}	
-	
+	}
+
     $httpProvider.defaults.headers.common[header] = token;
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 });
@@ -55,32 +55,14 @@ app.directive('ngEnter', function () {
     };
 });
 
-/*
-This directive allows us to pass a function in on an F2 key to do what we want.
- */
-app.directive('ngFilter', function () {
-    return function (scope, element, attrs) {
-        element.bind("keydown keypress", function (event) {
-            if(event.which === 113) {
-                scope.$apply(function (){
-                    scope.$eval(attrs.ngFilter);
-                });
-
-                event.preventDefault();
-            }
-        });
-    };
-});
-
-
 app.run(function($rootScope, $http) {
 	return $http.get('/user/current').then(function(response){
 		$rootScope.user = response.data;
-		
+
 		$rootScope.user.isAdmin = false;
 		$rootScope.user.isEditor = false;
 		$rootScope.user.isUserAdmin = false;
-		
+
 		angular.forEach($rootScope.user.authorities, function(value) {
 			  if (value.authority === 'ROLE_ADMIN') {
 				  $rootScope.user.isAdmin = true;
