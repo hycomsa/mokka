@@ -8,7 +8,7 @@
     <parent>
         <artifactId>mokka-parent</artifactId>
         <groupId>pl.hycom.mokka</groupId>
-        <version>0.3.4-SNAPSHOT</version>
+        <version>0.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>mokka</artifactId>
@@ -58,11 +58,10 @@
             <artifactId>spring-boot-starter-activemq</artifactId>
         </dependency>
 
-        <!-- MOCK Bluemedia? -->
+        <!-- MOCK Bluemedia -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-velocity</artifactId>
-            <version>1.4.7.RELEASE</version>
+            <artifactId>spring-boot-starter-freemarker</artifactId>
         </dependency>
 
 

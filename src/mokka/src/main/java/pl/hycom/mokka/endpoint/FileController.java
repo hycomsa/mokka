@@ -1,7 +1,7 @@
 package pl.hycom.mokka.endpoint;
 
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +11,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,8 +49,7 @@ public class FileController {
      *         File name path variable
      * @return ResponseEntity<FileSystemResource>
      */
-    @RequestMapping(value = "/{file-id:.+}",
-                    method = RequestMethod.GET)
+    @GetMapping(value = "/{file-id:.+}")
     @ResponseBody
     public ResponseEntity<FileSystemResource> fetchFile(
             @PathVariable("file-id")
@@ -79,8 +78,7 @@ public class FileController {
      *
      * @return ResponseEntity<List<String>>
      */
-    @RequestMapping(method = RequestMethod.GET,
-                    produces = "application/json")
+    @GetMapping(produces = "application/json")
     @ResponseBody
     public ResponseEntity<List<String>> fetchAllFiles() {
         LOG.debug("Calling FileController#fetchAllFiles");
