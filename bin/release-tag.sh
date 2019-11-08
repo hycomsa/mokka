@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TAG=v0.3.4-SNAPSHOT
+TAG=v0.4.0-SNAPSHOT
 
 echo -e "Delete existing $TAG tag first."
 git tag -d $TAG

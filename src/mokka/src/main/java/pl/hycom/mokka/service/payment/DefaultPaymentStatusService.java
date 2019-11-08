@@ -1,10 +1,11 @@
 package pl.hycom.mokka.service.payment;
 
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -12,17 +13,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
-import lombok.extern.slf4j.Slf4j;
 import pl.hycom.mokka.service.payment.constant.BlueMediaConstants;
 import pl.hycom.mokka.service.payment.pojo.BlueMediaPayment;
 import pl.hycom.mokka.util.validation.HashAlgorithm;
 import pl.hycom.mokka.util.validation.HashGenerator;
 
 import javax.annotation.Resource;
-import java.io.StringWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -36,8 +40,6 @@ public class DefaultPaymentStatusService implements PaymentStatusService {
     private static final String DATE_FORMAT = "yyyyMMddHHmmss";
     @Resource
     private HashGenerator hashGenerator;
-    @Autowired
-    private VelocityEngine velocityEngine;
     @Value("${paymentSchema}")
     private String paymentSchema;
 
@@ -67,22 +69,30 @@ public class DefaultPaymentStatusService implements PaymentStatusService {
     }
 
     private void updatePaymentStatus(String status, BlueMediaPayment blueMediaPayment) {
-        RestTemplate restTemplate = new RestTemplate();
-        Template template = velocityEngine.getTemplate(BlueMediaConstants.PAYMENT_STATUS_UPDATE_VM);
-        VelocityContext context = getVelocityContext(blueMediaPayment, status);
-        StringWriter writer = new StringWriter();
-        template.merge(context, writer);
-        log.info("Request :[{}]", writer.toString());
-        byte[] bytesEncoded = Base64.encodeBase64(writer.toString()
-                                                          .getBytes());
-        blueMediaPayment.setHash(calculateRedirectHash(blueMediaPayment));
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        String base64String=new String(bytesEncoded);
-        log.info("Request transformed to Base64:["+base64String+"]");
-        params.add(BlueMediaConstants.TRANSACTIONS, base64String);
-        ResponseEntity<String> response = restTemplate.postForEntity(blueMediaPayment.getNotificationURL() , params, String.class);
-        log.info("Response status: [{}]", response.getStatusCode());
-        log.info("Response body: [{}]", response.getBody());
+        log.info("Update payment with status {}", status);
+        try {
+            Configuration cfg = new Configuration(Configuration.VERSION_2_3_29);
+            cfg.setClassForTemplateLoading(this.getClass(), "/templates/");
+            Template template = cfg.getTemplate(BlueMediaConstants.PAYMENT_STATUS_UPDATE_FTL);
+            Writer writer = new OutputStreamWriter(System.out);
+            Map<String, Object> dataModel = getDataModel(blueMediaPayment, status);
+            template.process(dataModel, writer);
+
+            log.info("Request :[{}]", writer.toString());
+            byte[] bytesEncoded = Base64.encodeBase64(writer.toString()
+                                                              .getBytes());
+            blueMediaPayment.setHash(calculateRedirectHash(blueMediaPayment));
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            String base64String=new String(bytesEncoded);
+            log.info("Request transformed to Base64:["+base64String+"]");
+            params.add(BlueMediaConstants.TRANSACTIONS, base64String);
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.postForEntity(blueMediaPayment.getNotificationURL() , params, String.class);
+            log.info("Response status: [{}]", response.getStatusCode());
+            log.info("Response body: [{}]", response.getBody());
+        } catch (IOException | TemplateException e) {
+            e.printStackTrace();
+        }
     }
 
     private String generateRandomString(int length) {
@@ -127,22 +137,22 @@ public class DefaultPaymentStatusService implements PaymentStatusService {
     }
 
 
-    private VelocityContext getVelocityContext(BlueMediaPayment blueMediaPayment, String status) {
-        VelocityContext context = new VelocityContext();
-        context.put(BlueMediaConstants.ORDER_ID_LABEL, blueMediaPayment.getOrderID());
-        context.put(BlueMediaConstants.AMOUNT_LABEL, blueMediaPayment.getAmount());
-        context.put(BlueMediaConstants.PAYMENT_SCHEMA, paymentSchema);
-        context.put(BlueMediaConstants.PAYMENT_STATUS_LABEL, status);
+    private Map<String, Object> getDataModel(BlueMediaPayment blueMediaPayment, String status) {
+        Map<String, Object> dataModel = new HashMap<String, Object>();
+        dataModel.put(BlueMediaConstants.ORDER_ID_LABEL, blueMediaPayment.getOrderID());
+        dataModel.put(BlueMediaConstants.AMOUNT_LABEL, blueMediaPayment.getAmount());
+        dataModel.put(BlueMediaConstants.PAYMENT_SCHEMA, paymentSchema);
+        dataModel.put(BlueMediaConstants.PAYMENT_STATUS_LABEL, status);
         String date = new SimpleDateFormat(DATE_FORMAT).format(new Date());
-        context.put(BlueMediaConstants.PAYMENT_DATE_LABEL, date);
-        context.put(BlueMediaConstants.CURRENCY_LABEL, BlueMediaConstants.CURRENCY);
+        dataModel.put(BlueMediaConstants.PAYMENT_DATE_LABEL, date);
+        dataModel.put(BlueMediaConstants.CURRENCY_LABEL, BlueMediaConstants.CURRENCY);
         String remoteID = generateRandomString(20);
-        context.put(BlueMediaConstants.REMOTE_ID_LABEL, remoteID);
-        context.put(BlueMediaConstants.PAYMENT_STATUS_DETAILS_LABEL, BlueMediaConstants.PAYMENT_STATUS_DETAILS);
-        context.put(BlueMediaConstants.GATEWAY_ID_LABEL, BlueMediaConstants.GATEWAY_ID);
-        context.put(BlueMediaConstants.SERVICE_ID_LABEL, blueMediaPayment.getServiceID());
-        context.put(BlueMediaConstants.HASH_LABEL, calculateUpdateHash(blueMediaPayment, remoteID, date, status));
-        return context;
+        dataModel.put(BlueMediaConstants.REMOTE_ID_LABEL, remoteID);
+        dataModel.put(BlueMediaConstants.PAYMENT_STATUS_DETAILS_LABEL, BlueMediaConstants.PAYMENT_STATUS_DETAILS);
+        dataModel.put(BlueMediaConstants.GATEWAY_ID_LABEL, BlueMediaConstants.GATEWAY_ID);
+        dataModel.put(BlueMediaConstants.SERVICE_ID_LABEL, blueMediaPayment.getServiceID());
+        dataModel.put(BlueMediaConstants.HASH_LABEL, calculateUpdateHash(blueMediaPayment, remoteID, date, status));
+        return dataModel;
     }
 
 
