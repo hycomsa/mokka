@@ -18,6 +18,8 @@ import java.util.Map;
     @Transactional
     public class MockSearch {
 
+        public static final String ID = "id";
+        public static final String NAME = "name";
         public static final String PATH = "path";
         public static final String DESCRIPTION = "description";
         public static final String PATTERN = "pattern";
@@ -43,8 +45,24 @@ import java.util.Map;
                 base.append("select m from MockConfig m where ");
             }
 
+            if(parameterMap.containsKey(ID)) {
+                base.append("m.id = :id ");
+            }
+
+            if(parameterMap.containsKey(NAME)) {
+                if(base.toString().endsWith(WHERE)) {
+                    base.append("lower(m.name) like lower(:name) ");
+                } else {
+                    base.append("and lower(m.name) like lower(:name) ");
+                }
+            }
+
             if(parameterMap.containsKey(PATH)) {
-                base.append("lower(m.path) like lower(:path) ");
+                if(base.toString().endsWith(WHERE)) {
+                    base.append("lower(m.path) like lower(:path) ");
+                }else {
+                    base.append("and lower(m.path) like lower(:path) ");
+                }
             }
 
             if(parameterMap.containsKey(PATTERN)){
@@ -84,6 +102,14 @@ import java.util.Map;
             base.append("order by m ASC");
 
             query = em.createQuery(base.toString(), MockConfiguration.class);
+
+            if(parameterMap.containsKey(ID)) {
+                query.setParameter("id", Long.valueOf(parameterMap.get(ID)));
+            }
+
+            if(parameterMap.containsKey(NAME)) {
+                query.setParameter("name", PERCENT + parameterMap.get(NAME) + PERCENT);
+            }
 
             if(parameterMap.containsKey(PATH)) {
                 query.setParameter("path", PERCENT + parameterMap.get(PATH) + PERCENT);

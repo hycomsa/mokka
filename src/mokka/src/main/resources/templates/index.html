@@ -37,6 +37,9 @@
 			    <md-menu-item th:if="${path != 'configuration'}">
 			      <md-button th:href="@{/configurations}" target="_self">Configuration</md-button>
 			    </md-menu-item>
+<!--                <md-menu-item th:if="${path != 'jmsconfiguration'}">-->
+<!--                    <md-button th:href="@{/jmsconfigurations}" target="_self">Jms Mock Configuration</md-button>-->
+<!--                </md-menu-item>-->
 			    <md-menu-item th:if="${path != 'model'}" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
 			      <md-button th:href="@{/models}" target="_self">Model</md-button>
 			    </md-menu-item>
