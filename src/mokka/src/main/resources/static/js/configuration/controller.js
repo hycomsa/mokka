@@ -5,6 +5,7 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
     	self.mocks=[];
     	self.statuses=[101,201,202,203,204,205,206,02012,207,108,109,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30];
     	self.search = {};
+    	self.search.enabled = true;
     	self.activeSearch = {};
     	self.pagination = 0;
     	self.paginationHasNext = false;
@@ -122,6 +123,7 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
 			var newMock = {};
 			newMock.editMode = true;
 			newMock.isNew = true;
+			newMock.status = "200";
 
 			self.mocks.unshift(newMock)
 		}

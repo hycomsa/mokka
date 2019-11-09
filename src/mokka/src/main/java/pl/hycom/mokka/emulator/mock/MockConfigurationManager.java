@@ -220,6 +220,16 @@ public class MockConfigurationManager {
             mockSearch.setMaxResults(numberOfResultsPerQuery);
         }
 
+        // id
+        if (StringUtils.isNotBlank(req.getParameter(MockSearch.ID))) {
+            mockSearch.add(MockSearch.ID, req.getParameter(MockSearch.ID));
+        }
+
+        // name
+        if (StringUtils.isNotBlank(req.getParameter(MockSearch.NAME))) {
+            mockSearch.add(MockSearch.NAME, req.getParameter(MockSearch.NAME));
+        }
+
         // path
         if (StringUtils.isNotBlank(req.getParameter(MockSearch.PATH))) {
             mockSearch.add(MockSearch.PATH, req.getParameter(MockSearch.PATH));
