@@ -6,7 +6,6 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,6 @@ import pl.hycom.mokka.util.validation.HashAlgorithm;
 import pl.hycom.mokka.util.validation.HashGenerator;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -91,7 +89,7 @@ public class DefaultPaymentStatusService implements PaymentStatusService {
             log.info("Response status: [{}]", response.getStatusCode());
             log.info("Response body: [{}]", response.getBody());
         } catch (IOException | TemplateException e) {
-            e.printStackTrace();
+            log.error("Error occured when generating payment request", e);
         }
     }
 
