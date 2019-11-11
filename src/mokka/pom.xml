@@ -177,9 +177,29 @@
         </dependency>
     </dependencies>
 
+    <!--
+    # Maven profiles:
+        ## release (default) - no spring dev tools enabled, no h2 database included, no logging to console
+        ## dev - enables spring dev tools, in-memory h2 database embedded, logging to console
+
+        Property activateSpringProfile is passed to spring.profiles.active to activate Spring profile that follows
+        the same values as Maven profiles defined below.
+    -->
     <profiles>
         <profile>
+            <id>release</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <activateSpringProfile>release</activateSpringProfile>
+            </properties>
+        </profile>
+        <profile>
             <id>dev</id>
+            <properties>
+                <activateSpringProfile>dev</activateSpringProfile>
+            </properties>
             <dependencies>
                 <!-- hot swapping, disable cache for template, enable live reload -->
                 <dependency>
@@ -193,11 +213,6 @@
                     <artifactId>h2</artifactId>
                     <scope>runtime</scope>
                 </dependency>
-<!--                <dependency>-->
-<!--                    <groupId>org.hsqldb</groupId>-->
-<!--                    <artifactId>hsqldb</artifactId>-->
-<!--                    <scope>runtime</scope>-->
-<!--                </dependency>-->
             </dependencies>
         </profile>
     </profiles>
@@ -239,9 +254,6 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <profiles>
-                        <profile>dev</profile>
-                    </profiles>
                     <jvmArguments>
                         -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5007
                     </jvmArguments>
