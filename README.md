@@ -8,21 +8,21 @@ Database of your choice: Oracle, MySQL, HSQLDB, H2.
 
 ## Install
 ### Precompiled binaries
-
-Precompiled binary for release version is available on [GithHub Releases page](https://github.com/hycomsa/mokka/releases).
+You may use precompiled binary for release version available on [GithHub Releases page](https://github.com/hycomsa/mokka/releases).
 ### Building from sources
+Or build the application directly from sources:
 ```
 cd src
 mvn clean package
 ```
 ## Configuration
-The minimal configuration set requires to provide datasource configuration:
+The minimal configuration is to provide datasource details:
 ```
 spring.datasource.url=
 spring.datasource.username = 
 spring.datasource.password = 
 ```
-in `application.properties` file next to jar.
+in `application.properties` file which should be placed next to jar (or other locations described in [Spring Boot documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-external-config)
 
 ## Running
 ### From precompiled libraries 
