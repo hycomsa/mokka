@@ -27,7 +27,7 @@ in `application.properties` file which should be placed next to jar (or other lo
 ## Running
 ### From precompiled libraries 
 ```
-java -jar target/mokka*.jar
+java -jar mokka*.jar
 ```
 
 ### Directly from sources
