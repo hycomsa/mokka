@@ -1,10 +1,11 @@
 package pl.hycom.mokka.core;
 
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import pl.hycom.mokka.security.UserManager;
 
 /**
@@ -18,12 +19,13 @@ import pl.hycom.mokka.security.UserManager;
  * @author Piotr Kulasek-Szwed <piotr.kulasek-szwed@hycom.pl>
  */
 @Slf4j
-@Component
+@Service
+@RequiredArgsConstructor
 public class InitialSetupCommandLineRunner implements CommandLineRunner {
 
-    @Autowired
-    private UserManager userManager;
+    private final UserManager userManager;
 
+    @Setter
     @Value("${setup.initial.enabled}")
     private boolean initialSetupEnabled;
 

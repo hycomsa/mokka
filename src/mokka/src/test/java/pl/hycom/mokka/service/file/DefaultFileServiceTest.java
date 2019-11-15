@@ -1,7 +1,8 @@
 package pl.hycom.mokka.service.file;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,25 +13,31 @@ import java.util.List;
  */
 public class DefaultFileServiceTest {
 
-    DefaultFileService fileService = new DefaultFileService();
+    private DefaultFileService fileService;
+
+    @BeforeEach
+    public void init() {
+      fileService = new DefaultFileService();
+    }
 
     @Test
     public void testFetchFileSuccess() throws FileNotFoundException {
         fileService.setSourceDirectory("src/test/resources/files/");
         File file = fileService.fetchFile("samplefile.txt");
-        Assert.assertNotNull(file);
+        Assertions.assertNotNull(file);
     }
 
-    @Test(expected = FileNotFoundException.class)
+    @Test
     public void testFetchFileFileNotFoundException() throws FileNotFoundException {
-        fileService.setSourceDirectory("src/test/resources/files/");
-        fileService.fetchFile("samplefile1.txt");
-
+        Assertions.assertThrows(FileNotFoundException.class, () -> {
+            fileService.setSourceDirectory("src/test/resources/files/");
+            fileService.fetchFile("samplefile1.txt");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFetchFileIllegalArgumentException() throws FileNotFoundException {
-        fileService.fetchFile(null);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> fileService.fetchFile(null));
 
     }
 
@@ -38,16 +45,16 @@ public class DefaultFileServiceTest {
     public void testFetchAllFileSuccess() {
         fileService.setSourceDirectory("src/test/resources/files/");
         List<String> files = fileService.fetchAllFiles();
-        Assert.assertNotNull(files);
-        Assert.assertEquals(1, files.size());
+        Assertions.assertNotNull(files);
+        Assertions.assertEquals(1, files.size());
     }
 
     @Test
     public void testFetchAllFileWithoutFiles() {
         fileService.setSourceDirectory("src/test/resources/files/dummy-directory/");
         List<String> files = fileService.fetchAllFiles();
-        Assert.assertNotNull(files);
-        Assert.assertEquals(0, files.size());
+        Assertions.assertNotNull(files);
+        Assertions.assertEquals(0, files.size());
     }
 
 }
