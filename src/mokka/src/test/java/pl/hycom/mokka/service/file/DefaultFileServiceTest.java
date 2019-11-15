@@ -1,9 +1,7 @@
 package pl.hycom.mokka.service.file;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
-import pl.hycom.mokka.AbstractTest;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,8 +10,7 @@ import java.util.List;
 /**
  * @author Mariusz Krysztofowicz (mariusz.krysztofowicz@hycom.pl)
  */
-@Ignore
-public class DefaultFileServiceTest extends AbstractTest {
+public class DefaultFileServiceTest {
 
     DefaultFileService fileService = new DefaultFileService();
 
