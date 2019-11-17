@@ -1,6 +1,5 @@
 package pl.hycom.mokka.ui.payment;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -12,7 +11,6 @@ import pl.hycom.mokka.service.payment.pojo.BlueMediaPayment;
 
 import javax.annotation.Resource;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 /**
  * @author Jakub Muras <jakub.muras@hycom.pl>

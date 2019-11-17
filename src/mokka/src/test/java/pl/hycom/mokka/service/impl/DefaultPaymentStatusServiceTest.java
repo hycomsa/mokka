@@ -4,7 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.client.MockRestServiceServer;
 import pl.hycom.mokka.service.payment.DefaultPaymentStatusService;
 import pl.hycom.mokka.service.payment.pojo.BlueMediaPayment;
@@ -16,9 +19,11 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 /**
  * @author Mariusz Krysztofowicz (mariusz.krysztofowicz@hycom.pl)
  */
-@Disabled
+@RestClientTest(DefaultPaymentStatusService.class)
+@ActiveProfiles("test")
 public class DefaultPaymentStatusServiceTest{
 
+    @Autowired
     private DefaultPaymentStatusService defaultPaymentStatusService;
 
     @Autowired
@@ -26,8 +31,7 @@ public class DefaultPaymentStatusServiceTest{
 
     @BeforeEach
     public void init() {
-        defaultPaymentStatusService = new DefaultPaymentStatusService();//new DefaultHashGenerator());
-        this.server.expect(requestTo("/soap/webservice-http/payment"))
+        this.server.expect(requestTo("http://localhost:48080/soap/webservice-http/payment"))
             .andRespond(withSuccess("OK", MediaType.TEXT_PLAIN));
     }
 

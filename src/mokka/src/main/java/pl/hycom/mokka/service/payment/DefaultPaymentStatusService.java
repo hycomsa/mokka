@@ -4,9 +4,11 @@ package pl.hycom.mokka.service.payment;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -14,6 +16,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import pl.hycom.mokka.service.payment.constant.BlueMediaConstants;
 import pl.hycom.mokka.service.payment.pojo.BlueMediaPayment;
+import pl.hycom.mokka.util.validation.DefaultHashGenerator;
 import pl.hycom.mokka.util.validation.HashAlgorithm;
 import pl.hycom.mokka.util.validation.HashGenerator;
 
@@ -36,11 +39,20 @@ import java.util.Random;
 public class DefaultPaymentStatusService implements PaymentStatusService {
 
     private static final String DATE_FORMAT = "yyyyMMddHHmmss";
-    @Resource
+
+    private final RestTemplate restTemplate;
+
+    @Setter
     private HashGenerator hashGenerator;
+
     @Value("${paymentSchema}")
     private String paymentSchema;
 
+
+    public DefaultPaymentStatusService(RestTemplateBuilder builder) {
+        restTemplate = builder.build();
+        hashGenerator = new DefaultHashGenerator();
+    }
     /**
      * Generates rest post request with SUCCESS status
      * @param blueMediaPayment BlueMediaPayment model
@@ -84,7 +96,6 @@ public class DefaultPaymentStatusService implements PaymentStatusService {
             String base64String=new String(bytesEncoded);
             log.info("Request transformed to Base64:["+base64String+"]");
             params.add(BlueMediaConstants.TRANSACTIONS, base64String);
-            RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> response = restTemplate.postForEntity(blueMediaPayment.getNotificationURL() , params, String.class);
             log.info("Response status: [{}]", response.getStatusCode());
             log.info("Response body: [{}]", response.getBody());
