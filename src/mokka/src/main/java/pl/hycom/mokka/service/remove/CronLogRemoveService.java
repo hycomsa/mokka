@@ -24,10 +24,7 @@ public class CronLogRemoveService {
 
     @Scheduled(cron = "${remove.cron.expression}")
     public void removeOldMocks() {
-        if (!removeEnabled) {
-            return;
-        } else {
-
+        if (removeEnabled) {
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.DATE, -removeOlderThanThatDays);
 

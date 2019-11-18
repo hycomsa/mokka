@@ -2,12 +2,11 @@ package pl.hycom.mokka.endpoint;
 
 import io.restassured.RestAssured;
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-
 import pl.hycom.mokka.AbstractTest;
 
 import static io.restassured.RestAssured.expect;
@@ -21,7 +20,7 @@ public class FileControllerTest extends AbstractTest {
     @Value("${local.server.port}")
     protected int serverPort;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         RestAssured.port = serverPort;
     }

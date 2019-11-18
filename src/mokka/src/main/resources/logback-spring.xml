@@ -11,7 +11,7 @@
         </root>
     </springProfile>
 
-    <springProfile name="prod">
+    <springProfile name="release">
         <root level="INFO">
             <appender-ref ref="FILE" />
         </root>

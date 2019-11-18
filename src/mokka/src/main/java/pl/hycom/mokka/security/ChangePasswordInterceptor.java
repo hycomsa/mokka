@@ -37,7 +37,7 @@ public class ChangePasswordInterceptor extends HandlerInterceptorAdapter {
 			CurrentUser user = (CurrentUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			if (user != null) {
 				User dbUser = userManager.getUser(user.getId());
-				if (dbUser != null && dbUser.getResetPassword() == Boolean.TRUE) {
+				if (dbUser != null && Boolean.TRUE.equals(dbUser.getResetPassword())) {
 					res.sendRedirect("/change-password");
 					return false;
 				}

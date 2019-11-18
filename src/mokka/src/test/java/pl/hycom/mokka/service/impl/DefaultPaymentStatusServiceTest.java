@@ -1,51 +1,53 @@
 package pl.hycom.mokka.service.impl;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import pl.hycom.mokka.AbstractTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.client.MockRestServiceServer;
+import pl.hycom.mokka.service.payment.DefaultPaymentStatusService;
 import pl.hycom.mokka.service.payment.pojo.BlueMediaPayment;
-import pl.hycom.mokka.service.payment.PaymentStatusService;
 
-import javax.annotation.Resource;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 
 /**
  * @author Mariusz Krysztofowicz (mariusz.krysztofowicz@hycom.pl)
  */
-@Ignore
-public class DefaultPaymentStatusServiceTest extends AbstractTest {
+@RestClientTest(DefaultPaymentStatusService.class)
+@ActiveProfiles("test")
+public class DefaultPaymentStatusServiceTest{
 
-    @Resource
-    private PaymentStatusService paymentStatusService;
+    @Autowired
+    private DefaultPaymentStatusService defaultPaymentStatusService;
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(48080);
+    @Autowired
+    private MockRestServiceServer server;
 
-    @Before
+    @BeforeEach
     public void init() {
-        wireMockRule.stubFor(post(urlPathMatching("/soap/webservice-http/payment")).willReturn(aResponse().withHeader("Content-Type", "text/plain")
-                                                                                                       .withBody("OK")
-                                                                                                       .withStatus(200)));
+        this.server.expect(requestTo("http://localhost:48080/soap/webservice-http/payment"))
+            .andRespond(withSuccess("OK", MediaType.TEXT_PLAIN));
     }
 
     @Test
-    public void TestSuccess() {
-        paymentStatusService.paymentStatusSuccessUpdate(createSampleBlueMediaPayment());
+    public void shouldSendSuccess() {
+        defaultPaymentStatusService.paymentStatusSuccessUpdate(createSampleBlueMediaPayment());
     }
 
     @Test
-    public void TestPending() {
-        paymentStatusService.paymentStatusPendingUpdate(createSampleBlueMediaPayment());
+    public void shouldSendPending() {
+        defaultPaymentStatusService.paymentStatusPendingUpdate(createSampleBlueMediaPayment());
     }
 
     @Test
-    public void TestFailure() {
-        paymentStatusService.paymentStatusFailureUpdate(createSampleBlueMediaPayment());
+    public void shouldSendFailure() {
+        defaultPaymentStatusService.paymentStatusFailureUpdate(createSampleBlueMediaPayment());
     }
 
     private BlueMediaPayment createSampleBlueMediaPayment() {

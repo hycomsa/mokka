@@ -16,7 +16,6 @@ import pl.hycom.mokka.security.model.CurrentUser;
 import pl.hycom.mokka.security.model.Role;
 import pl.hycom.mokka.security.model.User;
 
-import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -31,7 +30,8 @@ import java.util.Set;
 @Service
 public class UserManager {
 
-	public static final String NOT_VALID = "not-valid";
+	private static final String NOT_VALID = "not-valid";
+
 	@Value("${default.password}")
 	private String defaultPassword;
 
@@ -41,25 +41,24 @@ public class UserManager {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	@Transactional
+    public User createAdminUser(){
+	    log.info("Creating admin user.");
+        User user = new User();
+        user.setUserName("admin");
+        user.setPasswordHash(passwordEncoder.encode(getDefaultPassword()));
+        user.setFirstName("Admin");
+        user.setLastName("Admin");
+        user.setDisabled(Boolean.FALSE);
+        user.setRoles(ImmutableSet.of(Role.ADMIN));
+
+        return userRepository.save(user);
+    }
+
 	public List<User> getAllUsers() {
 		return Lists.newArrayList(userRepository.findAll());
 	}
 
-	@Transactional
 	public UserDetails loadUserByUsername(String userName){
-
-		if (!userRepository.findAll().iterator().hasNext()) {
-			User user = new User();
-			user.setUserName("admin");
-			user.setPasswordHash(passwordEncoder.encode(getDefaultPassword()));
-			user.setFirstName("Admin");
-			user.setLastName("Admin");
-			user.setDisabled(Boolean.FALSE);
-			user.setRoles(ImmutableSet.of(Role.ADMIN));
-			userRepository.save(user);
-		}
-
 		User user = userRepository.findOneByUserName(userName).orElseThrow(() -> new UsernameNotFoundException("User[" + userName + "] was not found"));
 
 		Set<GrantedAuthority> authorities = new HashSet<>(user.getRoles().size());
@@ -71,12 +70,10 @@ public class UserManager {
 		return new CurrentUser(user, authorities);
 	}
 
-	@Transactional
 	public User getUser(long id) {
 		return userRepository.findById(id).orElse(null);
 	}
 
-	@Transactional
 	public boolean setDisabled(Long id, boolean disable) {
 		if (id == null) {
 			return false;
@@ -89,20 +86,18 @@ public class UserManager {
 		return user.isPresent();
 	}
 
-	@Transactional
 	public boolean removeUser(long id) {
 		try {
 			userRepository.deleteById(id);
-			log.info("User (id: " + id + ") deleted");
+			log.info("User (id: {}) deleted", id);
 			return true;
 		} catch (Exception e) {
-			log.error("Userk (id: " + id + ") could not be deleted", e);
+			log.error("User (id: {}}) could not be deleted", id, e);
 		}
 
 		return userRepository.findById(id).isPresent();
 	}
 
-	@Transactional
 	public User saveOrUpdateUser(User user) {
 		if (StringUtils.isBlank(user.getPasswordHash())) {
 			user.setPasswordHash(passwordEncoder.encode(getDefaultPassword()));
@@ -110,11 +105,10 @@ public class UserManager {
 		}
 
 		User u = userRepository.save(user);
-		log.info("Mock (id: " + u.getId() + ") added or updated");
+		log.info("User [username:{}, id:{}] added or updated", u.getUserName(), u.getId());
 		return u;
 	}
 
-	@Transactional
 	public Map<String, String> validate(User user) {
 		Map<String, String> out = new HashMap<>();
 
@@ -137,12 +131,10 @@ public class UserManager {
 		return out;
 	}
 
-	@Transactional
 	public int numberOfAdmins() {
 		return userRepository.findByRoles(Role.ADMIN).size();
 	}
 
-	@Transactional
 	public void resetPassword(long id) {
 		User user = getUser(id);
 		if (user == null) {

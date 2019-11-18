@@ -20,7 +20,7 @@ deploy:
   api_key:
     secure: N7obXL0TL+XczhZGjobVRYzWoSt01bjYQntMWdUXrg6TnD91fWqfdTJS23ZhE5pPrS640rLguaH/P0yJXwylWxCw1SJEOkei/+L7fLH1PxJtxIznDRsamdc+rDgqksgoAIYFUv66XpXf99zju5C9Z4jHmvGAjSir/wnbnFplKrFfPoJE3VwutpcujwLpykTMtPTO+SG+VLEJ1rXoJV0aai0qPIeAdglYOwU4eh78PnzUme4zLhwfhJAVOhGeE9+HFxB+38a6p4c7ItLpUtTyAxOf3P2V6vtMopyUCC3GS/M2xPd3MXYbq5ARCEorGwMSFdKVcoAONmcnm7Y9LP2nsBLPPp+JamEcX5DJ2XsEySzQUw3alRKraX61nqXZi7Lz6om0qI6vhhD2iDlgZnmeqOq/qo9QWwvjTst7H/yQuj51eYJmTEywbwIB/Rmne4S6I7s6STbG1i2vx3gpseOXwD4tgblcahTKGwlRToXshdGy5t47PSUTBpcb+T1hlzW/n5HoCoSgXlYNiMFEVIqEbzUkanlk8Lv/j4UkxQRkXEBkyjxqkmNl/t5cpK1ufv7nmZ3MIUFGR9SnvjXAGAcvCWHh4qDIcLMQ8JXh7fLb9RybbdvlCxwO/mivoB8YYrJAkfHvaimpTGZPdcf5MJNfmhPpakd7cIcY01J4ScYxZQc=
   skip_cleanup: true
-  file: mokka/target/mokka-0.4.1-SNAPSHOT.jar
+  file: mokka/target/mokka-0.5.0-SNAPSHOT.jar
 
   on:
     tags: true

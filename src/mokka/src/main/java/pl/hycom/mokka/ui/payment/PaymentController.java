@@ -30,7 +30,6 @@ public class PaymentController {
     private static final String WRONG_EMAIL_FORMAT = "Wrong email format.";
     private static final String AMOUNT_COULDNT_BE_NULL = "Amount couldn't be null";
     private static final String AMOUNT_MUST_NOT_BE_0 = "Amount must be >= 0";
-    private static final String WRONG_HASH_VALUE = "Wrong hash value";
     private static final String ALFANUMERIC_REGEX = "^[a-zA-Z0-9]*$";
     private static final String INT_REGEX = "^[0-9]*$";
     private static final String AMOUNT_FORMAT = "Amount should have max 14 digits before dot and 2 digits after dot.";
@@ -39,10 +38,12 @@ public class PaymentController {
     private static final String ORDER_ID = "&OrderID=";
     private static final String SERVICE_ID = "?ServiceID=";
     private static final String HASH = "&Hash=";
-    private static final String ORDER_IDERROR = "OrderIDerror";
-    private static final String AMOUNTERROR = "Amounterror";
-    private static final String SERVICE_IDERROR = "ServiceIDerror";
+    static final String ORDER_IDERROR = "OrderIDerror";
 
+    static final String AMOUNTERROR = "Amounterror";
+    static final String HASH_ERROR = "Hasherror";
+    static final String WRONG_HASH_VALUE = "Wrong hash value";
+    static final String SERVICE_IDERROR = "ServiceIDerror";
     static final String SERVICE_ID_EMPTY = "ServiceID cannot be empty.";
     static final String SERVICE_ID_TOO_LONG_MAXIMUM_10_SIGNS = "ServiceID too long. Maximum 10 signs.";
     static final String ORDER_ID_CANNOT_BE_EMPTY = "OrderID cannot be empty.";
@@ -96,9 +97,9 @@ public class PaymentController {
             model.addAttribute("Emailerror", WRONG_EMAIL_FORMAT);
         }
         if (StringUtils.isBlank(hash)) {
-            model.addAttribute("Hasherror", HASH_COULDNT_BE_NULL);
+            model.addAttribute(HASH_ERROR, HASH_COULDNT_BE_NULL);
         } else if (!HashValidator.validate(hash, currentKey, serviceId, orderId, amount, customerEmail)) {
-            model.addAttribute("Hasherror", WRONG_HASH_VALUE);
+            model.addAttribute(HASH_ERROR, WRONG_HASH_VALUE);
         }
 
         BlueMediaPayment blueMediaPayment = new BlueMediaPayment();
