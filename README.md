@@ -37,9 +37,11 @@ mvn spring-boot:run # (use -Pdev if in development mode)
 ```
 
 ## Usage
+```
 - http://localhost:8081 - login page
-- http://localhost:8081/bluemedia?ServiceID=1&OrderID=11&Amount=1.00&CustomerEmail=&Hash=1 - exemplary payment page
+- http://localhost:8081/bluemedia?ServiceID=123123111&OrderID=11&Amount=0.00&CustomerEmail=test@test.pl&Hash=b05bc1f89b61d68b57eacf83d28f79b6f9dc7e9b20e77b0d3f676475721f7 - exemplary payment page
 - http://localhost:8081/files - serving files from directory on local file system
+```
 
 ## Debugging
 ### Logs

@@ -20,7 +20,6 @@ import pl.hycom.mokka.util.validation.DefaultHashGenerator;
 import pl.hycom.mokka.util.validation.HashAlgorithm;
 import pl.hycom.mokka.util.validation.HashGenerator;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
