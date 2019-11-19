@@ -60,7 +60,8 @@ public class MockInterceptor extends HandlerInterceptorAdapter {
 			return false;
 		}
 
-		log.debug("Mock for uri[{}] found: {}", ctx.getUri(), mockConfiguration);
+        log.info("Found mock [id={}] for uri=[{}]", mockConfiguration.getId(), ctx.getUri());
+        log.debug("Returned mock: {} ", mockConfiguration);
 
 		handleMockResponse(ctx, mockConfiguration);
 
@@ -70,11 +71,12 @@ public class MockInterceptor extends HandlerInterceptorAdapter {
 	private void handleMockResponse(MockContext ctx, MockConfiguration mockConfiguration) throws InterruptedException, MockHandlerException {
 
 		if (mockConfiguration.getTimeout() > 0) {
-			log.info("Waiting for timeout: {}", mockConfiguration.getTimeout());
+			log.info("Applying mock [id={}] timeout: {}", mockConfiguration.getId(), mockConfiguration.getTimeout());
 			Thread.sleep(mockConfiguration.getTimeout());
 		}
 
 		if (rspDebugHeadersEnabled) {
+		    log.info("Adding debug header to mock response.");
             ctx.getResponse().addHeader("X-Mock-Id", mockConfiguration.getId().toString());
         }
 
@@ -106,7 +108,7 @@ public class MockInterceptor extends HandlerInterceptorAdapter {
 	}
 
 	private void handleNoMockResposne(MockContext ctx) throws IOException {
-		log.warn("Mock for uri[{}] not found!", ctx.getUri());
+		log.warn("Mock for uri [{}] not found!", ctx.getUri());
 
 		ctx.getResponse().setStatus(HttpStatus.NOT_FOUND.value());
 		ctx.getResponse().getWriter().write("Mock for uri[" + ctx.getUri() + "] not found");

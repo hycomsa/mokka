@@ -51,7 +51,7 @@ public class LogManager {
 	@Async
 	protected void updateLogCache() {
 		logCache.set(repository.findUniqueLogs());
-		log.debug("logCache updated and contains " + logCache.get().size() + " items");
+		log.debug("logCache updated and contains {} items.", logCache.get().size());
 	}
 
 	@Transactional

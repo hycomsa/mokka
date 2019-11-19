@@ -9,13 +9,14 @@
             <appender-ref ref="CONSOLE" />
             <appender-ref ref="FILE" />
         </root>
+        <logger name="pl.hycom.mokka" level="DEBUG"/>
     </springProfile>
 
     <springProfile name="release">
         <root level="INFO">
             <appender-ref ref="FILE" />
         </root>
+        <logger name="pl.hycom.mokka" level="INFO"/>
     </springProfile>
 
-    <logger name="pl.hycom.mokka" level="DEBUG"/>
 </configuration>

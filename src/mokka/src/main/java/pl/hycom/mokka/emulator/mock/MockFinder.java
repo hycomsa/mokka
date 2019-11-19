@@ -17,7 +17,7 @@ public class MockFinder {
 	private MockConfigurationManager mockConfigurationManager;
 
 	public MockConfiguration findMock(MockContext ctx) {
-		return mockConfigurationManager.findFirstAvailableMockConfiguration(ctx.getUri(), ctx.getRequestBody());
+		return mockConfigurationManager.findFirstAvailableMockConfiguration(ctx.getUri(), ctx.getRequestBody(), ctx.getHttpMethod());
 	}
 
 

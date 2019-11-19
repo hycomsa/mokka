@@ -39,6 +39,9 @@ public class Log implements Serializable {
 	@JsonView(View.General.class)
 	private String uri;
 
+	@JsonView(View.General.class)
+	private String httpMethod;
+
 	@Lob
 	@JsonView(View.Detailed.class)
 	private String request;

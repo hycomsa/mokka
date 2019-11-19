@@ -31,6 +31,8 @@ public class MockContext {
 
     private String uri;
 
+    private String httpMethod;
+
     private String requestBody;
 
     private String from;
@@ -52,8 +54,9 @@ public class MockContext {
         uri = StringUtils.removeStart((String) request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI), "/");
         requestBody = getRequestBody(request);
         from = getSenderAddress(request);
+        httpMethod = getHttpMethod(request);
 
-        logBuilder = Log.builder().uri(uri).request(requestBody).from(from)
+        logBuilder = Log.builder().uri(uri).httpMethod(httpMethod).request(requestBody).from(from)
                 .date(new Timestamp(System.currentTimeMillis()));
     }
 
@@ -79,6 +82,10 @@ public class MockContext {
         return request.getRemoteAddr();
     }
 
+    private static String getHttpMethod(HttpServletRequest request) {
+        return request.getMethod();
+    }
+
     private static String getRequestBody(HttpServletRequest req) {
 
         String requestBody = StringUtils.EMPTY;
@@ -96,10 +103,11 @@ public class MockContext {
 
         try {
             StringWriter sw = new StringWriter();
-            new XMLWriter(sw, OutputFormat.createPrettyPrint()).write(DocumentHelper.parseText(requestBody));
+            new XMLWriter(sw, OutputFormat.createCompactFormat()).write(DocumentHelper.parseText(requestBody));
             return sw.toString();
         } catch (IOException | DocumentException e) {
-            log.error("Error occured when XML parsing body of the request. Raw string will be returned", e);
+            log.warn("Error occured when XML parsing body of the request: {}", e.getMessage());
+            log.info("Raw string will be used.");
             return requestBody;
         }
     }
