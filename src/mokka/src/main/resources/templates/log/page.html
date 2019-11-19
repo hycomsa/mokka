@@ -83,7 +83,7 @@
 								      <ng-md-icon icon="{{ log.status == 'OK' ? 'check_circle' : 'error' }}" class="md-avatar" style="{{ log.status == 'OK' ? 'fill: #DFF2BF' : 'fill: #FFBABA' }}" size="48"></ng-md-icon>
 
 							          <div class="md-list-item-text" layout="column" flex="100">
-							            <h4>Service: {{ log.uri }}</h4>
+							            <h4>{{ log.httpMethod }} /{{ log.uri }}</h4>
 							            <p>{{ log.date | date:"yyyy.MM.dd HH:mm:ss" }} from {{ log.from }}</p>
 
 							            <div id="log-{{log.id}}-details" class="log-details">

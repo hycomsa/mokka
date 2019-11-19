@@ -50,6 +50,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
 /**
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.
  */
@@ -141,7 +145,8 @@ public class MockConfigurationManager {
         return !repository.findById(id).isPresent();
     }
 
-    public MockConfiguration findFirstAvailableMockConfiguration(String path, String requestBody) {
+    public MockConfiguration findFirstAvailableMockConfiguration(
+        String path, String requestBody, String httpMethod) {
         Set<String> paths = new HashSet<>();
         paths.add(path);
         for (String p : pathCache.get()) {
@@ -156,7 +161,12 @@ public class MockConfigurationManager {
         List<MockConfiguration> result = qManager.execute(q, MockConfiguration.class);
 
         for (MockConfiguration mc : result) {
-            if (StringUtils.isBlank(mc.getPattern())) {
+            if (isNotEmpty(mc.getHttpMethod()) && !equalsIgnoreCase(mc.getHttpMethod(), httpMethod)) {
+                log.debug("Mock [id={}] HTTP method [{}] does not match request HTTP method [{}].", mc.getId(), mc.getHttpMethod(), httpMethod);
+                continue;
+            }
+
+            if (isBlank(mc.getPattern())) {
                 return mc;
             }
 
@@ -395,7 +405,7 @@ public class MockConfigurationManager {
     public Map<String, String> validate(MockConfiguration mc) {
         Map<String, String> out = new HashMap<>();
 
-        if (StringUtils.isBlank(mc.getPath())) {
+        if (isBlank(mc.getPath())) {
             out.put("path", NOT_VALID);
         }
 
