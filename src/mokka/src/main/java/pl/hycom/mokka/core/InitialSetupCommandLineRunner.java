@@ -39,7 +39,7 @@ public class InitialSetupCommandLineRunner implements CommandLineRunner {
         log.info("Check if initial setup is required.");
 
         if (userManager.numberOfAdmins() == 0) {
-            log.info("Initial setup is required. Creating administrator.");
+            log.info("Initial setup is required.");
             userManager.createAdminUser();
             log.info("Initial setup done.");
 
