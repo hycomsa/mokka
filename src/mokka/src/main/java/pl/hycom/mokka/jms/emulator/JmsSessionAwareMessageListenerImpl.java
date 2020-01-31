@@ -44,7 +44,7 @@ public class JmsSessionAwareMessageListenerImpl implements SessionAwareMessageLi
                 handleMockResponse(mockContext,mockConfiguration);
             }
 
-            response.setJMSCorrelationID(message.getJMSCorrelationID());
+            response.setJMSCorrelationID(message.getJMSMessageID());
             try (MessageProducer replyProducer = session.createProducer(null)) {
                 replyProducer.send(message.getJMSReplyTo(), response);
             }
