@@ -1,21 +1,28 @@
 @startuml
 !includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/release/1-0/C4_Container.puml
 
-title C2 Mokka (draft)
+title Mokka - Container Diagram (C2)
 
-Person(user, "User", "")
-Person(adm, "Administrator", "")
-System_Ext(externalSystem, "External System", "")
+Person(user, "User", "Manages mocks, views logs")
+Person(adm, "Administrator", "Manages users, mocks and configuration of the system")
+System_Ext(restServiceConsumer, "REST Service Consumer", "Calls stubbed REST services")
+System_Ext(soapServiceConsumer, "SOAP Service Consumer", "Calls stubbed SOAP services")
+System_Ext(jmsServiceConsumer, "JMS Service Consumer", "Calls stubbed JMS services")
+System_Ext(paymentMerchant, "BlueMedia Payment Merchant", "Redirects to and consumes payment-related notifications")
 
 System_Boundary(c1, "Mokka"){
-    Container(web_app, "Web Aplication", "Spring Boot", "")
-    ContainerDb(db, "Database", "SQL", "")
+    Container(web_app, "Web Application", "Spring Boot", "Delivers UI and exposes stubbed APIs.")
+    ContainerDb(db, "Database", "SQL", "Stores users, stubs definitions and logs")
 }
 
-Rel(user, web_app, "Configures mocks", "HTTPS")
-Rel(adm, web_app, "Administers", "HTTPS")
-Rel(externalSystem, web_app, "Uses mocks", "SOAP/HTTPS, JMS, HTTP")
-Rel(web_app, db, "Uses mocks", "JDBC")
+Rel(user, web_app, "Uses", "HTTPS")
+Rel(adm, web_app, "Uses", "HTTPS")
+Rel(restServiceConsumer, web_app, "Uses", "HTTP")
+Rel(soapServiceConsumer, web_app, "Uses", "SOAP/HTTP, SOAP/JMS")
+Rel(jmsServiceConsumer, web_app, "Uses", "JMS")
+Rel(web_app, db, "Reads/Writes", "JDBC")
+Rel(paymentMerchant, web_app, "Uses", "HTTP")
+Rel(web_app, paymentMerchant, "Notifies", "HTTP")
 
 
 @enduml

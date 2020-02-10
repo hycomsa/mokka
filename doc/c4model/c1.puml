@@ -1,15 +1,22 @@
 @startuml
 !includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/release/1-0/C4_Context.puml
 
-title C1 Mokka context (draft)
+title Mokka - System Context Diagram(C1)
 
-Person(user, "User", "")
-Person(adm, "Administrator", "")
-System(mokka, "Mokka", "")
-System_Ext(externalSystem, "External System", "")
+Person(user, "User", "Manages mocks, views logs")
+Person(adm, "Administrator", "Manages users, mocks and configuration of the system")
+System(mokka, "Mokka", "Allows to stub services")
+System_Ext(restServiceConsumer, "REST Service Consumer", "Calls stubbed REST services")
+System_Ext(soapServiceConsumer, "SOAP Service Consumer", "Calls stubbed SOAP services")
+System_Ext(jmsServiceConsumer, "JMS Service Consumer", "Calls stubbed JMS services")
+System_Ext(paymentMerchant, "BlueMedia Payment Merchant", "Redirects to and consumes payment-related notifications")
 
 Rel(user, mokka, "Uses", "HTTPS")
 Rel(adm, mokka, "Uses", "HTTPS")
-Rel(externalSystem, mokka, "Uses mocks", "SOAP/HTTPS, JMS, HTTP")
+Rel(restServiceConsumer, mokka, "Uses", "HTTP")
+Rel(soapServiceConsumer, mokka, "Uses", "SOAP/HTTP, SOAP/JMS")
+Rel(jmsServiceConsumer, mokka, "Uses", "JMS")
+Rel(paymentMerchant, mokka, "Uses", "HTTP")
+Rel(mokka, paymentMerchant, "Notifies", "HTTP")
 
 @enduml
