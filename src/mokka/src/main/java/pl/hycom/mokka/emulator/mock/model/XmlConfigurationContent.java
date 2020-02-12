@@ -30,7 +30,7 @@ import pl.hycom.mokka.web.json.View;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XmlConfigurationContent extends ConfigurationContent {
 
-    @Column(columnDefinition = "LONGVARCHAR(2000000)")
+    @Column(length = 2000000)
     @Lob
     @Basic(fetch = FetchType.EAGER)
     @JsonView(View.General.class)
