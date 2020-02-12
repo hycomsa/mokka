@@ -80,8 +80,8 @@ app.controller('LogsController', function($rootScope, $mdToast, LogsService){
     };
 
 
-    self.getSetOfLogs = function() {
-        LogsService.getSetOfLogs().then (function(response){
+    self.getSetOfUris = function() {
+        LogsService.getSetOfUris().then (function(response){
             self.setOfLogs=response;
         });
 	};

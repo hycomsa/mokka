@@ -14,6 +14,7 @@ import pl.hycom.mokka.web.json.View;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.
@@ -38,9 +39,9 @@ public class LogsController {
 
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@JsonView(View.General.class)
-	@RequestMapping(value = "/logs/getLogs", method = RequestMethod.GET)
-	public Set<Log> getSetOfLogs() {
-		return logRepository.findUniqueLogs();
+	@RequestMapping(value = "/logs/uris", method = RequestMethod.GET)
+	public Set<String> getUris() {
+		return logRepository.findUniqueLogs().stream().map(Log::getUri).collect(Collectors.toSet());
 	}
 
 	@PreAuthorize("hasRole('ROLE_USER')")
