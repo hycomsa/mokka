@@ -16,7 +16,7 @@ import java.util.Set;
 @Transactional
 public interface LogRepository extends CrudRepository<Log, Long> {
 
-    @Query("SELECT DISTINCT l.uri FROM LogsMocks l ORDER BY l.uri ASC")
+    @Query("SELECT DISTINCT l FROM LogsMocks l ORDER BY l.uri ASC")
     Set<Log> findUniqueLogs();
 
     @Modifying

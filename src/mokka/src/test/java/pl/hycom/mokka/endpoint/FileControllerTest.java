@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.annotation.DirtiesContext;
 import pl.hycom.mokka.AbstractTest;
 
 import static io.restassured.RestAssured.expect;
@@ -15,6 +16,7 @@ import static io.restassured.RestAssured.expect;
 /**
  * @author Mariusz Krysztofowicz (mariusz.krysztofowicz@hycom.pl)
  */
+@DirtiesContext
 @SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
 public class FileControllerTest extends AbstractTest {
     @Value("${local.server.port}")
