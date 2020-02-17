@@ -37,9 +37,6 @@
 			    <md-menu-item th:if="${path != 'configuration'}">
 			      <md-button th:href="@{/configurations}" target="_self">Configuration</md-button>
 			    </md-menu-item>
-<!--                <md-menu-item th:if="${path != 'jmsconfiguration'}">-->
-<!--                    <md-button th:href="@{/jmsconfigurations}" target="_self">Jms Mock Configuration</md-button>-->
-<!--                </md-menu-item>-->
 			    <md-menu-item th:if="${path != 'user'}" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER_ADMIN')">
 			      <md-button th:href="@{/users}" target="_self">Users</md-button>
 			    </md-menu-item>
@@ -73,11 +70,11 @@
 		<div id="main-container" ng-cloak="" th:include="${#strings.concat(path, '/page')} :: main"></div>
 
 		<script th:src="@{js/angular.min.js}"></script>
-		<script th:src="@{js/angular-animate.min.js}"></script>
-		<script th:src="@{js/angular-aria.min.js}"></script>
-		<script th:src="@{js/angular-messages.min.js}"></script>
-		<script th:src="@{js/angular-material.js}"></script>
-		<script th:src="@{js/angular-material-icons.min.js}"></script>
+        <script th:src="@{js/angular-animate.min.js}"></script>
+        <script th:src="@{js/angular-aria.min.js}"></script>
+        <script th:src="@{js/angular-messages.min.js}"></script>
+        <script th:src="@{js/angular-material.js}"></script>
+        <script th:src="@{js/angular-material-icons.min.js}"></script>
 		<script th:src="@{js/moment.min.js}"></script>
 		<script th:src="@{js/ng-file-upload.min.js}"></script>
 		<script th:src="@{js/ace/src-min-noconflict/ace.js}"></script>

@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import pl.hycom.mokka.emulator.logs.model.Log;
 import pl.hycom.mokka.web.json.View;
@@ -32,21 +32,21 @@ public class LogsController {
 
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@JsonView(View.General.class)
-	@RequestMapping(value = "/logs", method = RequestMethod.GET)
+	@GetMapping(value = "/logs")
 	public List<Log> getLogs(HttpServletRequest request) {
 		return logManager.getLogs(request);
 	}
 
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@JsonView(View.General.class)
-	@RequestMapping(value = "/logs/uris", method = RequestMethod.GET)
+	@GetMapping(value = "/logs/uris")
 	public Set<String> getUris() {
 		return logRepository.findUniqueLogs().stream().map(Log::getUri).collect(Collectors.toSet());
 	}
 
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@JsonView(View.Detailed.class)
-	@RequestMapping(value = "/logs/{id}", method = RequestMethod.GET)
+	@GetMapping(value = "/logs/{id}")
 	public Log getExchanges(@PathVariable("id") long id) {
 		return logManager.getLog(id);
 	}

@@ -6,10 +6,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import pl.hycom.mokka.security.model.CurrentUser;
 import pl.hycom.mokka.security.model.Role;
@@ -31,7 +33,7 @@ public class UserController {
 	@Autowired
 	private UserManager userManager;
 
-	@RequestMapping(value = "/user/current", method = RequestMethod.GET)
+	@GetMapping(value = "/user/current")
 	public CurrentUser getCurrentUser() {
 		if (SecurityContextHolder.getContext() == null || SecurityContextHolder.getContext()
 				.getAuthentication() == null || !(SecurityContextHolder.getContext().getAuthentication()
@@ -42,13 +44,13 @@ public class UserController {
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER_ADMIN')")
-	@RequestMapping(value = "/user", method = RequestMethod.GET)
+	@GetMapping(value = "/user")
 	public List<User> getAllUsers() {
 		return userManager.getAllUsers();
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_USER')")
-	@RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
+	@GetMapping(value = "/user/{id}")
 	public Object getUser(@PathVariable("id") String id, HttpServletRequest request) {
 		if (StringUtils.equalsIgnoreCase("current", id)) {
 			if (SecurityContextHolder.getContext() == null || SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -65,7 +67,7 @@ public class UserController {
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER_ADMIN')")
-	@RequestMapping(value = "/user", method = RequestMethod.PUT)
+	@PutMapping(value = "/user")
 	public Object saveUser(@RequestBody User user, HttpServletRequest request) {
 		removeAdminRole(user, request);
 
@@ -102,7 +104,7 @@ public class UserController {
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-	@RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE)
+	@DeleteMapping(value = "/user/{id}")
 	public boolean removeUser(@PathVariable("id") long id, HttpServletRequest request) {
 
 		User user = userManager.getUser(id);
@@ -118,7 +120,7 @@ public class UserController {
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER_ADMIN')")
-	@RequestMapping(value = { "/user/{id}/enable", "/user/{id}/disable" }, method = RequestMethod.POST)
+	@PostMapping(value = {"/user/{id}/enable", "/user/{id}/disable" })
 	public boolean setDisabled(@PathVariable("id") long id, HttpServletRequest request) {
 
 		User user = userManager.getUser(id);
@@ -134,14 +136,14 @@ public class UserController {
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER_ADMIN')")
-	@RequestMapping(value = "/user/{id}/reset-password", method = RequestMethod.POST)
+	@PostMapping(value = "/user/{id}/reset-password")
 	public boolean resetPassword(@PathVariable("id") long id) {
 		userManager.resetPassword(id);
 		return true;
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER_ADMIN')")
-	@RequestMapping(value = "/user/{id}/role", method = RequestMethod.POST)
+	@PostMapping(value = "/user/{id}/role")
 	public boolean switchRole(@PathVariable("id") long id, @RequestBody Map<String, String> params, HttpServletRequest request) {
 
 		User user = userManager.getUser(id);
@@ -167,11 +169,8 @@ public class UserController {
 			return false;
 		}
 
-		if (user != null && user.hasAnyRole(Role.ADMIN) && userManager.numberOfAdmins() == 1) {
-			return false;
-		}
-		return true;
-	}
+        return user == null || !user.hasAnyRole(Role.ADMIN) || userManager.numberOfAdmins() != 1;
+    }
 
 	private void changeRoles(User user, Role role) {
 		if (user.hasAnyRole(role)) {
@@ -189,7 +188,7 @@ public class UserController {
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_USER')")
-	@RequestMapping(value = "/user/{id}/change-password", method = RequestMethod.POST)
+	@PostMapping(value = "/user/{id}/change-password")
 	public boolean changePassword(@PathVariable("id") long id, @RequestBody Map<String, String> params) {
 
 		User user = userManager.getUser(id);
