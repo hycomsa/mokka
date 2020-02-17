@@ -299,8 +299,17 @@
                     <ng-md-icon icon="navigate_before"
                                 style="fill: {{ctrl.pagination == 0 ? '#9a9a9a' : '#000000'}}"></ng-md-icon>
                 </md-button>
+                <div>
+                    <md-button ng-repeat="pageIndex in ctrl.pageIndexes" class="md-icon-button"
+                               ng-disabled="pageIndex == ctrl.getCurrentPageNumber()" ng-click="ctrl.goToPage(pageIndex)">
+                        <md-tooltip md-direction="top">Page {{ pageIndex }}</md-tooltip>
+                        <div style="{{pageIndex == ctrl.getCurrentPageNumber() ? 'color: black; font-weight: 900;' : ''}}">
+                            {{ pageIndex }}
+                        </div>
+                    </md-button>
+                </div>
                 <md-button class="md-icon-button" ng-click="ctrl.paginationNext()"
-                           ng-disabled="!ctrl.paginationHasNext">
+                           ng-disabled="!ctrl.hasNextPage()">
                     <md-tooltip md-direction="top">Next page</md-tooltip>
                     <ng-md-icon icon="navigate_next"
                                 style="fill: {{!ctrl.paginationHasNext ? '#9a9a9a' : '#000000'}}"></ng-md-icon>
