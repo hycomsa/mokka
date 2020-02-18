@@ -111,7 +111,7 @@ public class MockSearch {
     }
 
     private void appendCondition(StringBuilder base, String conditionString) {
-        if(base.toString().endsWith(WHERE)) {
+        if(!base.toString().endsWith(WHERE)) {
             base.append("and ");
         }
         base.append(conditionString);
