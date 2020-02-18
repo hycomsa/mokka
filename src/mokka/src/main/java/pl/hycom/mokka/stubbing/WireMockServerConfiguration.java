@@ -30,7 +30,6 @@ public class WireMockServerConfiguration {
         WireMockConfiguration o = new WireMockConfiguration();
         o.port(wiremockHttpPort);
 
-        WireMockServer server = new WireMockServer(o);
-        return server;
+        return new WireMockServer(o);
     }
 }
