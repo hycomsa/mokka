@@ -16,5 +16,5 @@ public class WrappedMockConfiguration implements Serializable {
 
     @JsonView(View.General.class)
     @TrackChanges
-    public boolean hasNext = false;
+    public Long pageCount;
 }

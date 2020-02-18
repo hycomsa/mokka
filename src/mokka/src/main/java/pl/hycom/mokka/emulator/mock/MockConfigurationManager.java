@@ -26,6 +26,7 @@ import pl.hycom.mokka.emulator.mock.model.XmlConfigurationContent;
 import pl.hycom.mokka.security.UserRepository;
 import pl.hycom.mokka.security.model.AuditedRevisionEntity;
 import pl.hycom.mokka.security.model.User;
+import pl.hycom.mokka.util.ArithmeticUtils;
 import pl.hycom.mokka.util.query.MockSearch;
 import pl.hycom.mokka.util.query.Q;
 import pl.hycom.mokka.util.query.QManager;
@@ -223,7 +224,7 @@ public class MockConfigurationManager {
             mockSearch.setStartingIndex(Integer.parseInt(req.getParameter("from")) * mocksPerPage);
         }
 
-        // start perPage & startFromc
+        // start perPage & startFrom
         if (StringUtils.isNumeric(req.getParameter("perPage"))) {
             mockSearch.setMaxResults(Integer.parseInt(req.getParameter("perPage")) * mocksPerPage);
         } else {
@@ -261,12 +262,9 @@ public class MockConfigurationManager {
         }
 
         wrappedMockConfiguration.mocks = mockSearch.find();
-
-        if (wrappedMockConfiguration.mocks.size() >= mocksPerPage + 1) {
-            wrappedMockConfiguration.hasNext = true;
-        } else {
-            wrappedMockConfiguration.hasNext = false;
-        }
+        Long allMockCount = mockSearch.countAllPossibleResults();
+        wrappedMockConfiguration.pageCount = ArithmeticUtils.divideAndCeil(allMockCount, mocksPerPage);
+        mockSearch.clearParameterMap();
 
         return wrappedMockConfiguration;
     }

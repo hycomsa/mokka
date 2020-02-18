@@ -9,7 +9,9 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
     	self.search.enabled = true;
     	self.activeSearch = {};
     	self.pagination = 0;
-    	self.paginationHasNext = false;
+    	self.pageCount = 1;
+    	self.pageIndexes = [1];
+    	self.maxPageIndexes = 9;
     	self.loading = false;
     	self.hasNext=false;
     	// self.mocksPerPage = 10;
@@ -42,7 +44,7 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
 
             file.upload = Upload.upload({
                 url: '/configurations/import',
-                data: {file: file}
+                data: {'file': file}
             });
 
             file.upload.then(function (response) {
@@ -219,11 +221,12 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
                 self.showConfiguration(d.mocks[0]);
                 d.mocks[0].editMode = true;
             }
-            self.paginationHasNext = d.hasNext;
-            self.mocks = d.mocks;
-            self.loading = false;
-            $location.hash('');
-            $anchorScroll();
+        	self.pageCount = d.pageCount;
+        	self.updatePageIndexes();
+        	self.mocks = d.mocks;
+        	self.loading = false;
+        	$location.hash('');
+        	$anchorScroll();
         });
 
     };
@@ -318,4 +321,44 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
             $mdToast.show($mdToast.simple().position('bottom right start').textContent('Change restored'));
         });
     };
+
+    self.hasNextPage = function () {
+        return self.pagination < (self.pageCount - 1);
+    }
+
+    self.goToPage = function(index) {
+        self.pagination = index - 1;
+        self.mocks = [];
+        self.fetchMocks();
+    }
+
+    self.getCurrentPageNumber = function() {
+        return self.pagination + 1;
+    }
+
+    self.updatePageIndexes = function() {
+        const maxPagesAhead = (self.maxPageIndexes - 1) / 2;
+        const maxPagesBehind = (self.maxPageIndexes - 1) / 2;
+
+        let currentPage = self.getCurrentPageNumber();
+        let pagesAhead = self.pageCount - currentPage;
+        pagesAhead = pagesAhead > maxPagesAhead ? maxPagesAhead : pagesAhead;
+        let pagesBehind = currentPage - 1;
+        pagesBehind = pagesBehind > maxPagesBehind ? maxPagesBehind : pagesBehind;
+
+        if(pagesAhead < maxPagesAhead) {
+            pagesBehind += maxPagesAhead - pagesAhead;
+        }
+        if(pagesBehind < maxPagesBehind) {
+            pagesAhead += maxPagesBehind - pagesBehind;
+        }
+
+        let startIndex = currentPage - pagesBehind;
+        startIndex = startIndex < 1 ? 1 : startIndex;
+        let endIndex = currentPage + pagesAhead;
+        self.pageIndexes = [];
+        for(let i=0; startIndex <= endIndex && startIndex <= self.pageCount; i++, startIndex++) {
+            self.pageIndexes[i] = startIndex;
+        }
+    }
 });
