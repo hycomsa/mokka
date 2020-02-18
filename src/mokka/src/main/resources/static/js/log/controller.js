@@ -1,4 +1,4 @@
-app.controller('LogsController', function($rootScope, $mdToast, LogsService){
+app.controller('LogsController', function($rootScope, $scope, $mdToast, LogsService){
     var self = this;
     	self.logs=[];
     	self.fetchingLogs = false;
@@ -85,4 +85,24 @@ app.controller('LogsController', function($rootScope, $mdToast, LogsService){
             self.setOfLogs=response;
         });
 	};
+
+    self.showLogDetails = function(log) {
+        if (log.showLogDetails) {
+            log.showLogDetails = false;
+            log["request"]=null;
+            log["response"]=null;
+        } else {
+              log.configurationLoading = true;
+              log.showLogDetails = true;
+              self.showDetails(log, "request");
+              self.showDetails(log, "response");
+              log.configurationLoading = false;
+        }
+    };
+
+  $scope.aceLoaded = function(_editor){
+    _editor.setOptions({
+                          maxLines: 20
+                      })
+  };
 });

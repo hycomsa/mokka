@@ -7,7 +7,7 @@
 <body>
 <div th:fragment="main">
 
-    <div class="generic-container" ng-controller="ConfigurationController as ctrl">
+    <div class="generic-container" ng-controller="ConfigurationController as ctrl" ng-init="init()">
 
         <md-fab-speed-dial md-direction="left" class="md-fling md-fab-bottom-right"
                            sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
@@ -35,7 +35,7 @@
             </md-fab-actions>
         </md-fab-speed-dial>
 
-        <md-card>
+        <md-card ng-init="initController()">
             <md-card-content ng-filter="ctrl.activateFilter();ctrl.getPaths()">
                 <md-content layout-padding="" layout="column">
                     <div layout="row">

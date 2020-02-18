@@ -16,19 +16,51 @@ md-list-item {
 	margin-bottom: 10px;
 }
 
-.log-details button.md-icon-button {	
+.log-details button.md-icon-button {
 	margin-left: -10px;
 }
 
-.log-details h4 {	
+.log-details h4 {
 	display: inline-block;
 	margin: 0;
 }
 
-.log-details svg {	
+.log-details svg {
 	vertical-align: -5px;
 }
 
 .log-search-form .md-errors-spacer {
 	display: none;
+}
+
+.icons-inline{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.log-info {
+    display: flex;
+    align-items: center;
+}
+
+.ng-expand-button{
+    margin-top: 12px;
+}
+
+md-list.md-dense md-list-item .material-icons-md-24 {
+    font-size: 24px;
+    height: 24px;
+    width: 24px;
+    margin: -3px 0 0 0;
+}
+
+.expand-log-button{
+    margin-left: auto;
+}
+
+.log .date-ip-log{
+    padding-top: 8px;
+    font-size: 0.85rem;
+    text-transform: none;
 }

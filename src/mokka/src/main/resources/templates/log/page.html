@@ -80,45 +80,60 @@
 				            <md-divider ></md-divider>
 			            	<div ng-repeat="log in ctrl.logs" class="log">
 						        <md-list-item>
-								      <ng-md-icon icon="{{ log.status == 'OK' ? 'check_circle' : 'error' }}" class="md-avatar" style="{{ log.status == 'OK' ? 'fill: #DFF2BF' : 'fill: #FFBABA' }}" size="48"></ng-md-icon>
-
 							          <div class="md-list-item-text" layout="column" flex="100">
-							            <h4>{{ log.httpMethod }} /{{ log.uri }}</h4>
-							            <p>{{ log.date | date:"yyyy.MM.dd HH:mm:ss" }} from {{ log.from }}</p>
+                                          <div class="icons-inline">
+                                              <div class="log-info">
+                                                  <ng-md-icon icon="{{ log.status == 'OK' ? 'check_circle' : 'error' }}" class="md-avatar material-icons-md-24" style="{{ log.status == 'OK' ? 'fill: #DFF2BF' : 'fill: #FFBABA' }};" size="24">
+                                                      <md-tooltip md-direction="top">Request {{log.status == 'OK' ? 'matched' : 'umatched'}}</md-tooltip>
+                                                  </ng-md-icon>
+                                                  <h4>{{ log.httpMethod }} /{{ log.uri }}</h4>
+                                              </div>
+                                              <md-button class="md-ink-ripple icons-inline log-info expand-log-button" type="button"
+                                                         ng-click="ctrl.showLogDetails(log)" >
 
-							            <div id="log-{{log.id}}-details" class="log-details">
-							            	<div flex="">
-							            		<h4>Request</h4>
-							            		<md-button class="md-icon-button md-ink-ripple" type="button" ng-click="ctrl.showDetails(log, 'request')">
-													<md-tooltip md-direction="top">{{log.request == null ? 'show' : 'hide'}} request</md-tooltip>
-								            		<ng-md-icon ng-show="log.request == null" class="request-expand-more-icon" style="fill: #000000" icon="expand_more"></ng-md-icon>
-								            		<ng-md-icon ng-show="log.request != null" class="request-expand-less-icon" style="fill: #000000" icon="expand_less"></ng-md-icon>
-												</md-button>
-							            	</div>
-							            	<div layout="row" layout-align="center center" ng-show="log.request == null &amp;&amp; log.requestLoading">
-												<md-progress-circular md-mode="indeterminate"></md-progress-circular>
-											</div>
-							            	<div class="ui-ace" ng-readonly="true" ui-ace="{mode: 'xml'}" ng-model="log.request" ng-if="log.request"></div>
+                                                  <md-tooltip md-direction="top">{{log.showLogDetails ? 'hide' : 'show'}} logs details</md-tooltip>
 
-							            	<div flex="">
-							            		<h4>Response</h4>
-							            		<md-button class="md-icon-button md-ink-ripple" type="button" ng-click="ctrl.showDetails(log, 'response')">
-													<md-tooltip md-direction="top">{{log.response == null ? 'show' : 'hide'}} response</md-tooltip>
-								            		<ng-md-icon ng-show="log.response == null" class="response-expand-more-icon" style="fill: #000000" icon="expand_more"></ng-md-icon>
-								            		<ng-md-icon ng-show="log.response != null" class="response-expand-less-icon" style="fill: #000000" icon="expand_less"></ng-md-icon>
-												</md-button>
-											</div>
-											<div layout="row" layout-align="center center" ng-show="log.response == null &amp;&amp; log.responseLoading">
-												<md-progress-circular md-mode="indeterminate"></md-progress-circular>
-											</div>
-											<div class="ui-ace" ng-readonly="true" ui-ace="{mode: 'xml'}" ng-model="log.response" ng-if="log.response"></div>
+                                                  <ng-md-icon class="ng-expand-button" ng-show="!log.showLogDetails" style="fill: #000000"
+                                                              icon="expand_more"></ng-md-icon>
+                                                  <ng-md-icon class="ng-expand-button" ng-show="log.showLogDetails" style="fill: #000000"
+                                                              icon="expand_less"></ng-md-icon>
+
+                                                  <p class="date-ip-log">{{ log.date | date:"yyyy.MM.dd HH:mm:ss" }} from {{ log.from }}</p>
+
+
+                                              </md-button>
+
+
+
+
+                                              <md-button class="md-icon-button md-primary md-button md-ink-ripple menu-item-link" type="button" href="/configurations?mockId={{log.configurationId}}" ng-if="log.configurationId">
+                                                  <md-tooltip md-direction="top">Edit configuration</md-tooltip>
+                                                  <ng-md-icon style="fill: #9a9a9a" icon="arrow_forward"></ng-md-icon>
+                                              </md-button>
+                                          </div>
+
+                                          <div layout="row" layout-align="center center" ng-show="log.configurationLoading">
+                                              <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                                          </div>
+
+
+                                            <div ng-show="log.showLogDetails" >
+                                                <div id="log-{{log.id}}-details" class="log-details">
+                                                    <h4>Request:</h4>
+                                                    <div layout="row" layout-align="center center" ng-show="log.request == null &amp;&amp; log.requestLoading">
+                                                        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                                                    </div>
+                                                    <div class="ui-ace" ng-readonly="true" ng-model="log.request" ng-if="log.request" ui-ace="{mode: 'xml', onLoad : aceLoaded }"></div>
+                                                    <h4>Response:</h4>
+                                                    <div layout="row" layout-align="center center" ng-show="log.response == null &amp;&amp; log.responseLoading">
+                                                        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                                                    </div>
+                                                    <div class="ui-ace" ng-readonly="true" ng-model="log.response" ng-if="log.response" ui-ace="{mode: 'xml', onLoad : aceLoaded }"></div>
+                                                </div>
+                                            </div>
 							            </div>
-							          </div>
 
-							          <md-button class="md-icon-button md-primary md-button md-ink-ripple" type="button" href="/configurations#mock-{{log.configurationId}}" ng-if="log.configurationId">
-										<md-tooltip md-direction="top">Edit configuration</md-tooltip>
-										<ng-md-icon style="fill: #9a9a9a" icon="edit"></ng-md-icon>
-									  </md-button>
+
 						        </md-list-item>
  						    	<md-divider ></md-divider>
 				        	</div>
