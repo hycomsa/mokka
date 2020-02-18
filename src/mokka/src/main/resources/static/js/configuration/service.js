@@ -64,6 +64,28 @@ app.factory('ConfigurationService',function($http, $q){
 		   });
 	   },
 
+       getMock: function(params, mockId) {
+           return $http.get('/configuration/' + mockId, {
+                'params': params
+            }).then(function(response){
+
+                    if (!response.data.configurationContent) {
+                        e.configurationContent = {};
+                    }
+
+                    if (response.data.configurationContent.groovy) {
+                        response.data.type='groovy';
+                    } else if (response.data.configurationContent.xml) {
+                        response.data.type='xml';
+                    } else {
+                        response.data.type='string';
+                    }
+
+
+                   return response.data;
+           });
+       },
+
 	   getStatuses: function(mock) {
 		   return $http.post('/configuration/statuses').then(function(response){
 		   console.debug(response);

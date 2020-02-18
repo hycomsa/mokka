@@ -165,6 +165,8 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
 	self.activateFilter = function() {
     	self.activeSearch = {};
     	self.search.update = false;
+        $location.search('mockId', null);
+
     	angular.extend(self.activeSearch, self.search);
     	self.mocks = [];
     	self.paths = [];
@@ -186,6 +188,14 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
     };
 
     self.fetchMocks = function(initParams){
+
+        mockId = $location.search().mockId;
+        if(mockId != null){
+            self.search.enabled = "";
+            self.search.id = mockId;
+        }
+
+        angular.extend(self.activeSearch, self.search);
     	self.loading = true;
     	var params = {
     		'from': (self.pagination),
@@ -205,13 +215,48 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
     	}
 
         ConfigurationService.fetchMocks(params).then(function(d) {
-        	self.paginationHasNext = d.hasNext;
-        	self.mocks = d.mocks;
-        	self.loading = false;
-        	$location.hash('');
-        	$anchorScroll();
+            if(mockId!=null && Array.isArray(d.mocks) && d.mocks.length){
+                self.showConfiguration(d.mocks[0]);
+                d.mocks[0].editMode = true;
+            }
+            self.paginationHasNext = d.hasNext;
+            self.mocks = d.mocks;
+            self.loading = false;
+            $location.hash('');
+            $anchorScroll();
         });
+
     };
+
+    $scope.init = function(initParams) {
+        self.search.enabled = true;
+        if($location.search().mockId != null){
+
+            var params = {
+                'from': (self.pagination),
+                // 'from': (self.pagination * self.mocksPerPage),
+                'perPage': (1),
+                // 'perPage': (self.mocksPerPage + 1),
+            };
+
+            angular.extend(params, initParams);
+
+            var mockId = parseInt($location.search().mockId);
+            if(isFinite(mockId)){
+
+                self.search.id = mockId;
+                            ConfigurationService.getMock(params,mockId).then(function(m){
+                                self.search.path = m.path;
+                                self.search.description = m.description;
+                                self.search.pattern = m.pattern;
+                                self.search.name = m.name;
+                                self.search.enabled = "";
+                                self.paths = [m.path];
+                            });
+            }
+        }
+    };
+
 
     self.paginationPrevious = function() {
     	self.pagination = self.pagination - 1;
