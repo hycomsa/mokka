@@ -104,7 +104,7 @@ public class MockInterceptor extends HandlerInterceptorAdapter {
 			ctx.getLogBuilder().status(LogStatus.NOT_FOUND).response("No handler found!");
 		}
 
-		logManager.saveLog(ctx.getLogBuilder().configurationId(mockConfiguration.getId()));
+		logManager.saveLog(ctx.getLogBuilder().configurationId(mockConfiguration.getId()).name(mockConfiguration.getName()));
 	}
 
 	private void handleNoMockResposne(MockContext ctx) throws IOException {

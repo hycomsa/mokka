@@ -88,6 +88,11 @@ public class LogManager {
 			q.and(Q.like("l.uri", req.getParameter("path")));
 		}
 
+		// name
+		if (StringUtils.isNotBlank(req.getParameter("name"))) {
+			q.and(Q.like("l.name", "%" + req.getParameter("name") + "%"));
+		}
+
 		// from
 		if (StringUtils.isNotBlank(req.getParameter("from"))) {
 			q.and(Q.like("l.from", req.getParameter("from")));
