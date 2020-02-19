@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class WireMockServerRunner implements CommandLineRunner {
 
-    private final WireMockServer server;
+    private final WireMockServer wireMockServer;
 
     @Setter
     @Value("${wiremock.enabled}")
@@ -30,14 +30,14 @@ public class WireMockServerRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (!wiremockEnabled) {
-            log.debug("Embedded Wiremock disabled by configuration.");
+            log.info("Embedded Wiremock disabled by configuration.");
             return;
         }
 
         log.info("Starting embedded Wiremock server.");
 
-        server.start();
+        wireMockServer.start();
 
-        log.info("Embedded Wiremock is running [{}] on port {}.", server.isRunning(), server.port());
+        log.info("Embedded Wiremock is running [{}] on port {}.", wireMockServer.isRunning(), wireMockServer.port());
     }
 }

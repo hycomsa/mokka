@@ -26,7 +26,7 @@ public class WireMockServerConfiguration {
      * @return
      */
     @Bean
-    public WireMockServer wireMockOptions() {
+    public WireMockServer wireMockServer() {
         WireMockConfiguration o = new WireMockConfiguration();
         o.port(wiremockHttpPort);
 
