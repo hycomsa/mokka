@@ -22,6 +22,10 @@ public class ArithmeticUtils {
      */
     public static Long divideAndCeil(long dividend, long divisor) {
         long remainder = dividend % divisor;
-        return (dividend + (remainder == 0 || remainder > (divisor / 2) ? remainder : (divisor - remainder))) / divisor;
+        long result = dividend / divisor;
+        if(remainder != 0) {
+            result++;
+        }
+        return result;
     }
 }
