@@ -21,15 +21,23 @@
 								</md-select>
 					        </md-input-container>
 
-							<md-input-container class="md-block" flex="33">
+                            <md-input-container flex="33">
+                                <label>Name</label>
+                                <input ng-model="ctrl.search.name"
+                                       ng-change="ctrl.search.update = true"
+                                       ng-enter="ctrl.activateFilter()"/>
+                            </md-input-container>
+
+                            <md-input-container class="md-block" flex="33">
 					            <label>From</label>
 					            <input ng-model="ctrl.search.from" ng-change="ctrl.search.update = true"  ng-enter="ctrl.activateFilter()"/>
 					        </md-input-container>
 
-							<md-input-container class="md-block" flex="33">
+                            <md-input-container class="md-block" flex="33">
 					            <label>Text</label>
 					            <input ng-model="ctrl.search.text" ng-change="ctrl.search.update = true"  ng-enter="ctrl.activateFilter()"/>
 					        </md-input-container>
+
 						</div>
 
 						<div layout-gt-sm="row">
@@ -86,7 +94,7 @@
                                                   <ng-md-icon icon="{{ log.status == 'OK' ? 'check_circle' : 'error' }}" class="md-avatar material-icons-md-24" style="{{ log.status == 'OK' ? 'fill: #DFF2BF' : 'fill: #FFBABA' }};" size="24">
                                                       <md-tooltip md-direction="top">Request {{log.status == 'OK' ? 'matched' : 'umatched'}}</md-tooltip>
                                                   </ng-md-icon>
-                                                  <h4>{{ log.httpMethod }} /{{ log.uri }}</h4>
+                                                  <h4>{{ log.httpMethod }} /{{ log.uri }} {{ log.name == null ? "" : "for"}} {{ log.name }}</h4>
                                               </div>
                                               <md-button class="md-ink-ripple icons-inline log-info expand-log-button" type="button"
                                                          ng-click="ctrl.showLogDetails(log)" >

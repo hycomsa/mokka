@@ -64,4 +64,7 @@ public class Log implements Serializable {
 
 	@JsonView(View.General.class)
 	private Long configurationId;
+
+    @JsonView(View.General.class)
+    private String name;
 }
