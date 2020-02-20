@@ -68,10 +68,24 @@ md-content {
 }
 
 div#logoMokka {
-    background-image: url("../mokka.png");
+    background-image: url("../img/mokka.png");
     background-repeat: no-repeat;
     background-size:contain;
-    width: 50px;
-    height: 50px;
+    width: 35px;
+    height: 40px;
+    margin-right: 10px;
 }
 
+md-toolbar {
+    min-height: 40px;
+}
+
+.md-toolbar-tools {
+    height: 40px;
+    max-height: 40px;
+    font-size: 16px;
+}
+
+.md-button {
+    text-transform: none
+}
