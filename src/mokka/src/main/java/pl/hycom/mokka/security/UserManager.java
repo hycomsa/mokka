@@ -2,9 +2,10 @@ package pl.hycom.mokka.security;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,21 +29,21 @@ import java.util.Set;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserManager {
 
 	private static final String NOT_VALID = "not-valid";
 
 	@Value("${default.password}")
+    @Setter
 	private String defaultPassword;
 
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+	private final PasswordEncoder passwordEncoder;
 
-    public User createAdminUser(){
-	    log.info("Creating admin user.");
+    public User createAdminUser() {
+        log.info("Creating admin user.");
         User user = new User();
         user.setUserName("admin");
         user.setPasswordHash(passwordEncoder.encode(getDefaultPassword()));
@@ -54,21 +55,21 @@ public class UserManager {
         return userRepository.save(user);
     }
 
-	public List<User> getAllUsers() {
-		return Lists.newArrayList(userRepository.findAll());
-	}
+    public List<User> getAllUsers() {
+        return Lists.newArrayList(userRepository.findAll());
+    }
 
-	public UserDetails loadUserByUsername(String userName){
-		User user = userRepository.findOneByUserName(userName).orElseThrow(() -> new UsernameNotFoundException("User[" + userName + "] was not found"));
+    public UserDetails loadUserByUsername(String userName) {
+        User user = userRepository.findOneByUserName(userName).orElseThrow(() -> new UsernameNotFoundException("User[" + userName + "] was not found"));
 
-		Set<GrantedAuthority> authorities = new HashSet<>(user.getRoles().size());
-		authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-		for (Role role : user.getRoles()) {
-			authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
-		}
+        Set<GrantedAuthority> authorities = new HashSet<>(user.getRoles().size());
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        for (Role role : user.getRoles()) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        }
 
-		return new CurrentUser(user, authorities);
-	}
+        return new CurrentUser(user, authorities);
+    }
 
 	public User getUser(long id) {
 		return userRepository.findById(id).orElse(null);
@@ -154,17 +155,21 @@ public class UserManager {
 
 		User user = getUser(id);
 		if (user == null) {
-			return false;
-		}
+            return false;
+        }
 
-		user.setResetPassword(Boolean.FALSE);
-		user.setPasswordHash(passwordEncoder.encode(password));
-		userRepository.save(user);
+        user.setResetPassword(Boolean.FALSE);
+        user.setPasswordHash(passwordEncoder.encode(password));
+        userRepository.save(user);
 
-		return true;
-	}
+        return true;
+    }
 
-	public String getDefaultPassword() {
-		return defaultPassword;
-	}
+    public String getDefaultPassword() {
+        return defaultPassword;
+    }
+
+    public String getDefaultEncodedPassword() {
+        return passwordEncoder.encode(defaultPassword);
+    }
 }
