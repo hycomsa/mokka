@@ -1,7 +1,6 @@
 package pl.hycom.mokka.ui.payment;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,8 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(PaymentController.class)
 @ActiveProfiles("test")
 public class PaymentControllerIT {
-
-    private static final String REDIRECT = "redirect:";
 
     private static final String ORDER_ID = "&OrderID=";
 
@@ -167,31 +165,31 @@ public class PaymentControllerIT {
             andExpect(model().attributeDoesNotExist(PaymentController.HASH_ERROR));
     }
 
-    @Test @Disabled
+    @Test
     public void shouldSuccessRedirect() throws Exception {
         BlueMediaPayment blueMediaPayment = createSampleBlueMediaPayment();
 
-        this.mvc.perform(post("/pay", blueMediaPayment)).
-            andExpect(status().isOk()).
+        this.mvc.perform(post("/bluemedia/pay").flashAttr("blueMediaPayment", blueMediaPayment)).
+            andExpect(status().is3xxRedirection()).
             andExpect(redirectedUrl(redirectUrl(blueMediaPayment)));
     }
 
-    @Test @Disabled
+    @Test
     public void shouldErrorRedirect() throws Exception {
         BlueMediaPayment blueMediaPayment = createSampleBlueMediaPayment();
 
-        this.mvc.perform(post("/error", blueMediaPayment)).
-            andExpect(status().isOk()).
+        this.mvc.perform(post("/bluemedia/error").flashAttr("blueMediaPayment", blueMediaPayment)).
+            andExpect(status().is3xxRedirection()).
             andExpect(redirectedUrl(redirectUrl(blueMediaPayment)));
     }
 
-    @Test @Disabled
+    @Test
     public void shouldPendingRedirect() throws Exception {
         BlueMediaPayment blueMediaPayment = createSampleBlueMediaPayment();
 
-        this.mvc.perform(post("/pending", blueMediaPayment)).
+        this.mvc.perform(post("/bluemedia/pending", blueMediaPayment)).
             andExpect(status().isOk()).
-            andExpect(redirectedUrl("OK"));
+            andExpect(content().string("OK"));
 
     }
 
@@ -208,7 +206,7 @@ public class PaymentControllerIT {
     }
 
     private String redirectUrl(BlueMediaPayment blueMediaPayment) {
-        return REDIRECT + blueMediaPayment.getRedirectURL() + SERVICE_ID + blueMediaPayment
+        return blueMediaPayment.getRedirectURL() + SERVICE_ID + blueMediaPayment
             .getServiceID() + ORDER_ID + blueMediaPayment.getOrderID() + HASH + blueMediaPayment.getHash();
     }
 }
