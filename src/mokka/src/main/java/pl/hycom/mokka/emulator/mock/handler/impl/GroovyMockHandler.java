@@ -1,5 +1,6 @@
 package pl.hycom.mokka.emulator.mock.handler.impl;
 
+import com.github.tomakehurst.wiremock.extension.responsetemplating.RequestTemplateModel;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +41,7 @@ public class GroovyMockHandler implements MockHandler {
 			Binding binding = new Binding();
 
 			binding.setVariable("ctx", ctx);
-			binding.setVariable("mockConfiguration", mockConfiguration);
-			binding.setVariable("httpHelper", httpHelper);
+			binding.setVariable("request", RequestTemplateModel.from(new MockHttpServletRequestAdapter(ctx)));
 
 			Object value = new GroovyShell(binding).evaluate(content.getScript());
 if(ctx.getResponse()!=null) {
