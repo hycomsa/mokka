@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @WebMvcTest(PaymentController.class)
 @ActiveProfiles("test")
-public class PaymentControllerTest {
+public class PaymentControllerIT {
 
     private static final String REDIRECT = "redirect:";
 

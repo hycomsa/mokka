@@ -1,13 +1,11 @@
 package pl.hycom.mokka.service.impl;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.client.MockRestServiceServer;
 import pl.hycom.mokka.service.payment.DefaultPaymentStatusService;
 import pl.hycom.mokka.service.payment.pojo.BlueMediaPayment;
@@ -21,7 +19,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  */
 @RestClientTest(DefaultPaymentStatusService.class)
 @ActiveProfiles("test")
-public class DefaultPaymentStatusServiceTest{
+public class DefaultPaymentStatusServiceIT {
 
     @Autowired
     private DefaultPaymentStatusService defaultPaymentStatusService;
