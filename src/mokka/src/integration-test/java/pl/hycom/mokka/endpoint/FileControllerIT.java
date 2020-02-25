@@ -5,10 +5,11 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.annotation.DirtiesContext;
-import pl.hycom.mokka.AbstractTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import static io.restassured.RestAssured.expect;
 
@@ -17,8 +18,10 @@ import static io.restassured.RestAssured.expect;
  * @author Mariusz Krysztofowicz (mariusz.krysztofowicz@hycom.pl)
  */
 @DirtiesContext
+@ActiveProfiles("test")
+@AutoConfigureTestDatabase
 @SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
-public class FileControllerTest extends AbstractTest {
+public class FileControllerIT {
     @Value("${local.server.port}")
     protected int serverPort;
 

@@ -5,14 +5,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import pl.hycom.mokka.AbstractTest;
+import pl.hycom.mokka.Application;
 import pl.hycom.mokka.emulator.logs.model.Log;
 
 import java.sql.Timestamp;
@@ -25,8 +27,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Kamil Adamiec (kamil.adamiec@hycom.pl)
  */
 @DirtiesContext
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
-public class LogsControllerIntegrationTest extends AbstractTest {
+@AutoConfigureTestDatabase
+@SpringBootTest(classes = Application.class)
+public class LogsControllerIT {
 
     private static final String GET_LOGS_URI = "/logs";
 
@@ -91,3 +96,6 @@ public class LogsControllerIntegrationTest extends AbstractTest {
         return builder.header("x-requested-with", "XMLHttpRequest");
     }
 }
+
+
+
