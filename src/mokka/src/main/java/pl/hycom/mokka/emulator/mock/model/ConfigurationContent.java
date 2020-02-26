@@ -33,7 +33,7 @@ import java.io.Serializable;
 		@JsonSubTypes.Type(value = ModelConfigurationContent.class, name = "model")
 })
 @XmlTransient
-public abstract class ConfigurationContent implements Serializable{
+public abstract class ConfigurationContent implements ConfigurationContentValue, Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)

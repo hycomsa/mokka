@@ -37,4 +37,9 @@ public class GroovyConfigurationContent extends ConfigurationContent {
     @TrackChanges
     @XmlElement
     private String script;
+
+    @Override
+    public String getValue() {
+        return script;
+    }
 }
