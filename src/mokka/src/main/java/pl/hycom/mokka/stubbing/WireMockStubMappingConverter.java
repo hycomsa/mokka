@@ -44,6 +44,7 @@ public class WireMockStubMappingConverter implements Converter<MockConfiguration
             }
 
             responseDefinitionBuilder.withFixedDelay(mockConfiguration.getTimeout());
+            responseDefinitionBuilder.proxiedFrom(mockConfiguration.getProxyBaseUrl());
 
             stubMapping.setRequest(requestPattern);
             stubMapping.setResponse(responseDefinitionBuilder.build());
