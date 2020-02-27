@@ -146,6 +146,11 @@
                             <textarea placeholder="" ng-model="mock.description" ng-disabled="!mock.editMode"
                                       ng-enter="ctrl.saveEditMode(mock)"></textarea>
                         </md-input-container>
+                        <md-input-container class="full-width" md-is-error="mock.errors.proxyBaseUrl != null">
+                            <label>Proxy</label>
+                            <textarea placeholder="" ng-model="mock.proxyBaseUrl" ng-disabled="!mock.editMode"
+                                      ng-enter="ctrl.saveEditMode(mock)"></textarea>
+                        </md-input-container>
                     </div>
 
                     <div class="mock-configuration">

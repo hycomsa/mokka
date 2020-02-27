@@ -71,6 +71,11 @@ public class MockConfiguration implements Serializable {
 	@TrackChanges
 	private boolean enabled = true;
 
+    @JsonView(View.General.class)
+    @XmlElement
+    @TrackChanges
+    private String proxyBaseUrl;
+
 	@Column(name = "mock_timeout", nullable = false)
 	@JsonView(View.General.class)
 	@XmlElement
