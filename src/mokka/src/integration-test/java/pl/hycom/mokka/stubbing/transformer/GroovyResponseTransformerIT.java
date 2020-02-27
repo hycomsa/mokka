@@ -2,64 +2,61 @@ package pl.hycom.mokka.stubbing.transformer;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import io.restassured.RestAssured;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import pl.hycom.mokka.stubbing.WireMockServerConfiguration;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.restassured.RestAssured.expect;
 
 /**
  * @author Bartosz Kuron (bartosz.kuron@hycom.pl)
  */
-@DirtiesContext
 @ActiveProfiles("test")
-@AutoConfigureTestDatabase
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = WireMockServerConfiguration.class)
 public class GroovyResponseTransformerIT {
 
+    private static final String API_URL = "test-body";
+    private static final String CONTENT_TYPE_KEY = "Content-Type";
+    private static final String CONTENT_TYPE_VALUE = "text/plain";
 
-    @Value("${wiremock.test.httpPort}")
-    private int wiremockHttpPort = 8083;
-
+    @Autowired
     WireMockServer wm;
 
     @BeforeEach
     public void setUp() {
-        RestAssured.port = wiremockHttpPort;
+        wm.start();
+        RestAssured.port = wm.port();
     }
 
     @Test
     public void transform_test() {
-        startWithExtensions("pl.hycom.mokka.stubbing.responsetemplating.GroovyResponseTransformer");
-        createStub("/test-body");
+        createStub("/"+API_URL);
 
-        expect().statusCode(404).when().get("/test-body");
+        Response response = RestAssured.get("/"+API_URL);
+        expect().statusCode(200).header(CONTENT_TYPE_KEY, CONTENT_TYPE_VALUE).response();
+
+        String expectedBody = "<response>" + API_URL + "|" + "GET</response>";
+        Assertions.assertEquals(expectedBody, response.getBody().asString());
     }
 
 
     private void createStub(String url) {
+        String body = "result='<response>'; result+=ctx.uri; result+='|'; result+=request.requestLine.method; result+='</response>'; return result;";
+
         wm.stubFor(get(urlEqualTo(url)).willReturn(aResponse()
-            .withHeader("Content-Type", "text/plain")
+            .withHeader(CONTENT_TYPE_KEY, CONTENT_TYPE_VALUE)
             .withStatus(200)
-            .withBody("result='''<responseBody>'''\\r\\nresult+=ctx.uri\\r\\nresult+='''<\\/responseBody>'''\\r\\n\\r\\nreturn result")
+            .withBody(body)
             .withTransformers("groovy-transformer")));
-    }
-
-
-    private void startWithExtensions(String... extensions) {
-        wm = new WireMockServer(wireMockConfig()
-            .port(wiremockHttpPort)
-            .extensions(extensions));
-        wm.start();
     }
 
     @AfterEach

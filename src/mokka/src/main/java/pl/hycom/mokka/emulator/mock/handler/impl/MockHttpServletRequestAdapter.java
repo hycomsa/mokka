@@ -38,8 +38,8 @@ import java.util.Set;
  */
 public class MockHttpServletRequestAdapter implements Request {
 
-    MockContext mockContext;
-    HttpServletRequest request;
+    private MockContext mockContext;
+    private HttpServletRequest request;
 
     public MockHttpServletRequestAdapter(MockContext mockContext) {
         this.mockContext = mockContext;
