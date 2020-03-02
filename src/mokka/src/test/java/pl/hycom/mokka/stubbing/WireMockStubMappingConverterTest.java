@@ -7,6 +7,7 @@ import pl.hycom.mokka.emulator.mock.model.GroovyConfigurationContent;
 import pl.hycom.mokka.emulator.mock.model.MockConfiguration;
 import pl.hycom.mokka.emulator.mock.model.StringConfigurationContent;
 import pl.hycom.mokka.emulator.mock.model.XmlConfigurationContent;
+import pl.hycom.mokka.stubbing.responsetemplating.GroovyResponseTransformer;
 
 import java.util.UUID;
 
@@ -146,7 +147,7 @@ public class WireMockStubMappingConverterTest {
         StubMapping stubMapping = wireMockStubMappingConverter.convert(mockConfiguration);
 
         //then
-        assertTrue(stubMapping.getResponse().getTransformers().contains("groovy-transformer"));
+        assertTrue(stubMapping.getResponse().getTransformers().contains(GroovyResponseTransformer.GROOVY_TRANSFORMER));
     }
 
     @Test

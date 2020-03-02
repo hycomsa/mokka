@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import pl.hycom.mokka.stubbing.WireMockServerConfiguration;
+import pl.hycom.mokka.stubbing.responsetemplating.GroovyResponseTransformer;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -56,7 +57,7 @@ public class GroovyResponseTransformerIT {
             .withHeader(CONTENT_TYPE_KEY, CONTENT_TYPE_VALUE)
             .withStatus(200)
             .withBody(body)
-            .withTransformers("groovy-transformer")));
+            .withTransformers(GroovyResponseTransformer.GROOVY_TRANSFORMER)));
     }
 
     @AfterEach
