@@ -25,7 +25,7 @@ public class WireMockStubMappingConverter implements Converter<MockConfiguration
 
         StubMapping stubMapping = new StubMapping();
 
-        if(mockConfiguration.getPath() != null || mockConfiguration.getHttpMethod() != null) {
+        if(mockConfiguration.getPath() != null && mockConfiguration.getHttpMethod() != null) {
             RequestPattern requestPattern = new RequestPattern(mockConfiguration.getPath(), (String) null, (String) null, (String) null, RequestMethod.fromString(mockConfiguration.getHttpMethod()), (Map) null, (Map) null, (Map) null, (BasicCredentials) null, (List) null, (CustomMatcherDefinition) null, (List) null);
 
             if(mockConfiguration.getId() != null){

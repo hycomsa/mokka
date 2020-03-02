@@ -2,6 +2,8 @@ package pl.hycom.mokka.stubbing;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.standalone.MappingsSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +22,9 @@ public class WireMockServerConfiguration {
     @Value("${wiremock.httpPort}")
     private int wiremockHttpPort;
 
+    @Autowired
+    MappingsSource wireMockMappingSource;
+
     /**
      * Provides configured {@link com.github.tomakehurst.wiremock.WireMockServer}.
      *
@@ -29,7 +34,7 @@ public class WireMockServerConfiguration {
     public WireMockServer wireMockServer() {
         WireMockConfiguration o = new WireMockConfiguration();
         o.port(wiremockHttpPort);
-
+        o.mappingSource(wireMockMappingSource);
         return new WireMockServer(o);
     }
 }
