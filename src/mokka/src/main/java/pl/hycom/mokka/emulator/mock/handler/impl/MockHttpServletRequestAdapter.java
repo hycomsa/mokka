@@ -174,7 +174,7 @@ public class MockHttpServletRequestAdapter implements Request {
     @Override
     public Collection<Part> getParts() {
         if (!this.isMultipart()) {
-            return null;
+            return Collections.emptyList();
         } else {
             return PartParser.parseFrom(this);
         }
