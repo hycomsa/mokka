@@ -1,18 +1,11 @@
 package pl.hycom.mokka.emulator.mock.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.Data;
-import org.hibernate.envers.Audited;
-import pl.hycom.mokka.emulator.mock.TrackChanges;
 import pl.hycom.mokka.web.json.View;
 
-import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @author Tomasz Wozniak (tomasz.wozniak@hycom.pl

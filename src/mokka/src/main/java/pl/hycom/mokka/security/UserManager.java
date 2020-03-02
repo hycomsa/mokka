@@ -82,7 +82,7 @@ public class UserManager {
 
 		Optional<User> user = userRepository.findById(id);
 		user.ifPresent(u -> u.setDisabled(disable));
-		user.ifPresent(u -> userRepository.save(u));
+		user.ifPresent(userRepository::save);
 
 		return user.isPresent();
 	}

@@ -49,10 +49,7 @@ public class MockConfigurationImportExportManager {
         File file = File.createTempFile("mce-", ".xml");
         file.deleteOnExit();
 
-        @Cleanup
-        FileWriter out = new FileWriter(file);
-
-        try {
+        try (FileWriter out = new FileWriter(file)) {
             JAXBContext jaxbContext = getJaxbContext();
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -63,8 +60,6 @@ public class MockConfigurationImportExportManager {
 
         } catch (JAXBException e) {
             log.error("", e);
-        } finally {
-            out.close();
         }
 
         return file;

@@ -34,7 +34,7 @@ public class GroovyResponseTransformer extends ResponseDefinitionTransformer {
         binding.setVariable("request", RequestTemplateModel.from(request));
         log.debug("Binding variables [{}]", binding.getVariables());
 
-        String value = resolveValue(binding,responseDefinition.getBody()); ;
+        String value = resolveValue(binding,responseDefinition.getBody());
         log.debug("Response body after Groovy Shell binding [{}]", value);
 
         return ResponseDefinitionBuilder.like(responseDefinition).but().withBody(value).build();

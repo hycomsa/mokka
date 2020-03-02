@@ -423,6 +423,7 @@ public class MockConfigurationManager {
         return out;
     }
 
+    @Transactional
     public Change restoreChange(long configId, long changeId) {
         String oldValue = "";
         Integer intOldValue;

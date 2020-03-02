@@ -21,7 +21,7 @@ public class WireMockContext {
     private String from;
 
     public WireMockContext(Request request) {
-        this.uri = StringUtils.removeStart((String) request.getUrl(), "/");
+        this.uri = StringUtils.removeStart(request.getUrl(), "/");
         this.httpMethod = request.getMethod().toString();
         this.requestBody = request.getBodyAsString();
         this.from = request.getClientIp();
