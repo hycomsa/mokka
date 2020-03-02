@@ -20,6 +20,8 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 public class GroovyResponseTransformer extends ResponseDefinitionTransformer {
 
+    public static final String GROOVY_TRANSFORMER = "groovy-transformer";
+
     @Override
     public ResponseDefinition transform(Request request, ResponseDefinition responseDefinition, FileSource fileSource, Parameters parameters) {
         log.debug("Initial response body [{}]", responseDefinition.getBody());
@@ -51,6 +53,6 @@ public class GroovyResponseTransformer extends ResponseDefinitionTransformer {
 
     @Override
     public String getName() {
-        return "groovy-transformer";
+        return GROOVY_TRANSFORMER;
     }
 }
