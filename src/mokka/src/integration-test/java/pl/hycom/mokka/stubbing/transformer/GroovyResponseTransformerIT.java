@@ -1,6 +1,7 @@
 package pl.hycom.mokka.stubbing.transformer;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.standalone.MappingsSource;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.AfterEach;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import pl.hycom.mokka.stubbing.WireMockServerConfiguration;
 import pl.hycom.mokka.stubbing.responsetemplating.GroovyResponseTransformer;
@@ -30,7 +32,10 @@ public class GroovyResponseTransformerIT {
     private static final String CONTENT_TYPE_VALUE = "text/plain";
 
     @Autowired
-    WireMockServer wm;
+    private WireMockServer wm;
+
+    @MockBean
+    private MappingsSource wireMockMappingSource;
 
     @BeforeEach
     public void setUp() {
