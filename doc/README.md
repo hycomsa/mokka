@@ -3,7 +3,7 @@
 As of result of ADR-0001 we have introduced ADRs to persist architecture-related decisions.
 
 ## Tools
-To create and manage ADR-s we use [adt-tools](https://github.com/npryce/adr-tools).
+To create and manage ADR-s we use [adr-tools](https://github.com/npryce/adr-tools).
 
 ## Content convention
 
