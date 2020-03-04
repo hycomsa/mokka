@@ -117,17 +117,18 @@ public class MockConfigurationImportExportManager {
 
         @Cleanup
         FileOutputStream fos = new FileOutputStream(zipFile, false);
-        @Cleanup
-        ZipOutputStream zos = new ZipOutputStream(fos);
-        ZipEntry ze = new ZipEntry(file.getName());
-        zos.putNextEntry(ze);
 
-        @Cleanup
-        FileInputStream in = new FileInputStream(file);
+        try (ZipOutputStream zos = new ZipOutputStream(fos)) {
+            ZipEntry ze = new ZipEntry(file.getName());
+            zos.putNextEntry(ze);
 
-        IOUtils.copy(in, zos);
+            try (FileInputStream in = new FileInputStream(file)) {
+                IOUtils.copy(in, zos);
+            }
 
-        zos.closeEntry();
+            zos.closeEntry();
+        }
+
 
         return zipFile;
     }
