@@ -1,5 +1,6 @@
 package pl.hycom.mokka;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -7,20 +8,31 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
+import pl.hycom.mokka.security.ServiceWebSecurityConfigurer;
+
+import java.util.List;
 
 /**
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.
  */
-
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired(required = false)
+    private List<ServiceWebSecurityConfigurer> serviceSecConfigs;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().ignoringAntMatchers("/bluemedia/**").and()
-            // mgmt console
-            .authorizeRequests().antMatchers("/", "/configurations/**", "/logs/**", "/change-password/**", "/users/**").authenticated().and()
-            // bluemedia and files pattern are redundantly listed on purpose - to remember we have such
-            .authorizeRequests().antMatchers("/bluemedia/**", "/files/**", "/**").permitAll()
+
+	    if (serviceSecConfigs != null) {
+	        for (ServiceWebSecurityConfigurer securityConfigurer: serviceSecConfigs) {
+                securityConfigurer.configure(http);
+            }
+        }
+
+        // mgmt console
+        http.authorizeRequests().antMatchers("/", "/configurations/**", "/logs/**", "/change-password/**", "/users/**").authenticated().and()
+            // files pattern are redundantly listed on purpose - to remember we have such
+            .authorizeRequests().antMatchers("/files/**", "/**").permitAll()
             .and()
 				.formLogin()
 				.loginPage("/login")

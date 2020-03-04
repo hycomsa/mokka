@@ -1,4 +1,4 @@
-package pl.hycom.mokka.service.impl;
+package pl.hycom.mokka.epayment.bluemedia;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,8 +7,6 @@ import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.client.MockRestServiceServer;
-import pl.hycom.mokka.service.payment.DefaultPaymentStatusService;
-import pl.hycom.mokka.service.payment.pojo.BlueMediaPayment;
 
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -17,12 +15,12 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 /**
  * @author Mariusz Krysztofowicz (mariusz.krysztofowicz@hycom.pl)
  */
-@RestClientTest(DefaultPaymentStatusService.class)
+@RestClientTest(BluemediaPaymentStatusService.class)
 @ActiveProfiles("test")
-public class DefaultPaymentStatusServiceIT {
+public class BluemediaPaymentStatusServiceIT {
 
     @Autowired
-    private DefaultPaymentStatusService defaultPaymentStatusService;
+    private BluemediaPaymentStatusService bluemediaPaymentStatusService;
 
     @Autowired
     private MockRestServiceServer server;
@@ -35,17 +33,23 @@ public class DefaultPaymentStatusServiceIT {
 
     @Test
     public void shouldSendSuccess() {
-        defaultPaymentStatusService.paymentStatusSuccessUpdate(createSampleBlueMediaPayment());
+        bluemediaPaymentStatusService.paymentStatusSuccessUpdate(createSampleBlueMediaPayment());
+
+        server.verify();
     }
 
     @Test
     public void shouldSendPending() {
-        defaultPaymentStatusService.paymentStatusPendingUpdate(createSampleBlueMediaPayment());
+        bluemediaPaymentStatusService.paymentStatusPendingUpdate(createSampleBlueMediaPayment());
+
+        server.verify();
     }
 
     @Test
     public void shouldSendFailure() {
-        defaultPaymentStatusService.paymentStatusFailureUpdate(createSampleBlueMediaPayment());
+        bluemediaPaymentStatusService.paymentStatusFailureUpdate(createSampleBlueMediaPayment());
+
+        server.verify();
     }
 
     private BlueMediaPayment createSampleBlueMediaPayment() {

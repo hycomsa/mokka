@@ -1,4 +1,4 @@
-package pl.hycom.mokka.ui.payment;
+package pl.hycom.mokka.epayment.bluemedia;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -6,13 +6,12 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.hycom.mokka.emulator.mock.MockInterceptor;
 import pl.hycom.mokka.security.ChangePasswordInterceptor;
-import pl.hycom.mokka.service.payment.PaymentStatusService;
-import pl.hycom.mokka.service.payment.pojo.BlueMediaPayment;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -28,9 +27,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Jakub Muras <jakub.muras@hycom.pl>
  * @author Piotr Kulasek-Szwed (kulasekp@gmail.com)
  */
-@WebMvcTest(PaymentController.class)
+@WebMvcTest(BlueMediaPaymentController.class)
 @ActiveProfiles("test")
-public class PaymentControllerIT {
+@Import(BlueMediaConfiguration.class)
+public class BlueMediaPaymentControllerIT {
 
     private static final String ORDER_ID = "&OrderID=";
 
@@ -67,7 +67,7 @@ public class PaymentControllerIT {
                 param("Amount", "0").
                 param("Hash", "")).
             andExpect(status().isOk()).
-            andExpect(model().attribute(PaymentController.SERVICE_IDERROR, PaymentController.SERVICE_ID_EMPTY));
+            andExpect(model().attribute(BlueMediaPaymentController.SERVICE_IDERROR, BlueMediaPaymentController.SERVICE_ID_EMPTY));
     }
 
     @Test
@@ -78,8 +78,8 @@ public class PaymentControllerIT {
                 param("Amount", "0").
                 param("Hash", "")).
             andExpect(status().isOk()).
-            andExpect(model().attribute(PaymentController.SERVICE_IDERROR,
-                                        PaymentController.SERVICE_ID_TOO_LONG_MAXIMUM_10_SIGNS));
+            andExpect(model().attribute(BlueMediaPaymentController.SERVICE_IDERROR,
+                                        BlueMediaPaymentController.SERVICE_ID_TOO_LONG_MAXIMUM_10_SIGNS));
     }
 
     @Test
@@ -90,8 +90,8 @@ public class PaymentControllerIT {
                 param("Amount", "0").
                 param("Hash", "")).
             andExpect(status().isOk()).
-            andExpect(model().attribute(PaymentController.SERVICE_IDERROR,
-                                        PaymentController.ONLY_INTEGERS_ARE_ALLOWED));
+            andExpect(model().attribute(BlueMediaPaymentController.SERVICE_IDERROR,
+                                        BlueMediaPaymentController.ONLY_INTEGERS_ARE_ALLOWED));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class PaymentControllerIT {
                 param("Amount", "0").
                 param("Hash", "")).
             andExpect(status().isOk()).
-            andExpect(model().attribute(PaymentController.ORDER_IDERROR, PaymentController.ORDER_ID_CANNOT_BE_EMPTY));
+            andExpect(model().attribute(BlueMediaPaymentController.ORDER_IDERROR, BlueMediaPaymentController.ORDER_ID_CANNOT_BE_EMPTY));
     }
 
     @Test
@@ -113,8 +113,8 @@ public class PaymentControllerIT {
                 param("Amount", "0").
                 param("Hash", "")).
             andExpect(status().isOk()).
-            andExpect(model().attribute(PaymentController.ORDER_IDERROR,
-                                        PaymentController.ORDER_ID_TOO_LONG_MAXIMUM_32_SIGNS));
+            andExpect(model().attribute(BlueMediaPaymentController.ORDER_IDERROR,
+                                        BlueMediaPaymentController.ORDER_ID_TOO_LONG_MAXIMUM_32_SIGNS));
     }
 
     @Test
@@ -125,8 +125,8 @@ public class PaymentControllerIT {
                 param("Amount", "0").
                 param("Hash", "")).
             andExpect(status().isOk()).
-            andExpect(model().attribute(PaymentController.ORDER_IDERROR,
-                                        PaymentController.ONLY_ALFANUMERIC_SIGNS_ARE_ALLOWED));
+            andExpect(model().attribute(BlueMediaPaymentController.ORDER_IDERROR,
+                                        BlueMediaPaymentController.ONLY_ALFANUMERIC_SIGNS_ARE_ALLOWED));
     }
 
     @Test
@@ -137,7 +137,7 @@ public class PaymentControllerIT {
                 param("Amount", "0").
                 param("Hash", "")).
             andExpect(status().isOk()).
-            andExpect(model().attribute(PaymentController.HASH_ERROR, PaymentController.HASH_COULDNT_BE_NULL));
+            andExpect(model().attribute(BlueMediaPaymentController.HASH_ERROR, BlueMediaPaymentController.HASH_COULDNT_BE_NULL));
     }
 
     @Test
@@ -148,7 +148,7 @@ public class PaymentControllerIT {
                 param("Amount", "0").
                 param("Hash", "asda")).
             andExpect(status().isOk()).
-            andExpect(model().attribute(PaymentController.HASH_ERROR, PaymentController.WRONG_HASH_VALUE));
+            andExpect(model().attribute(BlueMediaPaymentController.HASH_ERROR, BlueMediaPaymentController.WRONG_HASH_VALUE));
     }
 
     @Test
@@ -160,9 +160,9 @@ public class PaymentControllerIT {
                 param("CustomerEmail", "test@test.pl").
                 param("Hash", "b05bc1f89b61d68b57eacf83d28f79b6f9dc7e9b20e77b0d3f676475721f7")).
             andExpect(status().isOk()).
-            andExpect(model().attributeDoesNotExist(PaymentController.SERVICE_IDERROR)).
-            andExpect(model().attributeDoesNotExist(PaymentController.ORDER_IDERROR)).
-            andExpect(model().attributeDoesNotExist(PaymentController.HASH_ERROR));
+            andExpect(model().attributeDoesNotExist(BlueMediaPaymentController.SERVICE_IDERROR)).
+            andExpect(model().attributeDoesNotExist(BlueMediaPaymentController.ORDER_IDERROR)).
+            andExpect(model().attributeDoesNotExist(BlueMediaPaymentController.HASH_ERROR));
     }
 
     @Test
