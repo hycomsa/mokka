@@ -1,4 +1,4 @@
-package pl.hycom.mokka.endpoint;
+package pl.hycom.mokka.file;
 
 import io.restassured.RestAssured;
 import org.hamcrest.Matchers;

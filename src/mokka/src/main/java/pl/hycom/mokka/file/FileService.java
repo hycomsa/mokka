@@ -1,4 +1,4 @@
-package pl.hycom.mokka.service.file;
+package pl.hycom.mokka.file;
 
 import java.io.File;
 import java.io.FileNotFoundException;
