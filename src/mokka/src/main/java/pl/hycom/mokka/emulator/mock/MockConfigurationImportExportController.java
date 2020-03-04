@@ -12,8 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.ServletException;
@@ -67,8 +66,7 @@ public class MockConfigurationImportExportController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')")
-    @RequestMapping(value = "/configurations/import",
-                    method = RequestMethod.POST)
+    @PostMapping(value = "/configurations/import")
     @ResponseBody
     public Object load(HttpServletRequest req) throws IOException {
 

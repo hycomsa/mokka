@@ -7,6 +7,7 @@ import pl.hycom.mokka.emulator.mock.model.GroovyConfigurationContent;
 import pl.hycom.mokka.emulator.mock.model.MockConfiguration;
 import pl.hycom.mokka.emulator.mock.model.StringConfigurationContent;
 import pl.hycom.mokka.emulator.mock.model.XmlConfigurationContent;
+import pl.hycom.mokka.stubbing.responsetemplating.GroovyResponseTransformer;
 
 import java.util.UUID;
 
@@ -26,6 +27,8 @@ public class WireMockStubMappingConverterTest {
     private static final int timeout = 1;
     private static final int status = 200;
     private static final String path = "path";
+    private static final String proxy = "http://proxyserver.com";
+    private static final String slash = "/";
     private static final ConfigurationContent stringConfigurationContent = new StringConfigurationContent();
     private static final ConfigurationContent xmlConfigurationContent = new XmlConfigurationContent();
     private static final ConfigurationContent groovyConfigurationContent = new GroovyConfigurationContent();
@@ -44,6 +47,7 @@ public class WireMockStubMappingConverterTest {
         mockConfiguration.setStatus(status);
         mockConfiguration.setPath(path);
         mockConfiguration.setConfigurationContent(stringConfigurationContent);
+        mockConfiguration.setProxyBaseUrl(proxy);
 
         //when
         StubMapping stubMapping = wireMockStubMappingConverter.convert(mockConfiguration);
@@ -52,11 +56,12 @@ public class WireMockStubMappingConverterTest {
         assertEquals(stubMapping.getId(), UUID.nameUUIDFromBytes(mockConfiguration.getId().toString().getBytes()));
         assertEquals(stubMapping.getName(), mockConfiguration.getName());
         assertEquals(stubMapping.getPriority(), mockConfiguration.getOrder());
-        assertEquals(stubMapping.getRequest().getUrl(),mockConfiguration.getPath());
+        assertEquals(stubMapping.getRequest().getUrl(),slash + mockConfiguration.getPath());
         assertEquals(stubMapping.getRequest().getMethod().toString(), mockConfiguration.getHttpMethod());
         assertEquals(stubMapping.getResponse().getFixedDelayMilliseconds(), mockConfiguration.getTimeout());
         assertEquals(stubMapping.getResponse().getStatus(), mockConfiguration.getStatus());
         assertEquals(stubMapping.getResponse().getBody(), mockConfiguration.getConfigurationContent().getValue());
+        assertEquals(stubMapping.getResponse().getProxyBaseUrl(), mockConfiguration.getProxyBaseUrl());
     }
 
     @Test
@@ -71,6 +76,7 @@ public class WireMockStubMappingConverterTest {
         mockConfiguration.setStatus(status);
         mockConfiguration.setPath(path);
         mockConfiguration.setConfigurationContent(xmlConfigurationContent);
+        mockConfiguration.setProxyBaseUrl(proxy);
 
         //when
         StubMapping stubMapping = wireMockStubMappingConverter.convert(mockConfiguration);
@@ -79,11 +85,12 @@ public class WireMockStubMappingConverterTest {
         assertEquals(stubMapping.getId(), UUID.nameUUIDFromBytes(mockConfiguration.getId().toString().getBytes()));
         assertEquals(stubMapping.getName(), mockConfiguration.getName());
         assertEquals(stubMapping.getPriority(), mockConfiguration.getOrder());
-        assertEquals(stubMapping.getRequest().getUrl(),mockConfiguration.getPath());
+        assertEquals(stubMapping.getRequest().getUrl(),slash + mockConfiguration.getPath());
         assertEquals(stubMapping.getRequest().getMethod().toString(), mockConfiguration.getHttpMethod());
         assertEquals(stubMapping.getResponse().getFixedDelayMilliseconds(), mockConfiguration.getTimeout());
         assertEquals(stubMapping.getResponse().getStatus(), mockConfiguration.getStatus());
         assertEquals(stubMapping.getResponse().getBody(), mockConfiguration.getConfigurationContent().getValue());
+        assertEquals(stubMapping.getResponse().getProxyBaseUrl(), mockConfiguration.getProxyBaseUrl());
     }
 
     @Test
@@ -98,6 +105,7 @@ public class WireMockStubMappingConverterTest {
         mockConfiguration.setStatus(status);
         mockConfiguration.setPath(path);
         mockConfiguration.setConfigurationContent(groovyConfigurationContent);
+        mockConfiguration.setProxyBaseUrl(proxy);
 
         //when
         StubMapping stubMapping = wireMockStubMappingConverter.convert(mockConfiguration);
@@ -106,11 +114,12 @@ public class WireMockStubMappingConverterTest {
         assertEquals(stubMapping.getId(), UUID.nameUUIDFromBytes(mockConfiguration.getId().toString().getBytes()));
         assertEquals(stubMapping.getName(), mockConfiguration.getName());
         assertEquals(stubMapping.getPriority(), mockConfiguration.getOrder());
-        assertEquals(stubMapping.getRequest().getUrl(),mockConfiguration.getPath());
+        assertEquals(stubMapping.getRequest().getUrl(),slash + mockConfiguration.getPath());
         assertEquals(stubMapping.getRequest().getMethod().toString(), mockConfiguration.getHttpMethod());
         assertEquals(stubMapping.getResponse().getFixedDelayMilliseconds(), mockConfiguration.getTimeout());
         assertEquals(stubMapping.getResponse().getStatus(), mockConfiguration.getStatus());
         assertEquals(stubMapping.getResponse().getBody(), mockConfiguration.getConfigurationContent().getValue());
+        assertEquals(stubMapping.getResponse().getProxyBaseUrl(), mockConfiguration.getProxyBaseUrl());
     }
 
     @Test
@@ -124,6 +133,51 @@ public class WireMockStubMappingConverterTest {
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void groovyTransformer_Should_Be_Added_When_ConfiurationContentIsGroovyConfigurationContent(){
+        //given
+        MockConfiguration mockConfiguration = new MockConfiguration();
+        mockConfiguration.setConfigurationContent(groovyConfigurationContent);
+        mockConfiguration.setHttpMethod(httpMethod);
+        mockConfiguration.setPath(path);
+
+        //when
+        StubMapping stubMapping = wireMockStubMappingConverter.convert(mockConfiguration);
+
+        //then
+        assertTrue(stubMapping.getResponse().getTransformers().contains(GroovyResponseTransformer.GROOVY_TRANSFORMER));
+    }
+
+    @Test
+    public void groovyTransformer_Shouldnt_Be_Added_When_ConfiurationContentIsStringConfigurationContent(){
+        //given
+        MockConfiguration mockConfiguration = new MockConfiguration();
+        mockConfiguration.setConfigurationContent(stringConfigurationContent);
+        mockConfiguration.setHttpMethod(httpMethod);
+        mockConfiguration.setPath(path);
+
+        //when
+        StubMapping stubMapping = wireMockStubMappingConverter.convert(mockConfiguration);
+
+        //then
+        assertTrue(stubMapping.getResponse().getTransformers() == null);
+    }
+
+    @Test
+    public void groovyTransformer_Shouldnt_Be_Added_When_ConfiurationContentIsXMLConfigurationContent(){
+        //given
+        MockConfiguration mockConfiguration = new MockConfiguration();
+        mockConfiguration.setConfigurationContent(xmlConfigurationContent);
+        mockConfiguration.setHttpMethod(httpMethod);
+        mockConfiguration.setPath(path);
+
+        //when
+        StubMapping stubMapping = wireMockStubMappingConverter.convert(mockConfiguration);
+
+        //then
+        assertTrue(stubMapping.getResponse().getTransformers() == null);
     }
 
 

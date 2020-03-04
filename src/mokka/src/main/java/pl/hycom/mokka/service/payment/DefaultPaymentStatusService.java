@@ -23,6 +23,8 @@ import pl.hycom.mokka.util.validation.HashGenerator;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,6 +43,8 @@ public class DefaultPaymentStatusService implements PaymentStatusService {
 
     private final RestTemplate restTemplate;
 
+    private Random random;
+
     @Setter
     private HashGenerator hashGenerator;
 
@@ -48,9 +52,10 @@ public class DefaultPaymentStatusService implements PaymentStatusService {
     private String paymentSchema;
 
 
-    public DefaultPaymentStatusService(RestTemplateBuilder builder) {
+    public DefaultPaymentStatusService(RestTemplateBuilder builder) throws NoSuchAlgorithmException {
         restTemplate = builder.build();
         hashGenerator = new DefaultHashGenerator();
+        random = SecureRandom.getInstanceStrong();
     }
     /**
      * Generates rest post request with SUCCESS status
@@ -105,10 +110,10 @@ public class DefaultPaymentStatusService implements PaymentStatusService {
 
     private String generateRandomString(int length) {
         char[] alphNum = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
-        Random rnd = new Random();
+
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < length; i++) {
-            sb.append(alphNum[rnd.nextInt(alphNum.length)]);
+            sb.append(alphNum[random.nextInt(alphNum.length)]);
         }
         return sb.toString();
     }
