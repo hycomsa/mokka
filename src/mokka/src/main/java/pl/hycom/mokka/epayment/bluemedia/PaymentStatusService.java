@@ -1,6 +1,4 @@
-package pl.hycom.mokka.service.payment;
-
-import pl.hycom.mokka.service.payment.pojo.BlueMediaPayment;
+package pl.hycom.mokka.epayment.bluemedia;
 
 /**
  * Payment Status interface used to changing payment status

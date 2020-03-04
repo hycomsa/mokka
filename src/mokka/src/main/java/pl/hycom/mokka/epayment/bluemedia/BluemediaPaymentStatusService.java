@@ -1,4 +1,4 @@
-package pl.hycom.mokka.service.payment;
+package pl.hycom.mokka.epayment.bluemedia;
 
 
 import freemarker.template.Configuration;
@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import pl.hycom.mokka.service.payment.constant.BlueMediaConstants;
-import pl.hycom.mokka.service.payment.pojo.BlueMediaPayment;
 import pl.hycom.mokka.util.validation.DefaultHashGenerator;
 import pl.hycom.mokka.util.validation.HashAlgorithm;
 import pl.hycom.mokka.util.validation.HashGenerator;
@@ -23,8 +21,6 @@ import pl.hycom.mokka.util.validation.HashGenerator;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,7 +33,7 @@ import java.util.Random;
  */
 @Slf4j
 @Service(value = "paymentStatusService")
-public class DefaultPaymentStatusService implements PaymentStatusService {
+public class BluemediaPaymentStatusService implements PaymentStatusService {
 
     private static final String DATE_FORMAT = "yyyyMMddHHmmss";
 
@@ -52,10 +48,13 @@ public class DefaultPaymentStatusService implements PaymentStatusService {
     private String paymentSchema;
 
 
-    public DefaultPaymentStatusService(RestTemplateBuilder builder) throws NoSuchAlgorithmException {
+    public BluemediaPaymentStatusService(RestTemplateBuilder builder) {
         restTemplate = builder.build();
         hashGenerator = new DefaultHashGenerator();
-        random = SecureRandom.getInstanceStrong();
+
+        // Simple Random used on purpose. We do not need SecureRandom here as we only operate on mocks - no human being will suffer :)
+        // https://helpx.adobe.com/pl/experience-manager/kb/securerandom-nextbytes-hangs-request-threads-in-aem.html
+        random = new Random();
     }
     /**
      * Generates rest post request with SUCCESS status
@@ -151,7 +150,7 @@ public class DefaultPaymentStatusService implements PaymentStatusService {
 
 
     private Map<String, Object> getDataModel(BlueMediaPayment blueMediaPayment, String status) {
-        Map<String, Object> dataModel = new HashMap<String, Object>();
+        Map<String, Object> dataModel = new HashMap<>();
         dataModel.put(BlueMediaConstants.ORDER_ID_LABEL, blueMediaPayment.getOrderID());
         dataModel.put(BlueMediaConstants.AMOUNT_LABEL, blueMediaPayment.getAmount());
         dataModel.put(BlueMediaConstants.PAYMENT_SCHEMA, paymentSchema);

@@ -1,4 +1,4 @@
-package pl.hycom.mokka.ui.payment;
+package pl.hycom.mokka.epayment.bluemedia;
 
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import pl.hycom.mokka.service.payment.PaymentStatusService;
-import pl.hycom.mokka.service.payment.pojo.BlueMediaPayment;
 import pl.hycom.mokka.util.validation.HashValidator;
 
 import javax.annotation.Resource;
@@ -25,7 +23,7 @@ import java.util.regex.Pattern;
  */
 @Controller
 @RequestMapping(value = "/bluemedia")
-public class PaymentController {
+public class BlueMediaPaymentController {
     private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private static final String WRONG_EMAIL_FORMAT = "Wrong email format.";
     private static final String AMOUNT_COULDNT_BE_NULL = "Amount couldn't be null";
