@@ -1,12 +1,5 @@
 package pl.hycom.mokka.emulator.logs;
 
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -15,11 +8,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
 import pl.hycom.mokka.emulator.logs.model.Log;
 import pl.hycom.mokka.emulator.logs.model.Log.LogBuilder;
 import pl.hycom.mokka.util.query.Q;
 import pl.hycom.mokka.util.query.QManager;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Hubert Pruszyński <hubert.pruszynski@hycom.pl>, HYCOM S.A.
@@ -34,7 +32,7 @@ public class LogManager {
 	@Autowired
 	private QManager qManager;
 
-	private static int NUMBER_OF_RESULTS_PER_QUERY = 5;
+	private static final int NUMBER_OF_RESULTS_PER_QUERY = 5;
 
 	private static final String[] dateFormats = new String[] { "yyyy-MM-dd'T'HH:mm:ss.S'Z'" , "yyyy-MM-dd HH:mm"};
 

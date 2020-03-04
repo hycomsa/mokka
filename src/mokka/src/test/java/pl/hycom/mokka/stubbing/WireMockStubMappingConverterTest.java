@@ -12,6 +12,7 @@ import pl.hycom.mokka.stubbing.responsetemplating.GroovyResponseTransformer;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -123,16 +124,23 @@ public class WireMockStubMappingConverterTest {
     }
 
     @Test
-    public void convertTo_Shouldnt_Convert_When_HttpRequestOrPathIsNull(){
+    public void convertTo_Shouldnt_Convert_When_HttpMethodIsNull(){
         //given
         MockConfiguration mockConfiguration = new MockConfiguration();
-        Exception exception = assertThrows(MalformedMockConfigurationException.class, () -> {
+        mockConfiguration.setPath(path);
+        assertThrows(MalformedMockConfigurationException.class, () -> {
             wireMockStubMappingConverter.convert(mockConfiguration);
         });
-        String expectedMessage = "Path or HttpMethod is not set on MockConfiguration";
-        String actualMessage = exception.getMessage();
+    }
 
-        assertTrue(actualMessage.contains(expectedMessage));
+    @Test
+    public void convertTo_Shouldnt_Convert_When_PathIsNull(){
+        //given
+        MockConfiguration mockConfiguration = new MockConfiguration();
+        mockConfiguration.setHttpMethod(httpMethod);
+        assertThrows(MalformedMockConfigurationException.class, () -> {
+            wireMockStubMappingConverter.convert(mockConfiguration);
+        });
     }
 
     @Test
@@ -162,7 +170,7 @@ public class WireMockStubMappingConverterTest {
         StubMapping stubMapping = wireMockStubMappingConverter.convert(mockConfiguration);
 
         //then
-        assertTrue(stubMapping.getResponse().getTransformers() == null);
+        assertNull(stubMapping.getResponse().getTransformers());
     }
 
     @Test
@@ -177,8 +185,7 @@ public class WireMockStubMappingConverterTest {
         StubMapping stubMapping = wireMockStubMappingConverter.convert(mockConfiguration);
 
         //then
-        assertTrue(stubMapping.getResponse().getTransformers() == null);
+        assertNull(stubMapping.getResponse().getTransformers());
     }
-
 
 }
