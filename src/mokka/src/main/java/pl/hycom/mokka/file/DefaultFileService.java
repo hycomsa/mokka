@@ -1,8 +1,8 @@
-package pl.hycom.mokka.service.file;
+package pl.hycom.mokka.file;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,15 +14,13 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
+ * Service responsible for file management, implements FileService interface
+ *
  * @author Mariusz Krysztofowicz (mariusz.krysztofowicz@hycom.pl)
  */
-
-/**
- * Service responsible for file management, implements FileService interface
- */
+@Slf4j
 @Service
-public class DefaultFileService implements FileService {
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(DefaultFileService.class);
+class DefaultFileService implements FileService {
     /**
      * Location for files
      */
@@ -39,7 +37,7 @@ public class DefaultFileService implements FileService {
      */
     @Override
     public File fetchFile(String fileName) throws FileNotFoundException {
-        LOG.debug("Invoking DefaultFileService#fetchFile with argument [{}]", fileName);
+        log.debug("Invoking DefaultFileService#fetchFile with argument [{}]", fileName);
         checkArgument(!StringUtils.isEmpty(fileName), "File name cannot be empty");
         String fullPath = sourceDirectory + fileName;
 
@@ -47,8 +45,8 @@ public class DefaultFileService implements FileService {
         if (!file.exists()) {
             throw new FileNotFoundException("File with path [" + fullPath + "] does not exist");
         }
-        LOG.debug("Found file [{}]", file.getAbsolutePath());
-        LOG.debug("Ending DefaultFileService#fetchFile");
+        log.debug("Found file [{}]", file.getAbsolutePath());
+        log.debug("Ending DefaultFileService#fetchFile");
         return file;
     }
 

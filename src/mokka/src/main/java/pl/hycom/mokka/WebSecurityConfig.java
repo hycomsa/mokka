@@ -31,8 +31,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // mgmt console
         http.authorizeRequests().antMatchers("/", "/configurations/**", "/logs/**", "/change-password/**", "/users/**").authenticated().and()
-            // files pattern are redundantly listed on purpose - to remember we have such
-            .authorizeRequests().antMatchers("/files/**", "/**").permitAll()
+            .authorizeRequests().antMatchers("/**").permitAll()
             .and()
 				.formLogin()
 				.loginPage("/login")

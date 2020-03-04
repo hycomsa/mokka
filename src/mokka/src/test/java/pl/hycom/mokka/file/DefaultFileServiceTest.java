@@ -1,8 +1,9 @@
-package pl.hycom.mokka.service.file;
+package pl.hycom.mokka.file;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.hycom.mokka.file.DefaultFileService;
 
 import java.io.File;
 import java.io.FileNotFoundException;

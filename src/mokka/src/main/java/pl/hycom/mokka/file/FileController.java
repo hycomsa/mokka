@@ -1,4 +1,4 @@
-package pl.hycom.mokka.endpoint;
+package pl.hycom.mokka.file;
 
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import pl.hycom.mokka.service.file.FileService;
 
 import java.io.File;
 import java.io.FileNotFoundException;
