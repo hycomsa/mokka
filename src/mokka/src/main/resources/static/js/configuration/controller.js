@@ -67,10 +67,22 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
 		}
 	};
 
+	self.showDetails = function(mock) {
+	    if (mock.showDetails) {
+            mock.showDetails = false;
+            mock.detailMode = false;
+        } else {
+            mock.showDetails = true;
+            mock.detailMode = true;
+        }
+	};
+
 	self.editMode = function(mock) {
 		ConfigurationService.getMockConfiguration(mock.id).then(function(m){
 			angular.extend(mock, m);
 			mock.editMode = true;
+			mock.detailMode = true;
+			mock.showDetails = false;
 			$mdToast.show($mdToast.simple().position('bottom right').textContent('Edit mode enabled'));
 		});
 	};
@@ -87,6 +99,8 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
 			ConfigurationService.getMockConfiguration(mock.id).then(function(m){
 				angular.extend(mock, m);
 				mock.editMode = false;
+				mock.detailMode = false;
+				mock.showDetails = false;
 				mock.errors = null;
 				$mdToast.show($mdToast.simple().position('bottom right').textContent('Changes cancelled'));
 			});
@@ -145,6 +159,8 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
 				newMock.errors = null;
 				newMock.id = null;
 				newMock.editMode = true;
+				newMock.showDetails = false;
+				newMock.detailMode = true;
 				newMock.isNew = true;
 				newMock.description = m.description + ' COPY';
 

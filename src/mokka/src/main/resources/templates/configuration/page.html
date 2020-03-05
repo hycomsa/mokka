@@ -135,7 +135,55 @@
                                 <input type="number" placeholder="" ng-model="mock.order" ng-disabled="!mock.editMode"
                                        ng-enter="ctrl.saveEditMode(mock)"/>
                             </md-input-container>
+
+                            <span>
+						  		<md-tooltip md-direction="top" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">{{ mock.enabled ? 'Disable' : 'Enable'}}</md-tooltip>
+						  		<md-tooltip md-direction="top" sec:authorize="!hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">You don't have permision to change configuration</md-tooltip>
+							  	<md-switch ng-model="mock.enabled" class="md-primary" ng-change="ctrl.setEnabled(mock)"
+                                           ng-disabled="!user.isAdmin &amp;&amp; !user.isEditor"></md-switch>
+						    </span>
+                            <md-button style="width: 50px" class="md-icon-button {{mock.showChanges ? 'md-raised' : ''}}"
+                                       ng-click="ctrl.showChanges(mock)">
+                                <md-tooltip md-direction="top">{{mock.showChanges ? 'Hide' : 'Show'}} change history
+                                </md-tooltip>
+                                <ng-md-icon style="fill: {{mock.showChanges ? '#000000' : '#9a9a9a'}}"
+                                            icon="history"></ng-md-icon>
+                            </md-button>
+                            <md-button style="width: 50px" ng-show="!mock.editMode" class="md-icon-button {{mock.showDetails ? 'md-raised' : ''}}"
+                                       ng-click="ctrl.showDetails(mock)">
+                                <md-tooltip md-direction="top">{{mock.showDetails ? 'Hide' : 'Show'}} details</md-tooltip>
+                                <ng-md-icon style="fill: #9a9a9a" icon="pageview"></ng-md-icon>
+                            </md-button>
+                            <md-button ng-show="!mock.editMode" class="md-icon-button" ng-click="ctrl.editMode(mock)"
+                                       sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
+                                <md-tooltip md-direction="top">Edit</md-tooltip>
+                                <ng-md-icon style="fill: #9a9a9a" icon="edit"></ng-md-icon>
+                            </md-button>
+                            <md-button ng-show="!mock.editMode" class="md-icon-button" ng-click="ctrl.duplicateMock(mock)"
+                                       sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
+                                <md-tooltip md-direction="top">Duplicate</md-tooltip>
+                                <ng-md-icon style="fill: #9a9a9a" icon="content_copy"></ng-md-icon>
+                            </md-button>
+                            <md-button ng-show="mock.editMode" class="md-icon-button"
+                                       ng-click="ctrl.getPaths();ctrl.saveEditMode(mock)"
+                                       sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
+                                <md-tooltip md-direction="top">Save</md-tooltip>
+                                <ng-md-icon style="fill: #9a9a9a" icon="save"></ng-md-icon>
+                            </md-button>
+                            <md-button ng-show="mock.editMode" class="md-icon-button" ng-click="ctrl.cancelEditMode(mock)"
+                                       sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
+                                <md-tooltip md-direction="top">Cancel</md-tooltip>
+                                <ng-md-icon style="fill: #9a9a9a" icon="cancel"></ng-md-icon>
+                            </md-button>
+                            <md-button ng-show="mock.editMode &amp;&amp; !mock.isNew" class="md-icon-button"
+                                       ng-click="ctrl.removeMockConfiguration(mock)"
+                                       sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
+                                <md-tooltip md-direction="top">Delete</md-tooltip>
+                                <ng-md-icon style="fill: #9a9a9a" icon="delete_forever"></ng-md-icon>
+                            </md-button>
+
                         </div>
+                        <div ng-show="mock.detailMode">
                         <md-input-container class="full-width" md-is-error="mock.errors.pattern != null">
                             <label>Pattern</label>
                             <input placeholder="" ng-model="mock.pattern" ng-disabled="!mock.editMode"
@@ -151,9 +199,10 @@
                             <textarea placeholder="" ng-model="mock.proxyBaseUrl" ng-disabled="!mock.editMode"
                                       ng-enter="ctrl.saveEditMode(mock)"></textarea>
                         </md-input-container>
+                        </div>
                     </div>
 
-                    <div class="mock-configuration">
+                    <div class="mock-configuration" ng-show="mock.detailMode">
                         <h4>Configuration</h4>
                         <md-button class="md-icon-button md-ink-ripple" type="button"
                                    ng-click="ctrl.showConfiguration(mock)" ng-show="!mock.editMode">
@@ -207,57 +256,14 @@
                     </div>
                 </md-card-content>
 
-                <md-card-actions layout="column">
+                <md-card-actions layout="column" ng-show="mock.showChanges">
                     <md-divider></md-divider>
-
-                    <div layout="row" layout-align="end center">
-						  <span>
-						  		<md-tooltip md-direction="top" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">{{ mock.enabled ? 'Disable' : 'Enable'}}</md-tooltip>
-						  		<md-tooltip md-direction="top" sec:authorize="!hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">You don't have permision to change configuration</md-tooltip>
-							  	<md-switch ng-model="mock.enabled" class="md-primary" ng-change="ctrl.setEnabled(mock)"
-                                           ng-disabled="!user.isAdmin &amp;&amp; !user.isEditor"></md-switch>
-						  </span>
-                        <md-button class="md-icon-button {{mock.showChanges ? 'md-raised' : ''}}"
-                                   ng-click="ctrl.showChanges(mock)">
-                            <md-tooltip md-direction="top">{{mock.showChanges ? 'Hide' : 'Show'}} change history
-                            </md-tooltip>
-                            <ng-md-icon style="fill: {{mock.showChanges ? '#000000' : '#9a9a9a'}}"
-                                        icon="history"></ng-md-icon>
-                        </md-button>
-                        <md-button ng-show="!mock.editMode" class="md-icon-button" ng-click="ctrl.editMode(mock)"
-                                   sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
-                            <md-tooltip md-direction="top">Edit</md-tooltip>
-                            <ng-md-icon style="fill: #9a9a9a" icon="edit"></ng-md-icon>
-                        </md-button>
-                        <md-button ng-show="!mock.editMode" class="md-icon-button" ng-click="ctrl.duplicateMock(mock)"
-                                   sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
-                            <md-tooltip md-direction="top">Duplicate</md-tooltip>
-                            <ng-md-icon style="fill: #9a9a9a" icon="content_copy"></ng-md-icon>
-                        </md-button>
-                        <md-button ng-show="mock.editMode" class="md-icon-button"
-                                   ng-click="ctrl.getPaths();ctrl.saveEditMode(mock)"
-                                   sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
-                            <md-tooltip md-direction="top">Save</md-tooltip>
-                            <ng-md-icon style="fill: #9a9a9a" icon="save"></ng-md-icon>
-                        </md-button>
-                        <md-button ng-show="mock.editMode" class="md-icon-button" ng-click="ctrl.cancelEditMode(mock)"
-                                   sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
-                            <md-tooltip md-direction="top">Cancel</md-tooltip>
-                            <ng-md-icon style="fill: #9a9a9a" icon="cancel"></ng-md-icon>
-                        </md-button>
-                        <md-button ng-show="mock.editMode &amp;&amp; !mock.isNew" class="md-icon-button"
-                                   ng-click="ctrl.removeMockConfiguration(mock)"
-                                   sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')">
-                            <md-tooltip md-direction="top">Delete</md-tooltip>
-                            <ng-md-icon style="fill: #9a9a9a" icon="delete_forever"></ng-md-icon>
-                        </md-button>
-                    </div>
 
                     <div layout="row" layout-align="center center" ng-show="mock.changesLoading">
                         <md-progress-circular md-mode="indeterminate"></md-progress-circular>
                     </div>
 
-                    <div class="mock-changes" ng-show="mock.showChanges">
+                    <div class="mock-changes">
                         <md-divider></md-divider>
                         <h4>Changes</h4>
                         <p flex="" ng-show="mock.changes.length == 0">
