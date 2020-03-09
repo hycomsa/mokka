@@ -111,7 +111,7 @@
                             <md-input-container md-is-error="mock.errors.httpMethod != null" flex="10">
                                 <label>Method</label>
                                 <md-select ng-model="mock.httpMethod" required="" md-no-asterisk="true" ng-enter="ctrl.saveEditMode(mock)" ng-disabled="!mock.editMode">
-                                    <md-option ng-repeat="value in ctrl.httpMethods" value="{{value}}">{{value}}
+                                    <md-option ng-repeat="value in ctrl.httpMethods" value="{{value}}" ng-selected="$first">{{value}}
                                     </md-option>
                                 </md-select>
                             </md-input-container>
@@ -142,7 +142,7 @@
 							  	<md-switch ng-model="mock.enabled" class="md-primary" ng-change="ctrl.setEnabled(mock)"
                                            ng-disabled="!user.isAdmin &amp;&amp; !user.isEditor"></md-switch>
 						    </span>
-                            <md-button style="width: 50px" class="md-icon-button {{mock.showChanges ? 'md-raised' : ''}}"
+                            <md-button style="width: 50px" ng-show="!mock.editMode" class="md-icon-button {{mock.showChanges ? 'md-raised' : ''}}"
                                        ng-click="ctrl.showChanges(mock)">
                                 <md-tooltip md-direction="top">{{mock.showChanges ? 'Hide' : 'Show'}} change history
                                 </md-tooltip>
@@ -257,14 +257,12 @@
                 </md-card-content>
 
                 <md-card-actions layout="column" ng-show="mock.showChanges">
-                    <md-divider></md-divider>
 
                     <div layout="row" layout-align="center center" ng-show="mock.changesLoading">
                         <md-progress-circular md-mode="indeterminate"></md-progress-circular>
                     </div>
 
                     <div class="mock-changes">
-                        <md-divider></md-divider>
                         <h4>Changes</h4>
                         <p flex="" ng-show="mock.changes.length == 0">
                             No changes

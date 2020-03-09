@@ -63,6 +63,8 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
 				mock.changes = data;
 				mock.changesLoading = false;
 				mock.showChanges = true;
+				mock.showDetails = false;
+                mock.detailMode = false;
 			});
 		}
 	};
@@ -71,9 +73,13 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
 	    if (mock.showDetails) {
             mock.showDetails = false;
             mock.detailMode = false;
+            mock.showChanges = false;
+            mock.showConfiguration = false;
         } else {
             mock.showDetails = true;
+            mock.showChanges = false;
             mock.detailMode = true;
+            mock.showConfiguration = true;
         }
 	};
 
@@ -82,7 +88,8 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
 			angular.extend(mock, m);
 			mock.editMode = true;
 			mock.detailMode = true;
-			mock.showDetails = false;
+			mock.showDetails = true;
+			mock.showChanges = false;
 			$mdToast.show($mdToast.simple().position('bottom right').textContent('Edit mode enabled'));
 		});
 	};
@@ -99,8 +106,9 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
 			ConfigurationService.getMockConfiguration(mock.id).then(function(m){
 				angular.extend(mock, m);
 				mock.editMode = false;
-				mock.detailMode = false;
-				mock.showDetails = false;
+				mock.detailMode = true;
+				mock.showDetails = true;
+				mock.showConfiguration = true;
 				mock.errors = null;
 				$mdToast.show($mdToast.simple().position('bottom right').textContent('Changes cancelled'));
 			});
@@ -123,6 +131,8 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
 				mock.editMode = false;
 				mock.errors = null;
 				mock.changes = null;
+				mock.detailMode = true;
+                mock.showDetails = true;
 				mock.showChanges = false;
 				mock.showConfiguration = true;
 				mock.id=m.id;
@@ -140,6 +150,8 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
 			var newMock = {};
 			newMock.editMode = true;
 			newMock.isNew = true;
+			newMock.detailMode = true;
+		    newMock.showDetails = false;
 			newMock.status = "200";
 
 			self.mocks.unshift(newMock)
