@@ -253,7 +253,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.2.4.RELEASE</version>
+                <version>2.2.5.RELEASE</version>
                 <executions>
                     <execution>
                         <id>mokka-build-info</id>
