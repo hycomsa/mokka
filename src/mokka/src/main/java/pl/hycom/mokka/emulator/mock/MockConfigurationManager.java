@@ -11,6 +11,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.scheduling.annotation.Async;
@@ -23,6 +24,11 @@ import pl.hycom.mokka.emulator.mock.model.MockConfiguration;
 import pl.hycom.mokka.emulator.mock.model.StringConfigurationContent;
 import pl.hycom.mokka.emulator.mock.model.WrappedMockConfiguration;
 import pl.hycom.mokka.emulator.mock.model.XmlConfigurationContent;
+import pl.hycom.mokka.event.StubMappingAddEvent;
+import pl.hycom.mokka.event.StubMappingDisabledEvent;
+import pl.hycom.mokka.event.StubMappingEnabledEvent;
+import pl.hycom.mokka.event.StubMappingRemoveEvent;
+import pl.hycom.mokka.event.StubMappingUpdateEvent;
 import pl.hycom.mokka.security.UserRepository;
 import pl.hycom.mokka.security.model.AuditedRevisionEntity;
 import pl.hycom.mokka.security.model.User;
@@ -76,6 +82,8 @@ public class MockConfigurationManager {
 
     private static final Map<String, Class> map;
 
+    private final ApplicationEventPublisher applicationEventPublisher;
+
     @Autowired
     private QManager qManager;
 
@@ -94,6 +102,10 @@ public class MockConfigurationManager {
     private Integer mocksPerPage;
 
     WrappedMockConfiguration wrappedMockConfiguration = new WrappedMockConfiguration();
+
+    public MockConfigurationManager(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
 
     @Scheduled(fixedDelay = 5 * 60 * 1000)
     public void reportCurrentTime() {
@@ -115,7 +127,7 @@ public class MockConfigurationManager {
     }
 
     @Transactional
-    public MockConfiguration saveOrUpdateMockConfiguration(MockConfiguration mock) {
+    public MockConfiguration createMockConfiguration(MockConfiguration mock){
         if (mock == null) {
             return mock;
         }
@@ -123,7 +135,31 @@ public class MockConfigurationManager {
         mock.setUpdated(new Date(System.currentTimeMillis()));
 
         MockConfiguration m = repository.save(mock);
-        log.info(MOCK_ID + mock.getId() + ") added or updated");
+
+        StubMappingAddEvent stubMappingAddEvent = new StubMappingAddEvent(this, mock.getId());
+        applicationEventPublisher.publishEvent(stubMappingAddEvent);
+
+        log.info(MOCK_ID + "{}) added", mock.getId());
+
+        updatePathcache();
+
+        return m;
+    }
+
+    @Transactional
+    public MockConfiguration updateMockConfiguration(MockConfiguration mock){
+        if (mock == null) {
+            return mock;
+        }
+
+        mock.setUpdated(new Date(System.currentTimeMillis()));
+
+        MockConfiguration m = repository.save(mock);
+
+        StubMappingUpdateEvent stubMappingUpdateEvent = new StubMappingUpdateEvent(this, mock.getId());
+        applicationEventPublisher.publishEvent(stubMappingUpdateEvent);
+
+        log.info(MOCK_ID + "{}) updated", mock.getId());
 
         updatePathcache();
 
@@ -135,10 +171,14 @@ public class MockConfigurationManager {
     public boolean removeMockConfiguration(Long id) {
         try {
             repository.deleteById(id);
-            log.info(MOCK_ID + id + ") deleted");
+
+            StubMappingRemoveEvent stubMappingRemoveEvent = new StubMappingRemoveEvent(this, id);
+            applicationEventPublisher.publishEvent(stubMappingRemoveEvent);
+
+            log.info(MOCK_ID + "{}) deleted", id);
             return true;
         } catch (Exception e) {
-            log.error(MOCK_ID + id + ") could not be deleted", e);
+            log.error(MOCK_ID + "{}) could not be deleted", id);
         }
 
         updatePathcache();
@@ -180,16 +220,34 @@ public class MockConfigurationManager {
         return null;
     }
 
-    @Synchronized
     @Transactional
-    public boolean setEnabled(Long id, boolean enabled) {
+    public boolean disable(Long id) {
         if (id == null) {
             return false;
         }
 
         Optional<MockConfiguration> mock = repository.findById(id);
-        mock.ifPresent(m -> m.setEnabled(enabled));
-        mock.ifPresent(this::saveOrUpdateMockConfiguration);
+        mock.ifPresent(m -> m.setEnabled(false));
+
+        StubMappingDisabledEvent stubMappingDisabledEvent = new StubMappingDisabledEvent(this, id);
+        applicationEventPublisher.publishEvent(stubMappingDisabledEvent);
+
+
+        return mock.isPresent();
+    }
+
+    @Transactional
+    public boolean enable(Long id) {
+        if (id == null) {
+            return false;
+        }
+
+        Optional<MockConfiguration> mock = repository.findById(id);
+        mock.ifPresent(m -> m.setEnabled(true));
+
+        StubMappingEnabledEvent stubMappingEnabledEvent = new StubMappingEnabledEvent(this, id);
+        applicationEventPublisher.publishEvent(stubMappingEnabledEvent);
+
 
         return mock.isPresent();
     }
@@ -529,7 +587,7 @@ public class MockConfigurationManager {
             config.setStatus(intOldValue);
         }
 
-        saveOrUpdateMockConfiguration(config);
+        updateMockConfiguration(config);
         return change;
 
 
