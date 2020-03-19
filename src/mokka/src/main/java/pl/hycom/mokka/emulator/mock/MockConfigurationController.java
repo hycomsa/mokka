@@ -3,7 +3,6 @@ package pl.hycom.mokka.emulator.mock;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -58,13 +57,12 @@ public class MockConfigurationController {
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')")
 	@PutMapping(value = "/configuration")
 	public Object saveMock(@RequestBody MockConfiguration mock, HttpServletRequest req) {
-
 		Map<String, String> errors = mockConfigurationManager.validate(mock);
 		if (!errors.isEmpty()) {
 			return ImmutableMap.of("errors", errors);
 		}
 
-		return mockConfigurationManager.saveOrUpdateMockConfiguration(mock);
+		return mock.getId() == null ? mockConfigurationManager.createMockConfiguration(mock) : mockConfigurationManager.updateMockConfiguration(mock);
 	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')")
@@ -73,11 +71,17 @@ public class MockConfigurationController {
 		return mockConfigurationManager.removeMockConfiguration(id);
 	}
 
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')")
-	@PostMapping(value = "/configuration/{id}/{enable}")
-	public boolean setEnabled(@PathVariable("id") long id, @PathVariable("enable") String enable) {
-		return mockConfigurationManager.setEnabled(id, StringUtils.equalsIgnoreCase(enable, "enable"));
-	}
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')")
+    @PostMapping(value = "/configuration/{id}/enable")
+    public boolean setEnabled(@PathVariable("id") long id) {
+        return mockConfigurationManager.enable(id);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')")
+    @PostMapping(value = "/configuration/{id}/disable")
+    public boolean setDisabled(@PathVariable("id") long id) {
+        return mockConfigurationManager.disable(id);
+    }
 
 	@PreAuthorize("hasAnyRole('ROLE_USER')")
 	@GetMapping(value = "/configuration/{id}/changes")

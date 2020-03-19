@@ -91,17 +91,16 @@ public class MockConfigurationImportExportManager {
                     mc.setId(null);
                     mc.setDescription("[FILE UPLOAD] " + mc.getDescription());
                     mc.getConfigurationContent().setId(null);
-                    mockConfigurationManager.saveOrUpdateMockConfiguration(mc);
-
+                    mockConfigurationManager.createMockConfiguration(mc);
                 } else if (databaseMocks.size() == 1) {
                     mc.setId(databaseMocks.get(0).getId());
-                    mockConfigurationManager.saveOrUpdateMockConfiguration(mc);
+                    mockConfigurationManager.createMockConfiguration(mc);
 
                 } else {
                     mc.setId(null);
                     mc.setEnabled(false);
                     mc.setDescription("[FILE UPLOAD] " + mc.getDescription());
-                    mockConfigurationManager.saveOrUpdateMockConfiguration(mc);
+                    mockConfigurationManager.createMockConfiguration(mc);
                 }
             }
 

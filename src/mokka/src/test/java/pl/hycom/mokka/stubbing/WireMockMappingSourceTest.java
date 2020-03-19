@@ -54,7 +54,7 @@ public class WireMockMappingSourceTest {
         //given
         MockConfiguration malformedMock = new MockConfiguration();
         List<MockConfiguration> mockConfigurationList = Collections.singletonList(malformedMock);
-        when(mockConfigurationRepository.findAll()).thenReturn(mockConfigurationList);
+        when(mockConfigurationRepository.findAllByEnabledIsTrue()).thenReturn(mockConfigurationList);
         doThrow(ConversionFailedException.class).when(conversionService).convert(malformedMock, StubMapping.class);
 
         //when
@@ -68,7 +68,7 @@ public class WireMockMappingSourceTest {
     public void whenMockConfigurationListIsFull() {
         //given
         List<MockConfiguration> mockConfigurationList = Collections.singletonList(new MockConfiguration());
-        when(mockConfigurationRepository.findAll()).thenReturn(mockConfigurationList);
+        when(mockConfigurationRepository.findAllByEnabledIsTrue()).thenReturn(mockConfigurationList);
 
         //when
         wireMockMappingSource.loadMappingsInto(stubMapping);

@@ -49,7 +49,7 @@ public class WireMockMappingSource implements MappingsSource {
 
     @Override
     public void loadMappingsInto(StubMappings stubMappings) {
-        Iterable<MockConfiguration> mockConfigurations = mockConfigurationRepository.findAll();
+        Iterable<MockConfiguration> mockConfigurations = mockConfigurationRepository.findAllByEnabledIsTrue();
 
         for(MockConfiguration mockConfiguration: mockConfigurations){
             try{
