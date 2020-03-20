@@ -1,7 +1,7 @@
 package pl.hycom.mokka.event;
 
 /**
- * Event responsible for disabling stubmapping
+ * Event indicating that MockConfiguration has been disabled.
  *
  * @author adam.misterski@hycom.pl
  */

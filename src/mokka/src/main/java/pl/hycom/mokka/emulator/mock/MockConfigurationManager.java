@@ -24,11 +24,11 @@ import pl.hycom.mokka.emulator.mock.model.MockConfiguration;
 import pl.hycom.mokka.emulator.mock.model.StringConfigurationContent;
 import pl.hycom.mokka.emulator.mock.model.WrappedMockConfiguration;
 import pl.hycom.mokka.emulator.mock.model.XmlConfigurationContent;
-import pl.hycom.mokka.event.StubMappingAddEvent;
+import pl.hycom.mokka.event.StubMappingCreatedEvent;
 import pl.hycom.mokka.event.StubMappingDisabledEvent;
 import pl.hycom.mokka.event.StubMappingEnabledEvent;
-import pl.hycom.mokka.event.StubMappingRemoveEvent;
-import pl.hycom.mokka.event.StubMappingUpdateEvent;
+import pl.hycom.mokka.event.StubMappingRemovedEvent;
+import pl.hycom.mokka.event.StubMappingUpdatedEvent;
 import pl.hycom.mokka.security.UserRepository;
 import pl.hycom.mokka.security.model.AuditedRevisionEntity;
 import pl.hycom.mokka.security.model.User;
@@ -136,8 +136,8 @@ public class MockConfigurationManager {
 
         MockConfiguration m = repository.save(mock);
 
-        StubMappingAddEvent stubMappingAddEvent = new StubMappingAddEvent(this, mock.getId());
-        applicationEventPublisher.publishEvent(stubMappingAddEvent);
+        StubMappingCreatedEvent stubMappingCreatedEvent = new StubMappingCreatedEvent(this, mock.getId());
+        applicationEventPublisher.publishEvent(stubMappingCreatedEvent);
 
         log.info(MOCK_ID + "{}) added", mock.getId());
 
@@ -156,8 +156,8 @@ public class MockConfigurationManager {
 
         MockConfiguration m = repository.save(mock);
 
-        StubMappingUpdateEvent stubMappingUpdateEvent = new StubMappingUpdateEvent(this, mock.getId());
-        applicationEventPublisher.publishEvent(stubMappingUpdateEvent);
+        StubMappingUpdatedEvent stubMappingUpdatedEvent = new StubMappingUpdatedEvent(this, mock.getId());
+        applicationEventPublisher.publishEvent(stubMappingUpdatedEvent);
 
         log.info(MOCK_ID + "{}) updated", mock.getId());
 
@@ -172,8 +172,8 @@ public class MockConfigurationManager {
         try {
             repository.deleteById(id);
 
-            StubMappingRemoveEvent stubMappingRemoveEvent = new StubMappingRemoveEvent(this, id);
-            applicationEventPublisher.publishEvent(stubMappingRemoveEvent);
+            StubMappingRemovedEvent stubMappingRemovedEvent = new StubMappingRemovedEvent(this, id);
+            applicationEventPublisher.publishEvent(stubMappingRemovedEvent);
 
             log.info(MOCK_ID + "{}) deleted", id);
             return true;

@@ -13,9 +13,9 @@ import java.util.UUID;
  */
 public abstract class StubMappingEvent extends ApplicationEvent {
 
-    private UUID uuid;
+    private final UUID uuid;
 
-    private Long id;
+    private final Long id;
 
     public StubMappingEvent(Object source, Long id) {
         super(source);
