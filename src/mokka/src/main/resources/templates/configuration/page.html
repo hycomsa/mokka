@@ -111,7 +111,7 @@
                             <md-input-container md-is-error="mock.errors.httpMethod != null" flex="10">
                                 <label>Method</label>
                                 <md-select ng-model="mock.httpMethod" required="" md-no-asterisk="true" ng-enter="ctrl.saveEditMode(mock)" ng-disabled="!mock.editMode">
-                                    <md-option ng-repeat="value in ctrl.httpMethods" value="{{value}}" ng-selected="$first">{{value}}
+                                    <md-option ng-repeat="value in ctrl.httpMethods" value="{{value}}">{{value}}
                                     </md-option>
                                 </md-select>
                             </md-input-container>
