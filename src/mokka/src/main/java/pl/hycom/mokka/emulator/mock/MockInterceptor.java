@@ -50,6 +50,7 @@ public class MockInterceptor extends HandlerInterceptorAdapter {
 
 		MockContext ctx = new MockContext(req, res);
 
+        res.setHeader("Access-Control-Allow-Origin", "*");
 		res.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
 		res.setContentType(req.getContentType());
 
