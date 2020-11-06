@@ -195,7 +195,7 @@ public class MockHttpServletRequestAdapter implements Request {
             return false;
         } else if (this.request instanceof wiremock.org.eclipse.jetty.server.Request) {
             wiremock.org.eclipse.jetty.server.Request jettyRequest = (wiremock.org.eclipse.jetty.server.Request) this.request;
-            return JettyUtils.getUri(jettyRequest).isAbsolute();
+            return JettyUtils.uriIsAbsolute(jettyRequest);
         } else {
             return false;
         }

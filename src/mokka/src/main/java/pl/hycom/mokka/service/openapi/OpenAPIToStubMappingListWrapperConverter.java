@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.matching.RequestPattern;
+import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import io.swagger.v3.oas.models.*;
 import io.swagger.v3.oas.models.media.MediaType;
@@ -162,10 +163,7 @@ public class OpenAPIToStubMappingListWrapperConverter implements Converter<OpenA
     }
 
     private RequestPattern createWireMockRequestPattern(RequestMethod requestMethod, String path) {
-
-        return new RequestPattern(WireMock.urlEqualTo(path), requestMethod,
-            null, null, null, null,
-            null, null, null, null);
+        return RequestPatternBuilder.newRequestPattern(requestMethod, WireMock.urlEqualTo(path)).build();
     }
 
     private ResponseDefinition createWireMockJSONResponseDefinition(int status, JsonNode rootNode) {
