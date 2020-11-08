@@ -2,9 +2,7 @@ package pl.hycom.mokka.stubbing;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +21,11 @@ public class WireMockServerRunner implements CommandLineRunner {
 
     private final WireMockServer wireMockServer;
 
-    @Setter
-    @Value("${wiremock.enabled}")
-    private boolean wiremockEnabled;
+    private final WireMockProperties wireMockProperties;
 
     @Override
     public void run(String... args) throws Exception {
-        if (!wiremockEnabled) {
+        if (!wireMockProperties.isEnabled()) {
             log.info("Embedded Wiremock disabled by configuration.");
             return;
         }
