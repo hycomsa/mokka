@@ -16,8 +16,9 @@ public class WireMockServerRunnerTest {
     public void shouldNotStartWireMock() {
         // given
         WireMockServer server = new WireMockServer();
-        WireMockServerRunner runner = new WireMockServerRunner(server);
-        runner.setWiremockEnabled(false);
+        WireMockProperties wireMockProperties = new WireMockProperties();
+        wireMockProperties.setEnabled(false);
+        WireMockServerRunner runner = new WireMockServerRunner(server, wireMockProperties);
 
         // when
         try {
@@ -34,8 +35,9 @@ public class WireMockServerRunnerTest {
     public void shouldStartWireMock() {
         // given
         WireMockServer server = new WireMockServer();
-        WireMockServerRunner runner = new WireMockServerRunner(server);
-        runner.setWiremockEnabled(true);
+        WireMockProperties wireMockProperties = new WireMockProperties();
+        wireMockProperties.setEnabled(true);
+        WireMockServerRunner runner = new WireMockServerRunner(server, wireMockProperties);
 
         // when
         try {
