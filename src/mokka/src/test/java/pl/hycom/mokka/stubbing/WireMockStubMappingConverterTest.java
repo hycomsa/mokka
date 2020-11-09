@@ -58,7 +58,7 @@ public class WireMockStubMappingConverterTest {
         assertEquals(stubMapping.getId(), UUID.nameUUIDFromBytes(mockConfiguration.getId().toString().getBytes()));
         assertEquals(stubMapping.getName(), mockConfiguration.getName());
         assertEquals(stubMapping.getPriority(), mockConfiguration.getOrder());
-        assertEquals(stubMapping.getRequest().getUrl(),slash + mockConfiguration.getPath());
+        assertEquals(slash + mockConfiguration.getPath(), stubMapping.getRequest().getUrlPathPattern());
         assertEquals(stubMapping.getRequest().getMethod().toString(), mockConfiguration.getHttpMethod());
         assertEquals(stubMapping.getResponse().getFixedDelayMilliseconds(), mockConfiguration.getTimeout());
         assertEquals(stubMapping.getResponse().getStatus(), mockConfiguration.getStatus());
@@ -105,7 +105,7 @@ public class WireMockStubMappingConverterTest {
         assertEquals(stubMapping.getId(), UUID.nameUUIDFromBytes(mockConfiguration.getId().toString().getBytes()));
         assertEquals(stubMapping.getName(), mockConfiguration.getName());
         assertEquals(stubMapping.getPriority(), mockConfiguration.getOrder());
-        assertEquals(stubMapping.getRequest().getUrl(),slash + mockConfiguration.getPath());
+        assertEquals(slash + mockConfiguration.getPath(), stubMapping.getRequest().getUrlPathPattern());
         assertEquals(stubMapping.getRequest().getMethod().toString(), mockConfiguration.getHttpMethod());
         assertEquals(stubMapping.getResponse().getFixedDelayMilliseconds(), mockConfiguration.getTimeout());
         assertEquals(stubMapping.getResponse().getStatus(), mockConfiguration.getStatus());
@@ -134,7 +134,7 @@ public class WireMockStubMappingConverterTest {
         assertEquals(stubMapping.getId(), UUID.nameUUIDFromBytes(mockConfiguration.getId().toString().getBytes()));
         assertEquals(stubMapping.getName(), mockConfiguration.getName());
         assertEquals(stubMapping.getPriority(), mockConfiguration.getOrder());
-        assertEquals(stubMapping.getRequest().getUrl(),slash + mockConfiguration.getPath());
+        assertEquals(slash + mockConfiguration.getPath(), stubMapping.getRequest().getUrlPathPattern());
         assertEquals(stubMapping.getRequest().getMethod().toString(), mockConfiguration.getHttpMethod());
         assertEquals(stubMapping.getResponse().getFixedDelayMilliseconds(), mockConfiguration.getTimeout());
         assertEquals(stubMapping.getResponse().getStatus(), mockConfiguration.getStatus());
