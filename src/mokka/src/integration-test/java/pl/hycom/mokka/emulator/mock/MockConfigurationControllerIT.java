@@ -63,7 +63,7 @@ public class MockConfigurationControllerIT {
 
         Response response = RestAssured.get("/__admin/mappings/" + convertIDtoUUID(id));
         assertEquals(name, response.jsonPath().get("name"));
-        assertEquals(slash + path, response.jsonPath().get("request.url"));
+        assertEquals(slash + path, response.jsonPath().get("request.urlPathPattern"));
         assertEquals(httpMethod, response.jsonPath().get("request.method"));
     }
 
@@ -81,7 +81,7 @@ public class MockConfigurationControllerIT {
 
         Response response = RestAssured.get("/__admin/mappings/" + convertIDtoUUID(id));
         assertEquals(testChange, response.jsonPath().get("name"));
-        assertEquals(slash + path, response.jsonPath().get("request.url"));
+        assertEquals(slash + path, response.jsonPath().get("request.urlPathPattern"));
         assertEquals(httpMethod, response.jsonPath().get("request.method"));
     }
 
@@ -107,7 +107,7 @@ public class MockConfigurationControllerIT {
 
         Response response = RestAssured.get("/__admin/mappings/" + convertIDtoUUID(id));
         assertEquals(name, response.jsonPath().get("name"));
-        assertEquals(slash + path, response.jsonPath().get("request.url"));
+        assertEquals(slash + path, response.jsonPath().get("request.urlPathPattern"));
         assertEquals(httpMethod, response.jsonPath().get("request.method"));
     }
 

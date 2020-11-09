@@ -44,14 +44,13 @@ public class WireMockStubMappingConverter implements Converter<MockConfiguration
 
         RequestPatternBuilder requestPatternBuilder = RequestPatternBuilder
             .newRequestPattern(RequestMethod.fromString(mockConfiguration.getHttpMethod()),
-                               UrlPattern.fromOneOf(SLASH + mockConfiguration.getPath(), null, null, null));
+                               UrlPattern.fromOneOf(null, null, null, SLASH + mockConfiguration.getPath()));
 
         if (StringUtils.isNotBlank(mockConfiguration.getPattern())) {
             requestPatternBuilder.withRequestBody(new RegexPattern(mockConfiguration.getPattern()));
         }
 
         stubMapping.setRequest(requestPatternBuilder.build());
-
 
         stubMapping.setName(defaultIfBlank(mockConfiguration.getName(), ""));
         stubMapping.setPriority(mockConfiguration.getOrder());
@@ -67,7 +66,7 @@ public class WireMockStubMappingConverter implements Converter<MockConfiguration
         responseDefinitionBuilder.proxiedFrom(mockConfiguration.getProxyBaseUrl());
 
         if (mockConfiguration.getConfigurationContent() instanceof GroovyConfigurationContent) {
-            log.debug("Mock [id={}] has groovy content. Adding [{}] transforem to StubMapping",
+            log.debug("Mock [id={}] has groovy content. Adding [{}] transformer to StubMapping",
                       mockConfiguration.getId(), GroovyResponseTransformer.GROOVY_TRANSFORMER);
             responseDefinitionBuilder.withTransformers(GroovyResponseTransformer.GROOVY_TRANSFORMER);
         }
