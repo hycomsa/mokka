@@ -1,5 +1,6 @@
 package pl.hycom.mokka.stubbing;
 
+import com.github.tomakehurst.wiremock.matching.RegexPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.junit.jupiter.api.Test;
 import pl.hycom.mokka.emulator.mock.model.ConfigurationContent;
@@ -63,6 +64,24 @@ public class WireMockStubMappingConverterTest {
         assertEquals(stubMapping.getResponse().getStatus(), mockConfiguration.getStatus());
         assertEquals(stubMapping.getResponse().getBody(), mockConfiguration.getConfigurationContent().getValue());
         assertEquals(stubMapping.getResponse().getProxyBaseUrl(), mockConfiguration.getProxyBaseUrl());
+    }
+
+    @Test
+    public void convertTo_ShouldConvertRegexpAsBodyPattern() {
+        //given
+        MockConfiguration mockConfiguration = new MockConfiguration();
+        mockConfiguration.setId(id);
+        mockConfiguration.setHttpMethod(httpMethod);
+        mockConfiguration.setPath(path);
+        mockConfiguration.setPattern("([a-z]*)");
+
+        //when
+        StubMapping stubMapping = wireMockStubMappingConverter.convert(mockConfiguration);
+
+        //then
+        assertEquals(1, stubMapping.getRequest().getBodyPatterns().size());
+        assertTrue(stubMapping.getRequest().getBodyPatterns().get(0) instanceof RegexPattern);
+        assertEquals(mockConfiguration.getPattern(), stubMapping.getRequest().getBodyPatterns().get(0).getValue());
     }
 
     @Test

@@ -2,11 +2,13 @@ package pl.hycom.mokka.stubbing;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
+import com.github.tomakehurst.wiremock.matching.RegexPattern;
 import com.github.tomakehurst.wiremock.matching.RequestPattern;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import pl.hycom.mokka.emulator.mock.model.GroovyConfigurationContent;
@@ -40,10 +42,15 @@ public class WireMockStubMappingConverter implements Converter<MockConfiguration
             stubMapping.setId(UUID.nameUUIDFromBytes(mockConfiguration.getId().toString().getBytes()));
         }
 
-        RequestPattern requestPattern = RequestPatternBuilder
+        RequestPatternBuilder requestPatternBuilder = RequestPatternBuilder
             .newRequestPattern(RequestMethod.fromString(mockConfiguration.getHttpMethod()),
-                               UrlPattern.fromOneOf(SLASH + mockConfiguration.getPath(), null, null, null)).build();
-        stubMapping.setRequest(requestPattern);
+                               UrlPattern.fromOneOf(SLASH + mockConfiguration.getPath(), null, null, null));
+
+        if (StringUtils.isNotBlank(mockConfiguration.getPattern())) {
+            requestPatternBuilder.withRequestBody(new RegexPattern(mockConfiguration.getPattern()));
+        }
+
+        stubMapping.setRequest(requestPatternBuilder.build());
 
 
         stubMapping.setName(defaultIfBlank(mockConfiguration.getName(), ""));

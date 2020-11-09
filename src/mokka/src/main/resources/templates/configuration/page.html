@@ -185,7 +185,7 @@
                         </div>
                         <div ng-show="mock.detailMode">
                         <md-input-container class="full-width" md-is-error="mock.errors.pattern != null">
-                            <label>Pattern</label>
+                            <label>Pattern (regexp)</label>
                             <input placeholder="" ng-model="mock.pattern" ng-disabled="!mock.editMode"
                                    ng-enter="ctrl.saveEditMode(mock)"/>
                         </md-input-container>
