@@ -31,7 +31,7 @@ public class WireMockServerConfiguration {
         o.extensions(GroovyResponseTransformer.class);
         o.enableBrowserProxying(wireMockProperties.isBrowserProxying());
         o.notifier(new Slf4jNotifier(wireMockProperties.isVerbose()));
-        o.gzipDisabled(wireMockProperties.isGzip());
+        o.gzipDisabled(!wireMockProperties.isGzip());
         return new WireMockServer(o);
     }
 }
