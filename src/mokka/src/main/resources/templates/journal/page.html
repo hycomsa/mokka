@@ -1,0 +1,18 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+</head>
+<body>
+<div th:fragment="main">
+    <div class="generic-container" ng-controller="JournalController as ctrl">
+        <md-card>
+            <md-card-content layout="column">
+                <pre id="custom-spacing">{{ctrl.journal | json:4 }}</pre>
+            </md-card-content>
+        </md-card>
+    </div>
+</div>
+</body>
+</html>

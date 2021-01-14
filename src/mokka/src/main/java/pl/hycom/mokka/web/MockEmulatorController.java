@@ -48,6 +48,11 @@ public class MockEmulatorController {
 		return handleResponse("configuration", model);
 	}
 
+    @GetMapping(path = "/journal")
+    public String journal(ModelMap model) {
+        return handleResponse("journal", model);
+    }
+
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER_ADMIN')")
 	@GetMapping(path = "/users")
 	public String users(ModelMap model) {

@@ -8,6 +8,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pl.hycom.mokka.stubbing.responsetemplating.GroovyResponseTransformer;
+import pl.hycom.mokka.stubbing.responsetemplating.GzipResponseTransformer;
 
 /**
  * Configuration bean related to {@link com.github.tomakehurst.wiremock.WireMockServer}.
@@ -28,7 +29,7 @@ public class WireMockServerConfiguration {
         WireMockConfiguration o = new WireMockConfiguration();
         o.port(wireMockProperties.getHttpPort());
         o.mappingSource(wireMockMappingSource);
-        o.extensions(GroovyResponseTransformer.class);
+        o.extensions(GroovyResponseTransformer.class, GzipResponseTransformer.class);
         o.enableBrowserProxying(wireMockProperties.isBrowserProxying());
         o.notifier(new Slf4jNotifier(wireMockProperties.isVerbose()));
         o.gzipDisabled(!wireMockProperties.isGzip());
