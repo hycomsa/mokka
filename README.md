@@ -4,7 +4,8 @@ Mokka
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=pl.hycom.mokka%3Amokka-parent&metric=alert_status)](https://sonarcloud.io/dashboard?id=pl.hycom.mokka%3Amokka-parent)
 
 ## Prerequisities
-Database of your choice: Oracle, MySQL, MariaDB, HSQLDB, H2, PostgreSQL
+* Java 11
+* database of your choice: Oracle, MySQL, MariaDB, HSQLDB, H2, PostgreSQL
 
 ## Install
 ### Precompiled binaries
