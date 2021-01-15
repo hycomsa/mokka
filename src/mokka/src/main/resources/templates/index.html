@@ -25,6 +25,7 @@
 
               <section layout="row" layout-sm="column" layout-align="center center" layout-wrap sec:authorize="hasRole('ROLE_USER')">
 			      <md-button th:href="@{/logs}" target="_self" th:classappend="${#httpServletRequest.requestURI.contains('logs')} ? 'active'">Logs</md-button>
+			      <md-button th:href="@{/journal}" target="_self" th:classappend="${#httpServletRequest.requestURI.contains('journal')} ? 'active'">Journal</md-button>
 			      <md-button th:href="@{/configurations}" target="_self" th:classappend="${#httpServletRequest.requestURI.contains('configurations')} ? 'active'">Configuration</md-button>
 			      <md-button th:href="@{/users}" target="_self" th:classappend="${#httpServletRequest.requestURI.contains('users')} ? 'active'" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER_ADMIN')">Users</md-button>
               </section>
