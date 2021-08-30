@@ -49,3 +49,7 @@ mvn spring-boot:run # (use -Pdev if in development mode)
 Logback is used as logging framework. By default logs are redirected to FILE (/tmp/mokka.log).
 ### Identifying mocks
 `X-Mock-Id` HTTP header is added to mock response to allow easy identification of related mock configuration
+
+## Visualization
+
+![Visualization of the codebase](./doc/code_structure.svg)
