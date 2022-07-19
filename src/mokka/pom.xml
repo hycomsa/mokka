@@ -107,7 +107,11 @@
             <artifactId>mariadb-java-client</artifactId>
             <version>2.6.2</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.4.0</version>
+        </dependency>
 
         <!-- Utilities -->
         <dependency>
