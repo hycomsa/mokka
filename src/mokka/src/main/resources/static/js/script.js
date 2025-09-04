@@ -20,7 +20,10 @@ app.config(function ($httpProvider) {
 	    }
 	}
 
-    $httpProvider.defaults.headers.common[header] = token;
+    // Set CSRF header only if both header name and token are present
+    if (header && token) {
+        $httpProvider.defaults.headers.common[header] = token;
+    }
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 });
 

@@ -17,14 +17,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(mockInterceptor());
+		registry.addInterceptor(mockInterceptor()).excludePathPatterns("/configurations/**", "/configuration/**", "/users/**", "/user/**", "/files/**", "/logs/**", "/js/**", "/css/**", "/img/**", "/fonts/**", "/api/**", "/login", "/logout", "/change-password/**", "/", "/templates/**", "/actuator/**", "/error", "/error/**");
 		registry.addInterceptor(changePasswordInterceptor());
 	}
 
 	@Bean
 	public MultipartResolver multipartResolver() {
 		CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-		resolver.setDefaultEncoding("utf-8");
+		resolver.setResolveLazily(true);
 		return resolver;
 	}
 

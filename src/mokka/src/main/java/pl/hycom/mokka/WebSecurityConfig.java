@@ -30,7 +30,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         }
 
         // mgmt console
-        http.authorizeRequests().antMatchers("/", "/configurations/**", "/logs/**", "/change-password/**", "/users/**").authenticated().and()
+        http
+            .csrf().disable()
+            .authorizeRequests()
+                .antMatchers("/templates/**").permitAll()
+                .antMatchers("/", "/configurations/**", "/logs/**", "/change-password/**", "/users/**").authenticated().and()
             .authorizeRequests().antMatchers("/**").permitAll()
             .and()
 				.formLogin()

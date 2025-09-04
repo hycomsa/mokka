@@ -27,6 +27,10 @@
                     <md-tooltip md-direction="top">Import</md-tooltip>
                     <ng-md-icon icon="file_upload" style="fill:#666666"></ng-md-icon>
                 </md-button>
+                <md-button aria-label="delete-all" class="md-fab md-raised md-mini" ng-click="ctrl.showDeleteAllConfirm()">
+                    <md-icon md-svg-icon="img/icons/delete-forever.svg" aria-label="delete-all"></md-icon>
+                    <md-tooltip>Delete All</md-tooltip>
+                </md-button>
                 <md-button aria-label="export" class="md-fab md-raised md-mini" th:href="@{/configurations/export}"
                            target="_blank">
                     <md-tooltip md-diregitction="top">Export</md-tooltip>

@@ -51,7 +51,9 @@ public class MockContext {
     public MockContext(HttpServletRequest request, HttpServletResponse response) {
         this.request = request;
         this.response = response;
-        uri = StringUtils.removeStart((String) request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI), "/");
+        String forwarded = (String) request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
+        String effectiveUri = StringUtils.defaultIfBlank(forwarded, request.getRequestURI());
+        uri = StringUtils.removeStart(effectiveUri, "/");
         requestBody = getRequestBody(request);
         from = getSenderAddress(request);
         httpMethod = getHttpMethod(request);
@@ -97,18 +99,22 @@ public class MockContext {
         }
 
         if (StringUtils.isBlank(requestBody)) {
-            log.info("Request body is empty.");
+            log.debug("Request body is empty.");
             return requestBody;
         }
 
-        try {
-            StringWriter sw = new StringWriter();
-            new XMLWriter(sw, OutputFormat.createCompactFormat()).write(DocumentHelper.parseText(requestBody));
-            return sw.toString();
-        } catch (IOException | DocumentException e) {
-            log.warn("Error occured when XML parsing body of the request: {}", e.getMessage());
-            log.info("Raw string will be used.");
-            return requestBody;
+        String contentType = req.getContentType();
+        if (contentType != null && (contentType.contains("application/xml") || contentType.contains("text/xml"))) {
+            try {
+                StringWriter sw = new StringWriter();
+                new XMLWriter(sw, OutputFormat.createCompactFormat()).write(DocumentHelper.parseText(requestBody));
+                log.debug("Successfully formatted request body as XML.");
+                return sw.toString();
+            } catch (IOException | DocumentException e) {
+                log.warn("Content-Type was XML, but parsing failed: {}. Raw string will be used.", e.getMessage());
+            }
         }
+
+        return requestBody; 
     }
 }

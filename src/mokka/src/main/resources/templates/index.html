@@ -3,8 +3,10 @@
 
 	<head>
 	  	<meta charset="utf-8"></meta>
-	  	<meta name="_csrf" th:content="${_csrf.token}"/>
-  		<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+	  	<th:block th:if="${_csrf != null}">
+	  		<meta name="_csrf" th:content="${_csrf.token}"/>
+	  		<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+	  	</th:block>
 
 	  	<title>Mokka</title>
 		<link rel="icon" type="image/png" href="static/favicon.ico"/>

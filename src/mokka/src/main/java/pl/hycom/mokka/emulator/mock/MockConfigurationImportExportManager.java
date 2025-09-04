@@ -70,7 +70,13 @@ public class MockConfigurationImportExportManager {
                                        XmlConfigurationContent.class, StringConfigurationContent.class);
     }
 
-    public void loadMocks(InputStream stream) {
+    @Transactional
+    public void loadMocks(InputStream stream, String strategy) {
+
+        if ("overwrite".equalsIgnoreCase(strategy)) {
+            log.info("Overwrite strategy selected. Deleting all existing mock configurations.");
+            mockConfigurationManager.deleteAll();
+        }
 
         try {
             JAXBContext jaxbContext = getJaxbContext();

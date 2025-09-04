@@ -107,6 +107,12 @@ app.factory('ConfigurationService',function($http, $q){
                // mock.configurationContent.value
 
            });
+       },
+
+       deleteAllMocks: function() {
+           return $http.delete("/configurations/all").then(function (response) {
+               return response.data;
+           });
        }
 
 

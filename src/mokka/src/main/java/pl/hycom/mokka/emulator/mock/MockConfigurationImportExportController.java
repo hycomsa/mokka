@@ -11,9 +11,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -38,6 +41,9 @@ public class MockConfigurationImportExportController {
 
     @Autowired
     private pl.hycom.mokka.emulator.mock.MockConfigurationImportExportManager importExportManager;
+
+    @Autowired
+    private MockConfigurationManager mockConfigurationManager;
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_EDITOR')")
     @GetMapping(value = "/configurations/export")
@@ -65,44 +71,71 @@ public class MockConfigurationImportExportController {
         return new HttpEntity<byte[]>(documentBody, header);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @DeleteMapping(value = "/configurations/all")
+    @ResponseBody
+    public Object deleteAll() {
+        log.info("Request to delete all mock configurations received.");
+        mockConfigurationManager.deleteAll();
+        return ImmutableMap.of(STATUS, "ok");
+    }
+
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_EDITOR')")
     @PostMapping(value = "/configurations/import")
     @ResponseBody
-    public Object load(HttpServletRequest req) throws IOException {
+    public Object load(HttpServletRequest req,
+                      @RequestParam(value = "strategy", defaultValue = "merge") String strategy,
+                      @RequestParam(value = "file", required = false) MultipartFile springFile) throws IOException {
 
-        log.info("CSV import started");
+        log.info("File import started with strategy: {}", strategy);
 
-        Part filePart = null;
-        try {
-            filePart = req.getPart("file");
-        } catch (ServletException e) {
-            log.debug("Exception: ", e);
-        }
-        if (filePart == null) {
-            return ImmutableMap.of(STATUS, "no file");
-        }
+        // Prefer Spring MultipartFile if available (works with CommonsMultipartResolver)
+        String fileName;
+        @Cleanup InputStream stream = null;
 
-        String fileName = getFileName(filePart);
-
-        if (!StringUtils.endsWithAny(fileName, ".xml", ".zip")) {
-            return ImmutableMap.of(STATUS, "not supported");
-        }
-
-        @Cleanup
-        InputStream stream = null;
-        File file;
-        if (StringUtils.endsWithAny(fileName, ".zip")) {
-            file = importExportManager.unzip(filePart.getInputStream());
-            if (file != null) {
-                stream = new FileInputStream(file);
+        if (springFile != null && !springFile.isEmpty()) {
+            fileName = springFile.getOriginalFilename();
+            if (!StringUtils.endsWithAny(fileName, ".xml", ".zip")) {
+                return ImmutableMap.of(STATUS, "not supported");
+            }
+            if (StringUtils.endsWithAny(fileName, ".zip")) {
+                File file = importExportManager.unzip(springFile.getInputStream());
+                if (file != null) {
+                    stream = new FileInputStream(file);
+                } else {
+                    return ImmutableMap.of(STATUS, "no file");
+                }
             } else {
-                return ImmutableMap.of(STATUS, "no file");
+                stream = springFile.getInputStream();
             }
         } else {
-            stream = filePart.getInputStream();
+            // Fallback to Servlet Part (works with StandardServletMultipartResolver)
+            Part filePart = null;
+            try {
+                filePart = req.getPart("file");
+            } catch (ServletException e) {
+                log.debug("Exception while obtaining servlet part: ", e);
+            }
+            if (filePart == null) {
+                return ImmutableMap.of(STATUS, "no file");
+            }
+            fileName = getFileName(filePart);
+            if (!StringUtils.endsWithAny(fileName, ".xml", ".zip")) {
+                return ImmutableMap.of(STATUS, "not supported");
+            }
+            if (StringUtils.endsWithAny(fileName, ".zip")) {
+                File file = importExportManager.unzip(filePart.getInputStream());
+                if (file != null) {
+                    stream = new FileInputStream(file);
+                } else {
+                    return ImmutableMap.of(STATUS, "no file");
+                }
+            } else {
+                stream = filePart.getInputStream();
+            }
         }
 
-        importExportManager.loadMocks(stream);
+        importExportManager.loadMocks(stream, strategy);
 
         log.info("XML imported!");
 

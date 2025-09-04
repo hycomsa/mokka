@@ -1,4 +1,4 @@
-app.controller('ConfigurationController', function($rootScope, $scope, $mdToast, $location, $anchorScroll, ConfigurationService, Upload) {
+app.controller('ConfigurationController', function($rootScope, $scope, $mdToast, $location, $anchorScroll, $mdDialog, ConfigurationService, Upload) {
 
     var self = this;
     	self.newMock = false;
@@ -40,18 +40,75 @@ app.controller('ConfigurationController', function($rootScope, $scope, $mdToast,
     	$scope.f = file;
         $scope.errFile = errFiles && errFiles[0];
         if (file) {
-        	$mdToast.show($mdToast.simple().position('bottom right').textContent('File upload started'));
 
-            file.upload = Upload.upload({
-                url: '/configurations/import',
-                data: {'file': file}
-            });
+            $mdDialog.show({
+                controller: function($scope, $mdDialog, fileName) {
+                    var ctrl = this;
+                    ctrl.fileName = fileName;
+                    ctrl.strategy = 'merge'; // Default strategy
 
-            file.upload.then(function (response) {
-            	$mdToast.show($mdToast.simple().position('bottom right').textContent('File upload finished ['+response.data.status+']'));
+                    ctrl.cancel = function() {
+                        $mdDialog.cancel();
+                    };
+
+                    ctrl.answer = function(strategy) {
+                        $mdDialog.hide(strategy);
+                    };
+                },
+                controllerAs: 'ctrl',
+                templateUrl: '/templates/dialogs/import-strategy-dialog.html',
+                parent: angular.element(document.body),
+                clickOutsideToClose: true,
+                locals: {
+                    fileName: file.name
+                }
+            }).then(function(strategy) {
+                // User confirmed the dialog
+                $mdToast.show($mdToast.simple().position('bottom right').textContent('File upload started with [' + strategy + '] strategy...'));
+
+                file.upload = Upload.upload({
+                    url: '/configurations/import?strategy=' + strategy,
+                    data: {'file': file}
+                });
+
+                file.upload.then(function (response) {
+                    $mdToast.show($mdToast.simple().position('bottom right').textContent('File upload finished ['+response.data.status+']'));
+                    if (response.data.status === 'ok') {
+                        self.resetFilter(); // Refresh the view
+                    }
+                }, function (response) {
+                    $mdToast.show($mdToast.simple().position('bottom right').textContent('File upload ERROR: status ' + response.status));
+                });
+            }, function() {
+                // User cancelled the dialog
+                $mdToast.show($mdToast.simple().position('bottom right').textContent('Import cancelled.'));
             });
         }
 	};
+
+    self.showDeleteAllConfirm = function(ev) {
+        var confirm = $mdDialog.confirm()
+            .title('Are you sure you want to delete ALL mock configurations?')
+            .textContent('This action is irreversible. All mock definitions will be permanently removed.')
+            .ariaLabel('Confirm deletion of all mocks')
+            .targetEvent(ev)
+            .ok('Yes, delete all')
+            .cancel('Cancel');
+
+        $mdDialog.show(confirm).then(function() {
+            $mdToast.show($mdToast.simple().position('bottom right').textContent('Deleting all mock configurations...'));
+            ConfigurationService.deleteAllMocks().then(function(response) {
+                if (response.status === 'ok') {
+                    $mdToast.show($mdToast.simple().position('bottom right').textContent('All mocks have been deleted.'));
+                    self.resetFilter(); // Refresh the view
+                } else {
+                    $mdToast.show($mdToast.simple().position('bottom right').textContent('Error deleting mocks.'));
+                }
+            });
+        }, function() {
+            $mdToast.show($mdToast.simple().position('bottom right').textContent('Deletion cancelled.'));
+        });
+    };
 
 	self.showChanges = function(mock) {
 		if (mock.showChanges) {

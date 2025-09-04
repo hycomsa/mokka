@@ -188,11 +188,27 @@ public class MockConfigurationManager {
 
     public MockConfiguration findFirstAvailableMockConfiguration(
         String path, String requestBody, String httpMethod) {
+        // Guard against null/blank path and uninitialized cache
+        if (isBlank(path)) {
+            log.debug("Request path is null/blank; skipping mock lookup by path.");
+            return null;
+        }
+
         Set<String> paths = new HashSet<>();
         paths.add(path);
-        for (String p : pathCache.get()) {
-            if (Pattern.matches(p, path)) {
-                paths.add(p);
+
+        Set<String> cachedPaths = pathCache.get();
+        if (cachedPaths != null) {
+            for (String p : cachedPaths) {
+                log.debug("Checking path: {}", p);
+                log.debug("Path: {}", path);
+                try {
+                    if (p != null && Pattern.matches(p, path)) {
+                        paths.add(p);
+                    }
+                } catch (Exception e) {
+                    log.warn("Invalid path regex [{}]: {}", p, e.getMessage());
+                }
             }
         }
 
@@ -211,9 +227,14 @@ public class MockConfigurationManager {
                 return mc;
             }
 
-            Pattern pattern = Pattern.compile(mc.getPattern(), Pattern.DOTALL);
-            if (pattern.matcher(requestBody).matches()) {
-                return mc;
+            try {
+                Pattern pattern = Pattern.compile(mc.getPattern(), Pattern.DOTALL);
+                String safeBody = requestBody == null ? "" : requestBody;
+                if (pattern.matcher(safeBody).matches()) {
+                    return mc;
+                }
+            } catch (Exception e) {
+                log.warn("Invalid body regex for mock id [{}]: {}", mc.getId(), e.getMessage());
             }
         }
 
@@ -597,5 +618,11 @@ public class MockConfigurationManager {
                                                                                           InvocationTargetException,
                                                                                           IllegalAccessException {
         method.invoke(newInstance, newValue);
+    }
+
+    @Transactional
+    public void deleteAll() {
+        repository.deleteAll();
+        log.info("All mock configurations have been deleted.");
     }
 }
