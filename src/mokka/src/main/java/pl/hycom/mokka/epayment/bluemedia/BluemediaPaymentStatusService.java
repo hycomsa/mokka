@@ -6,7 +6,8 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.codec.binary.Base64;
+import java.util.Base64;
+import java.nio.charset.StandardCharsets;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
@@ -92,11 +93,9 @@ public class BluemediaPaymentStatusService implements PaymentStatusService {
             template.process(dataModel, writer);
 
             log.info("Request :[{}]", writer.toString());
-            byte[] bytesEncoded = Base64.encodeBase64(writer.toString()
-                                                              .getBytes());
+            String base64String = Base64.getEncoder().encodeToString(writer.toString().getBytes(StandardCharsets.UTF_8));
             blueMediaPayment.setHash(calculateRedirectHash(blueMediaPayment));
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-            String base64String=new String(bytesEncoded);
             log.info("Request transformed to Base64:["+base64String+"]");
             params.add(BlueMediaConstants.TRANSACTIONS, base64String);
             ResponseEntity<String> response = restTemplate.postForEntity(blueMediaPayment.getNotificationURL() , params, String.class);
